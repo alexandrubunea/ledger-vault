@@ -2,8 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="ledger_vault.App"
              xmlns:local="using:ledger_vault"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             RequestedThemeVariant="Light">
 
     <Application.DataTemplates>
         <local:ViewLocator/>
@@ -11,5 +10,22 @@
   
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="Styles/DefaultStyle.axaml"></StyleInclude>
     </Application.Styles>
+    
+    <Application.Resources>
+        <!-- Brushes -->
+        <SolidColorBrush x:Key="PrimaryBackground">#F3F4F2</SolidColorBrush>
+        <SolidColorBrush x:Key="PrimaryForeground">#2B2C2E</SolidColorBrush>
+        <SolidColorBrush x:Key="SteelGray">#E4E4E4</SolidColorBrush>
+        <SolidColorBrush x:Key="LiliacPastel">#7386F7</SolidColorBrush>
+        <SolidColorBrush x:Key="DarkLiliacPastel">#505EAB</SolidColorBrush>
+        <SolidColorBrush x:Key="NightLiliacPastel">#404B89</SolidColorBrush>
+        
+        <!-- Fonts -->
+        <FontFamily x:Key="MerriweatherBlack">/Assets/Fonts/Merriweather_24pt-Black.ttf#Merriweather 24pt Black</FontFamily>
+        <FontFamily x:Key="MerriweatherLight">/Assets/Fonts/Merriweather_24pt-Black.ttf#Merriweather 24pt Light</FontFamily>
+        <FontFamily x:Key="Merriweather">/Assets/Fonts/Merriweather_24pt-Black.ttf#Merriweather 24pt</FontFamily>
+        
+    </Application.Resources>
 </Application>

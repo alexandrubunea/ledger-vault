@@ -1,6 +1,19 @@
-﻿namespace ledger_vault.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace ledger_vault.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    public string Greeting { get; } = "Welcome to Avalonia!";
+    [ObservableProperty] 
+    private ViewModelBase _currentViewModel;
+
+    public MainWindowViewModel()
+    {
+        CurrentViewModel = new LoginViewModel(OnLoginSuccess);
+    }
+
+    private void OnLoginSuccess()
+    {
+        CurrentViewModel = new HomeViewModel();
+    }
 }

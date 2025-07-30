@@ -1,0 +1,31 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+    <Style Selector="TextBox /template/ ContentPresenter">
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryForeground}" />
+    </Style>
+    <Style Selector="TextBox:focus /template/ Border">
+        <Setter Property="BorderBrush" Value="{DynamicResource LiliacPastel}" />
+    </Style>
+
+    <Style Selector="Button.login">
+        <Setter Property="FontFamily" Value="{DynamicResource Merriweather}" />
+        <Setter Property="Background" Value="{DynamicResource LiliacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+    </Style>
+    <Style Selector="Button.login:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.login:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource NightLiliacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+    </Style>
+</Styles>

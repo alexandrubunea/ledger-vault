@@ -4,4 +4,5 @@ namespace ledger_vault.ViewModels;
 
 public class ViewModelBase : ObservableObject
 {
+    
 }

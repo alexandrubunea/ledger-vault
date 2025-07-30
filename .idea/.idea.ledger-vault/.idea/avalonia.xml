@@ -3,6 +3,12 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="App.axaml" value="ledger-vault.csproj" />
+        <entry key="Styles/DefaultStyle.axaml" value="ledger-vault.csproj" />
+        <entry key="Styles1.axaml" value="ledger-vault.csproj" />
+        <entry key="ViewModels/Home.axaml" value="ledger-vault.csproj" />
+        <entry key="Views/HomeView.axaml" value="ledger-vault.csproj" />
+        <entry key="Views/LoginView.axaml" value="ledger-vault.csproj" />
         <entry key="Views/MainWindow.axaml" value="ledger-vault.csproj" />
       </map>
     </option>

@@ -14,6 +14,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void OnLoginSuccess()
     {
-        CurrentViewModel = new HomeViewModel();
+        CurrentViewModel = new MainViewModel();
     }
 }

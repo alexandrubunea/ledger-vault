@@ -18,6 +18,7 @@
         <SolidColorBrush x:Key="PrimaryBackground">#F3F4F2</SolidColorBrush>
         <SolidColorBrush x:Key="PrimaryForeground">#2B2C2E</SolidColorBrush>
         <SolidColorBrush x:Key="SteelGray">#E4E4E4</SolidColorBrush>
+        <SolidColorBrush x:Key="SecondGray">#DADADA</SolidColorBrush>
         <SolidColorBrush x:Key="LiliacPastel">#7386F7</SolidColorBrush>
         <SolidColorBrush x:Key="DarkLiliacPastel">#505EAB</SolidColorBrush>
         <SolidColorBrush x:Key="NightLiliacPastel">#404B89</SolidColorBrush>
@@ -26,6 +27,8 @@
         <FontFamily x:Key="MerriweatherBlack">/Assets/Fonts/Merriweather_24pt-Black.ttf#Merriweather 24pt Black</FontFamily>
         <FontFamily x:Key="MerriweatherLight">/Assets/Fonts/Merriweather_24pt-Black.ttf#Merriweather 24pt Light</FontFamily>
         <FontFamily x:Key="Merriweather">/Assets/Fonts/Merriweather_24pt-Black.ttf#Merriweather 24pt</FontFamily>
+        <FontFamily x:Key="PoppinsLight">/Assets/Fonts/Poppins-Light.ttf#Poppins Light</FontFamily>
+        <FontFamily x:Key="Poppins">/Assets/Fonts/Poppins.ttf#Poppins</FontFamily>
         
     </Application.Resources>
 </Application>

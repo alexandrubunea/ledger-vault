@@ -28,4 +28,20 @@
         <Setter Property="Background" Value="{DynamicResource NightLiliacPastel}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
     </Style>
+
+    <Style Selector="Button.sidebar">
+        <Setter Property="FontFamily" Value="{DynamicResource PoppinsLight}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FontSize" Value="18" />
+    </Style>
+    <Style Selector="Button.sidebar:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource LiliacPastel}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+    </Style>
+    <Style Selector="Button.sidebar:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+    </Style>
 </Styles>

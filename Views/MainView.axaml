@@ -1,0 +1,38 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ledger_vault.Views.MainView"
+             Background="{DynamicResource PrimaryBackground}"
+             Foreground="{DynamicResource PrimaryForeground}">
+
+    <Grid ColumnDefinitions="Auto, *">
+        <!-- Sidebar -->
+        <Grid Grid.Column="0" RowDefinitions="Auto,*">
+            <!-- Logo -->
+            <StackPanel Background="{DynamicResource SteelGray}">
+                <TextBlock Foreground="{DynamicResource PrimaryForeground}"
+                           FontFamily="{DynamicResource MerriweatherBlack}"
+                           FontSize="24"
+                           Padding="20">
+                    Ledger <TextBlock Foreground="{DynamicResource LiliacPastel}">Vault</TextBlock>
+                </TextBlock>
+            </StackPanel>
+
+            <!-- Menu -->
+            <StackPanel Grid.Row="1" Background="{DynamicResource SecondGray}">
+                <StackPanel Margin="0 50" HorizontalAlignment="Stretch">
+                    <Button Classes="sidebar" Content="Home" />
+                    <Button Classes="sidebar" Content="Income" />
+                    <Button Classes="sidebar" Content="Payments" />
+                    <Button Classes="sidebar" Content="Cash Flow" />
+                    <Button Classes="sidebar" Content="Verify Integrity" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Column="1">
+        </StackPanel>
+    </Grid>
+</UserControl>

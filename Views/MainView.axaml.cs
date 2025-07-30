@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace ledger_vault.Views;
 
-public partial class HomeView : UserControl
+public partial class MainView : UserControl
 {
-    public HomeView()
+    public MainView()
     {
         InitializeComponent();
     }

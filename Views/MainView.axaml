@@ -28,6 +28,8 @@
                     <Button Classes="sidebar" Content="Payments" />
                     <Button Classes="sidebar" Content="Cash Flow" />
                     <Button Classes="sidebar" Content="Verify Integrity" />
+                    <Button Classes="sidebar" Content="Export" />
+                    <Button Classes="sidebar" Content="Backups" />
                 </StackPanel>
             </StackPanel>
         </Grid>

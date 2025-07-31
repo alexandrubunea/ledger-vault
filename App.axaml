@@ -29,6 +29,7 @@
         <FontFamily x:Key="Merriweather">/Assets/Fonts/Merriweather_24pt-Black.ttf#Merriweather 24pt</FontFamily>
         <FontFamily x:Key="PoppinsLight">/Assets/Fonts/Poppins-Light.ttf#Poppins Light</FontFamily>
         <FontFamily x:Key="Poppins">/Assets/Fonts/Poppins.ttf#Poppins</FontFamily>
+        <FontFamily x:Key="Phosphor">/Assets/Fonts/Phosphor-Fill.ttf#Phosphor-Fill</FontFamily>
         
     </Application.Resources>
 </Application>

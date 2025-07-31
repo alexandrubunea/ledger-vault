@@ -12,24 +12,61 @@
         <Grid Grid.Column="0" RowDefinitions="Auto,*">
             <!-- Logo -->
             <StackPanel Background="{DynamicResource SteelGray}">
-                <TextBlock Foreground="{DynamicResource PrimaryForeground}"
-                           FontFamily="{DynamicResource MerriweatherBlack}"
-                           FontSize="24"
-                           Padding="20">
-                    Ledger <TextBlock Foreground="{DynamicResource LiliacPastel}">Vault</TextBlock>
-                </TextBlock>
+                <Image Source="{SvgImage /Assets/Images/LedgerVaultLogo.svg}"
+                       Width="170" Margin="20"/>
             </StackPanel>
 
             <!-- Menu -->
             <StackPanel Grid.Row="1" Background="{DynamicResource SecondGray}">
                 <StackPanel Margin="0 50" HorizontalAlignment="Stretch">
-                    <Button Classes="sidebar" Content="Home" />
-                    <Button Classes="sidebar" Content="Income" />
-                    <Button Classes="sidebar" Content="Payments" />
-                    <Button Classes="sidebar" Content="Cash Flow" />
-                    <Button Classes="sidebar" Content="Verify Integrity" />
-                    <Button Classes="sidebar" Content="Export" />
-                    <Button Classes="sidebar" Content="Backups" />
+                    <Button Classes="sidebar">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Classes="icon" Content="&#xe2c4;" />
+                            <Label Content="Home" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="sidebar">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Classes="icon" Content="&#xe78e;" />
+                            <Label Content="Income" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="sidebar">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Classes="icon" Content="&#xe3ec;" />
+                            <Label Content="Payments" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="sidebar">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Classes="icon" Content="&#xea04;" />
+                            <Label Content="Cash Flow" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="sidebar">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Classes="icon" Content="&#xe606;" />
+                            <Label Content="Verify Integrity" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="sidebar">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Classes="icon" Content="&#xed52;" />
+                            <Label Content="Export" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="sidebar">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Classes="icon" Content="&#xe922;" />
+                            <Label Content="Backups" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="sidebar">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Classes="icon" Content="&#xe270;" />
+                            <Label Content="Settings" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </StackPanel>
         </Grid>

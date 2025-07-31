@@ -5,8 +5,13 @@
             <!-- Add Controls for Previewer Here -->
         </Border>
     </Design.PreviewWith>
+    
+    <!-- Turn off Avalonia pressed effect -->
+    <Style Selector=":is(Button):pressed">
+        <Setter Property="RenderTransform" Value="none" />
+    </Style>
 
-    <!-- Add Styles Here -->
+    <!-- TextBox -->
     <Style Selector="TextBox /template/ ContentPresenter">
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryForeground}" />
     </Style>
@@ -14,6 +19,7 @@
         <Setter Property="BorderBrush" Value="{DynamicResource LiliacPastel}" />
     </Style>
 
+    <!-- Login -->
     <Style Selector="Button.login">
         <Setter Property="FontFamily" Value="{DynamicResource Merriweather}" />
         <Setter Property="Background" Value="{DynamicResource LiliacPastel}" />
@@ -29,6 +35,7 @@
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
     </Style>
 
+    <!-- Sidebar -->
     <Style Selector="Button.sidebar">
         <Setter Property="FontFamily" Value="{DynamicResource PoppinsLight}" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -36,12 +43,28 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontSize" Value="18" />
     </Style>
+    <Style Selector="Button.sidebar /template/ ContentPresenter">
+        <Setter Property="Transitions">
+            <Transitions>
+                <ThicknessTransition Property="Margin" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
+        <Setter Property="Margin" Value="0" />
+    </Style>
     <Style Selector="Button.sidebar:pointerover /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource LiliacPastel}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="Margin" Value="15,0,0,0" />
     </Style>
     <Style Selector="Button.sidebar:pressed /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+    </Style>
+
+    <Style Selector="Label.icon">
+        <Setter Property="Margin" Value="0 0 10 0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{DynamicResource Phosphor}" />
+        <Setter Property="FontSize" Value="20" />
     </Style>
 </Styles>

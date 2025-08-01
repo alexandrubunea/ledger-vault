@@ -5,10 +5,21 @@
             <!-- Add Controls for Previewer Here -->
         </Border>
     </Design.PreviewWith>
-    
+
     <!-- Turn off Avalonia pressed effect -->
     <Style Selector=":is(Button):pressed">
         <Setter Property="RenderTransform" Value="none" />
+    </Style>
+
+    <!-- Transitions for all buttons -->
+    <Style Selector="Button /template/ ContentPresenter">
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Foreground" Duration="0:0:0.15" />
+                <BrushTransition Property="Background" Duration="0:0:0.15" />
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
     </Style>
 
     <!-- TextBox -->
@@ -32,7 +43,6 @@
     </Style>
     <Style Selector="Button.login:pressed /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource NightLiliacPastel}" />
-        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
     </Style>
 
     <!-- Sidebar -->
@@ -66,5 +76,22 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{DynamicResource Phosphor}" />
         <Setter Property="FontSize" Value="20" />
+    </Style>
+
+    <!-- Action Button -->
+    <Style Selector="Button.action">
+        <Setter Property="FontFamily" Value="{DynamicResource Poppins}" />
+        <Setter Property="Background" Value="{DynamicResource LiliacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+
+    </Style>
+    <Style Selector="Button.action:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="RenderTransform" Value="scale(0.9)" />
+    </Style>
+    <Style Selector="Button.action:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource NightLiliacPastel}" />
     </Style>
 </Styles>

@@ -10,7 +10,8 @@
         Height="720"
         Width="1280"
         WindowStartupLocation="CenterScreen"
-        CanResize="False">
+        CanResize="False"
+        Icon="avares://ledger-vault/Assets/app.ico">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,

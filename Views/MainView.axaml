@@ -2,10 +2,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="using:ledger_vault.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.MainView"
+             x:DataType="vm:MainViewModel"
              Background="{DynamicResource PrimaryBackground}"
              Foreground="{DynamicResource PrimaryForeground}">
+    
+    <Design.DataContext><vm:MainViewModel /></Design.DataContext>
 
     <Grid ColumnDefinitions="Auto, *">
         <!-- Sidebar -->
@@ -19,49 +23,57 @@
             <!-- Menu -->
             <StackPanel Grid.Row="1" Background="{DynamicResource SecondGray}">
                 <StackPanel Margin="0 50" HorizontalAlignment="Stretch">
-                    <Button Classes="sidebar">
+                    <Button Classes="sidebar" 
+                            Command="{Binding SwitchPage}" CommandParameter="Home">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe2c4;" />
                             <Label Content="Home" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar">
+                    <Button Classes="sidebar"
+                            Command="{Binding SwitchPage}" CommandParameter="Income">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe78e;" />
                             <Label Content="Income" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar">
+                    <Button Classes="sidebar"
+                            Command="{Binding SwitchPage}" CommandParameter="Payments">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe3ec;" />
                             <Label Content="Payments" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar">
+                    <Button Classes="sidebar"
+                            Command="{Binding SwitchPage}" CommandParameter="CashFlow">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xea04;" />
                             <Label Content="Cash Flow" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar">
+                    <Button Classes="sidebar"
+                            Command="{Binding SwitchPage}" CommandParameter="VerifyIntegrity">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe606;" />
                             <Label Content="Verify Integrity" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar">
+                    <Button Classes="sidebar"
+                            Command="{Binding SwitchPage}" CommandParameter="Export">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xed52;" />
                             <Label Content="Export" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar">
+                    <Button Classes="sidebar"
+                            Command="{Binding SwitchPage}" CommandParameter="Backups">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe922;" />
                             <Label Content="Backups" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar">
+                    <Button Classes="sidebar"
+                            Command="{Binding SwitchPage}" CommandParameter="Settings">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe270;" />
                             <Label Content="Settings" VerticalAlignment="Center" />
@@ -71,7 +83,6 @@
             </StackPanel>
         </Grid>
 
-        <StackPanel Grid.Column="1">
-        </StackPanel>
+        <ContentControl Grid.Column="1" Content="{Binding CurrentPageViewModel}" />
     </Grid>
 </UserControl>

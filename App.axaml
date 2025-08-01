@@ -23,6 +23,7 @@
         <SolidColorBrush x:Key="LiliacPastel">#7386F7</SolidColorBrush>
         <SolidColorBrush x:Key="DarkLiliacPastel">#505EAB</SolidColorBrush>
         <SolidColorBrush x:Key="NightLiliacPastel">#404B89</SolidColorBrush>
+        <SolidColorBrush x:Key="DarkWine">#8E1A0C</SolidColorBrush>
         
         <!-- Fonts -->
         <FontFamily x:Key="MerriweatherBlack">/Assets/Fonts/Merriweather_24pt-Black.ttf#Merriweather 24pt Black</FontFamily>

@@ -10,39 +10,92 @@
         <vm:SettingsViewModel />
     </Design.DataContext>
     <StackPanel Margin="20">
-        <Border CornerRadius="5" Padding="10"
+        <Border CornerRadius="5" Padding="40"
                 BorderBrush="{DynamicResource SecondaryBackground}" BorderThickness="1"
                 Background="{DynamicResource SecondaryBackground}">
             <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label FontFamily="{DynamicResource MerriweatherBlack}" FontSize="20" Content="Password" />
-                    <Label Classes="icon" FontFamily="{DynamicResource Phosphor}" FontSize="20" Content="&#xe2d6;" />
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label FontFamily="{DynamicResource MerriweatherBlack}" FontSize="20" Content="Password" />
+                        <Label Classes="icon" FontFamily="{DynamicResource Phosphor}" FontSize="20" Content="&#xe2d6;" />
+                    </StackPanel>
+                    <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="15" Margin="0 20 0 0">
+                        To change your password, fill out the boxes below.
+                    </TextBlock>
+
+                    <Grid ColumnDefinitions="*, *, *, *" HorizontalAlignment="Left" ColumnSpacing="50"
+                          VerticalAlignment="Center" Margin="0 5 0 0">
+                        <TextBox Grid.Column="0" Height="35" CornerRadius="5" Watermark="Your old password"
+                                 Width="200" FontFamily="{DynamicResource Poppins}" PasswordChar="*"
+                                 VerticalAlignment="Center" Text="{Binding OldPassword}" />
+
+                        <TextBox Grid.Column="1" Height="35" CornerRadius="5" Watermark="Your new password"
+                                 Width="200" FontFamily="{DynamicResource Poppins}" PasswordChar="*"
+                                 VerticalAlignment="Center" Text="{Binding NewPassword}" />
+
+                        <TextBox Grid.Column="2" Height="35" CornerRadius="5" Watermark="Retype your new password"
+                                 Width="200" FontFamily="{DynamicResource Poppins}" PasswordChar="*"
+                                 VerticalAlignment="Center" Text="{Binding RetypePassword}" />
+
+                        <Button Grid.Column="3" Height="35" Width="200" Classes="action"
+                                FontSize="15" CornerRadius="5" VerticalAlignment="Center"
+                                Command="{Binding ChangePassword}">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
+                                Change Password
+                            </TextBlock>
+                        </Button>
+                    </Grid>
+                    <TextBlock IsVisible="{Binding WrongOldPassword}"
+                               Foreground="{DynamicResource DarkWine}" FontFamily="{DynamicResource Poppins}"
+                               FontSize="15" Margin="0 20 0 0">
+                        The old password is incorrect. Please try again.
+                    </TextBlock>
+                    <TextBlock IsVisible="{Binding IsPasswordTooWeak}"
+                               Foreground="{DynamicResource DarkWine}" FontFamily="{DynamicResource Poppins}"
+                               FontSize="15" Margin="0 20 0 0">
+                        Your new password must be stronger. Please try again with a password that includes:
+                        <LineBreak />
+                        - At least 8 characters. <LineBreak />
+                        - At least one uppercase letter. <LineBreak />
+                        - At least one number or special character (like !, @, #, etc.)
+                    </TextBlock>
+                    <TextBlock IsVisible="{Binding DifferentPasswords}"
+                               Foreground="{DynamicResource DarkWine}" FontFamily="{DynamicResource Poppins}"
+                               FontSize="15" Margin="0 20 0 0">
+                        It looks like your retyped password doesn't match the new one.
+                    </TextBlock>
                 </StackPanel>
-                <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="15" Margin="0 20 0 0">
-                    To change your password, fill out the boxes below.
-                </TextBlock>
+                <StackPanel Margin="0 50 0 0">
+                    <StackPanel Orientation="Horizontal">
+                        <Label FontFamily="{DynamicResource MerriweatherBlack}" FontSize="20" Content="Your Data" />
+                        <Label Classes="icon" FontFamily="{DynamicResource Phosphor}" FontSize="20" Content="&#xe2a0;" />
+                    </StackPanel>
+                    <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="15" Margin="0 20 0 0">
+                        If you're looking for a fresh start, you can delete all your data, including any backups.
+                    </TextBlock>
+                    <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="15">
+                        Proceed with care, this action cannot be reversed.
+                    </TextBlock>
 
-                <Grid ColumnDefinitions="*, *, *, *" HorizontalAlignment="Left" ColumnSpacing="50"
-                      VerticalAlignment="Center" Margin="0 5 0 0">
-                    <TextBox Grid.Column="0" Height="35" CornerRadius="5" Watermark="Your old password"
-                             Width="200" FontFamily="{DynamicResource Poppins}" PasswordChar="*"
-                             VerticalAlignment="Center" />
+                    <Grid ColumnDefinitions="*, *" HorizontalAlignment="Left" ColumnSpacing="50"
+                          VerticalAlignment="Center" Margin="0 5 0 0">
+                        <TextBox Grid.Column="0" Height="35" CornerRadius="5" Watermark="Your password"
+                                 Width="200" FontFamily="{DynamicResource Poppins}" PasswordChar="*"
+                                 VerticalAlignment="Center" Text="{Binding CurrentPassword}" />
 
-                    <TextBox Grid.Column="1" Height="35" CornerRadius="5" Watermark="Your new password"
-                             Width="200" FontFamily="{DynamicResource Poppins}" PasswordChar="*"
-                             VerticalAlignment="Center" />
-
-                    <TextBox Grid.Column="2" Height="35" CornerRadius="5" Watermark="Retype your new password"
-                             Width="200" FontFamily="{DynamicResource Poppins}" PasswordChar="*"
-                             VerticalAlignment="Center" />
-
-                    <Button Grid.Column="3" Height="35" Width="200" Classes="action"
-                            FontSize="15" CornerRadius="5" VerticalAlignment="Center">
-                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
-                            Change Password
-                        </TextBlock>
-                    </Button>
-                </Grid>
+                        <Button Grid.Column="1" Height="35" Width="200" Classes="action"
+                                FontSize="15" CornerRadius="5" VerticalAlignment="Center">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
+                                Delete Data
+                            </TextBlock>
+                        </Button>
+                    </Grid>
+                    <TextBlock IsVisible="{Binding WrongCurrentPassword}"
+                               Foreground="{DynamicResource DarkWine}" FontFamily="{DynamicResource Poppins}"
+                               FontSize="15" Margin="0 20 0 0">
+                        The password is incorrect. Please try again.
+                    </TextBlock>
+                </StackPanel>
             </StackPanel>
         </Border>
     </StackPanel>

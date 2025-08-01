@@ -23,56 +23,56 @@
             <!-- Menu -->
             <StackPanel Grid.Row="1" Background="{DynamicResource SecondGray}">
                 <StackPanel Margin="0 50" HorizontalAlignment="Stretch">
-                    <Button Classes="sidebar" 
+                    <Button Classes="sidebar" Classes.active_sidebar="{Binding HomePageIsActive}"
                             Command="{Binding SwitchPage}" CommandParameter="Home">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe2c4;" />
                             <Label Content="Home" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar"
+                    <Button Classes="sidebar" Classes.active_sidebar="{Binding IncomePageIsActive}"
                             Command="{Binding SwitchPage}" CommandParameter="Income">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe78e;" />
                             <Label Content="Income" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar"
+                    <Button Classes="sidebar" Classes.active_sidebar="{Binding PaymentsPageIsActive}"
                             Command="{Binding SwitchPage}" CommandParameter="Payments">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe3ec;" />
                             <Label Content="Payments" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar"
+                    <Button Classes="sidebar" Classes.active_sidebar="{Binding CashFlowPageIsActive}"
                             Command="{Binding SwitchPage}" CommandParameter="CashFlow">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xea04;" />
                             <Label Content="Cash Flow" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar"
+                    <Button Classes="sidebar" Classes.active_sidebar="{Binding VerifyIntegrityPageIsActive}"
                             Command="{Binding SwitchPage}" CommandParameter="VerifyIntegrity">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe606;" />
                             <Label Content="Verify Integrity" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar"
+                    <Button Classes="sidebar" Classes.active_sidebar="{Binding ExportPageIsActive}"
                             Command="{Binding SwitchPage}" CommandParameter="Export">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xed52;" />
                             <Label Content="Export" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar"
+                    <Button Classes="sidebar" Classes.active_sidebar="{Binding BackupsPageIsActive}"
                             Command="{Binding SwitchPage}" CommandParameter="Backups">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe922;" />
                             <Label Content="Backups" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar"
+                    <Button Classes="sidebar" Classes.active_sidebar="{Binding SettingsPageIsActive}"
                             Command="{Binding SwitchPage}" CommandParameter="Settings">
                         <StackPanel Orientation="Horizontal">
                             <Label Classes="icon" Content="&#xe270;" />

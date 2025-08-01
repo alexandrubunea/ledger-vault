@@ -63,12 +63,26 @@
     </Style>
     <Style Selector="Button.sidebar:pointerover /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource LiliacPastel}" />
-        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Margin" Value="15,0,0,0" />
     </Style>
     <Style Selector="Button.sidebar:pressed /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+    </Style>
+    
+    <Style Selector="Button.sidebar.active_sidebar">
+        <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+    </Style>
+    <Style Selector="Button.sidebar.active_sidebar /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+    <Style Selector="Button.sidebar.active_sidebar:pointerover /template/ ContentPresenter">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Margin" Value="0" />
     </Style>
 
     <Style Selector="Label.icon">

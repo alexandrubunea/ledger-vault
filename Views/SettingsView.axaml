@@ -16,6 +16,64 @@
             <StackPanel>
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
+                        <Label FontFamily="{DynamicResource MerriweatherBlack}" FontSize="20" Content="Preferences" />
+                        <Label Classes="icon" FontFamily="{DynamicResource Phosphor}" FontSize="20" Content="&#xe6a2;" />
+                    </StackPanel>
+                    <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="15" Margin="0 20 0 0">
+                        Feel free to customize the settings to your preferences. <LineBreak />
+                        There are no restrictions on how you can tailor this experience to best suit your needs.
+                    </TextBlock>
+                    <Grid ColumnDefinitions="*, *, *" Margin="0, 5, 0, 0">
+                        <StackPanel Grid.Column="0">
+                            <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14">
+                                Currency
+                            </Label>
+                            <ComboBox x:Name="CurrencyComboBox" SelectedIndex="{Binding CurrencyIndex}" Width="250"
+                                      MaxDropDownHeight="200" Height="35" CornerRadius="5">
+                                <ComboBox.Styles>
+                                    <Style Selector="ComboBox /template/ Popup">
+                                        <Setter Property="MinWidth" Value="250" />
+                                        <Setter Property="MaxWidth" Value="250" />
+                                    </Style>
+                                </ComboBox.Styles>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14">
+                                Interface Theme
+                            </Label>
+                            <ComboBox x:Name="ThemeComboBox" SelectedIndex="{Binding ThemeIndex}" Width="250"
+                                      MaxDropDownHeight="200" Height="35" CornerRadius="5">
+                                <ComboBox.Styles>
+                                    <Style Selector="ComboBox /template/ Popup">
+                                        <Setter Property="MinWidth" Value="250" />
+                                        <Setter Property="MaxWidth" Value="250" />
+                                    </Style>
+                                </ComboBox.Styles>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14">
+                                Your complete name
+                            </Label>
+
+                            <TextBox Height="35" CornerRadius="5"
+                                     Watermark="How should we call you?"
+                                     HorizontalAlignment="Left"
+                                     Text="{Binding UserCompleteName}"
+                                     Width="250" FontFamily="{DynamicResource Poppins}" />
+                        </StackPanel>
+                    </Grid>
+                    <Button Margin="0, 30, 0, 0" Classes="action"
+                            HorizontalAlignment="Center" Width="200" FontSize="15"
+                            Command="{Binding UpdatePreferences}">
+                        <TextBlock HorizontalAlignment="Center">
+                            Save Preferences
+                        </TextBlock>
+                    </Button>
+                </StackPanel>
+                <StackPanel Margin="0 50 0 0">
+                    <StackPanel Orientation="Horizontal">
                         <Label FontFamily="{DynamicResource MerriweatherBlack}" FontSize="20" Content="Password" />
                         <Label Classes="icon" FontFamily="{DynamicResource Phosphor}" FontSize="20" Content="&#xe2d6;" />
                     </StackPanel>
@@ -84,7 +142,8 @@
                                  VerticalAlignment="Center" Text="{Binding CurrentPassword}" />
 
                         <Button Grid.Column="1" Height="35" Width="200" Classes="action"
-                                FontSize="15" CornerRadius="5" VerticalAlignment="Center">
+                                FontSize="15" CornerRadius="5" VerticalAlignment="Center"
+                                Command="{Binding DeleteData}">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
                                 Delete Data
                             </TextBlock>

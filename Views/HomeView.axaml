@@ -5,7 +5,16 @@
              xmlns:vm="using:ledger_vault.ViewModels"
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.HomeView"
-             x:DataType="vm:HomeViewModel">
-    <Design.DataContext><vm:HomeViewModel /></Design.DataContext>
-    Home View
+             x:DataType="vm:HomeViewModel"
+             Background="{DynamicResource PrimaryBackground}"
+             Foreground="{DynamicResource PrimaryForeground}">
+    <Design.DataContext>
+        <vm:PageViewModel />
+    </Design.DataContext>
+    <StackPanel>
+        <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="24" Margin="50, 50, 0, 0">
+            Hello, <TextBlock Text="{Binding UserFullName}">PLACEHOLDER</TextBlock>
+        </TextBlock>
+        <Separator Margin="0 20" Background="{DynamicResource PrimaryForeground}" />
+    </StackPanel>
 </UserControl>

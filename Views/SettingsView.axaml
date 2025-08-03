@@ -7,7 +7,7 @@
              x:Class="ledger_vault.Views.SettingsView"
              x:DataType="vm:SettingsViewModel">
     <Design.DataContext>
-        <vm:SettingsViewModel />
+        <vm:PageViewModel />
     </Design.DataContext>
     <StackPanel Margin="20">
         <Border CornerRadius="5" Padding="40"

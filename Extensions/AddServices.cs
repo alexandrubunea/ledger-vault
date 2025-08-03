@@ -12,7 +12,7 @@ namespace ledger_vault.Services
         public static void AddAppServices(this IServiceCollection collection)
         {
             // Services
-            collection.AddSingleton<IUserStateService, UserStateService>();
+            collection.AddSingleton<UserStateService>();
 
             // Functions
             collection.AddSingleton<Func<ApplicationPages, PageViewModel>>(x => name => name switch

@@ -1,6 +1,6 @@
 namespace ledger_vault.Services;
 
-public class UserStateService : IUserStateService
+public class UserStateService
 {
     private string _fullUserName = "";
     private ushort _currencyId = 0;

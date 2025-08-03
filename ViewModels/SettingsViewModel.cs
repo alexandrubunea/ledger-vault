@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
+using ledger_vault.Services;
 
 namespace ledger_vault.ViewModels;
 
@@ -20,17 +21,19 @@ public partial class SettingsViewModel : PageViewModel
     private string _retypePassword = "";
 
     [ObservableProperty]
-    private int _currencyIndex = 0; // TODO: Implement a way to extract this info from the settings table
+    private ushort _currencyIndex;
 
     [ObservableProperty]
-    private int _themeIndex = 0; // TODO: Implement a way to extract this info from the settings table
+    private ushort _themeIndex;
 
     [ObservableProperty]
-    private string _userCompleteName = "John Doe"; // TODO: Implement a way to extract this info from the settings table
+    private string _userCompleteName;
 
     [GeneratedRegex(@"^(?=.+)(?!(?=.*[A-Z])(?=.*[\d\W]).{8,}).*$")]
     private static partial Regex StrongPasswordRegex();
 
+    private readonly UserStateService _userStateService;
+    
     public bool WrongOldPassword => CheckPassword(OldPassword);
     public bool WrongCurrentPassword => CheckPassword(CurrentPassword);
 
@@ -40,9 +43,14 @@ public partial class SettingsViewModel : PageViewModel
                                       RetypePassword.Length > 0 &&
                                       NewPassword != RetypePassword;
 
-    public SettingsViewModel()
+    public SettingsViewModel(UserStateService userStateService)
     {
         PageName = ApplicationPages.Settings;
+        _userStateService = userStateService;
+        
+        UserCompleteName = _userStateService.FullUserName;
+        CurrencyIndex = _userStateService.CurrencyId;
+        ThemeIndex = _userStateService.ThemeId;
     }
 
     private bool CheckPassword(string password)
@@ -76,7 +84,9 @@ public partial class SettingsViewModel : PageViewModel
     [RelayCommand]
     public void UpdatePreferences()
     {
-        // Implement this later...
+        _userStateService.FullUserName = UserCompleteName;
+        _userStateService.CurrencyId = CurrencyIndex;
+        _userStateService.ThemeId = ThemeIndex;
     }
 
     [RelayCommand]

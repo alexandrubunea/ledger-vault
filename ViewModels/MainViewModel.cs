@@ -1,16 +1,14 @@
-﻿using System;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.Generic;
+using ledger_vault.Data;
+using ledger_vault.Factories;
 
 namespace ledger_vault.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    /************************************************
-     *                  Pages Logic                 *
-     ************************************************/
-
+    private readonly PageFactory _pageFactory;
+    
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HomePageIsActive))]
     [NotifyPropertyChangedFor(nameof(IncomePageIsActive))]
@@ -20,7 +18,7 @@ public partial class MainViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(ExportPageIsActive))]
     [NotifyPropertyChangedFor(nameof(BackupsPageIsActive))]
     [NotifyPropertyChangedFor(nameof(SettingsPageIsActive))]
-    private ViewModelBase _currentPageViewModel = new HomeViewModel();
+    private PageViewModel _currentPageViewModel = new();
 
     // Related to styling active buttons
     public bool HomePageIsActive => CurrentPageViewModel is HomeViewModel;
@@ -32,35 +30,15 @@ public partial class MainViewModel : ViewModelBase
     public bool BackupsPageIsActive => CurrentPageViewModel is BackupsViewModel;
     public bool SettingsPageIsActive => CurrentPageViewModel is SettingsViewModel;
 
-    public enum Pages : byte
+    public MainViewModel(PageFactory pageFactory)
     {
-        Home,
-        Income,
-        Payments,
-        CashFlow,
-        VerifyIntegrity,
-        Settings,
-        Export,
-        Backups,
+        _pageFactory = pageFactory;
+        SwitchPage(ApplicationPages.Home);
     }
 
-    // There is no need to reload the pages when switching between them
-    private readonly Dictionary<Pages, Lazy<ViewModelBase>> _pageCache = new()
-    {
-        [Pages.Home] = new Lazy<ViewModelBase>(() => new HomeViewModel()),
-        [Pages.Income] = new Lazy<ViewModelBase>(() => new IncomeViewModel()),
-        [Pages.Payments] = new Lazy<ViewModelBase>(() => new PaymentsViewModel()),
-        [Pages.CashFlow] = new Lazy<ViewModelBase>(() => new CashFlowViewModel()),
-        [Pages.VerifyIntegrity] = new Lazy<ViewModelBase>(() => new VerifyIntegrityViewModel()),
-        [Pages.Export] = new Lazy<ViewModelBase>(() => new ExportViewModel()),
-        [Pages.Backups] = new Lazy<ViewModelBase>(() => new BackupsViewModel()),
-        [Pages.Settings] = new Lazy<ViewModelBase>(() => new SettingsViewModel())
-    };
-
     [RelayCommand]
-    public void SwitchPage(Pages pageName)
+    public void SwitchPage(ApplicationPages pageName)
     {
-        if (_pageCache.TryGetValue(pageName, out var lazyPage))
-            CurrentPageViewModel = lazyPage.Value;
+        CurrentPageViewModel = _pageFactory.GetPageViewModel(pageName);
     }
 }

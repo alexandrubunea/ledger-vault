@@ -6,14 +6,17 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     [ObservableProperty] 
     private ViewModelBase _currentViewModel;
+    
+    private readonly MainViewModel _mainViewModel;
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(MainViewModel mainViewModel)
     {
+        _mainViewModel = mainViewModel;
         CurrentViewModel = new LoginViewModel(OnLoginSuccess);
     }
 
     private void OnLoginSuccess()
     {
-        CurrentViewModel = new MainViewModel();
+        CurrentViewModel = _mainViewModel;
     }
 }

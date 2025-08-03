@@ -1,10 +1,11 @@
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ledger_vault.Data;
 
 namespace ledger_vault.ViewModels;
 
-public partial class SettingsViewModel : ViewModelBase
+public partial class SettingsViewModel : PageViewModel
 {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(WrongCurrentPassword))]
     private string _currentPassword = "";
@@ -38,6 +39,11 @@ public partial class SettingsViewModel : ViewModelBase
     public bool DifferentPasswords => NewPassword.Length > 0 &&
                                       RetypePassword.Length > 0 &&
                                       NewPassword != RetypePassword;
+
+    public SettingsViewModel()
+    {
+        PageName = ApplicationPages.Settings;
+    }
 
     private bool CheckPassword(string password)
     {

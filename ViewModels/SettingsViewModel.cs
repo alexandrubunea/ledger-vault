@@ -14,26 +14,25 @@ public partial class SettingsViewModel : PageViewModel
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(WrongOldPassword))]
     private string _oldPassword = "";
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsPasswordTooWeak))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsPasswordTooWeak))]
+    [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
     private string _newPassword = "";
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
     private string _retypePassword = "";
 
-    [ObservableProperty]
-    private ushort _currencyIndex;
+    [ObservableProperty] private ushort _currencyIndex;
 
-    [ObservableProperty]
-    private ushort _themeIndex;
+    [ObservableProperty] private ushort _themeIndex;
 
-    [ObservableProperty]
-    private string _userCompleteName;
+    [ObservableProperty] private string _userCompleteName;
 
     [GeneratedRegex(@"^(?=.+)(?!(?=.*[A-Z])(?=.*[\d\W]).{8,}).*$")]
     private static partial Regex StrongPasswordRegex();
 
     private readonly UserStateService _userStateService;
-    
+
     public bool WrongOldPassword => CheckPassword(OldPassword);
     public bool WrongCurrentPassword => CheckPassword(CurrentPassword);
 
@@ -47,7 +46,7 @@ public partial class SettingsViewModel : PageViewModel
     {
         PageName = ApplicationPages.Settings;
         _userStateService = userStateService;
-        
+
         UserCompleteName = _userStateService.FullUserName;
         CurrencyIndex = _userStateService.CurrencyId;
         ThemeIndex = _userStateService.ThemeId;

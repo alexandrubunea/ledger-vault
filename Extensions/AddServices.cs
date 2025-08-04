@@ -32,6 +32,7 @@ namespace ledger_vault.Services
             collection.AddSingleton<PageFactory>();
 
             // ViewModels
+            collection.AddTransient<SetupViewModel>();
             collection.AddTransient<MainViewModel>();
             collection.AddTransient<BackupsViewModel>();
             collection.AddTransient<CashFlowViewModel>();

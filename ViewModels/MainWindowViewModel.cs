@@ -9,10 +9,12 @@ public partial class MainWindowViewModel : ViewModelBase
     
     private readonly MainViewModel _mainViewModel;
 
-    public MainWindowViewModel(MainViewModel mainViewModel)
+    public MainWindowViewModel(MainViewModel mainViewModel, SetupViewModel setupViewModel)
     {
         _mainViewModel = mainViewModel;
-        CurrentViewModel = new LoginViewModel(OnLoginSuccess);
+        
+        // TODO: Verify if the application is set-up
+        CurrentViewModel = setupViewModel;
     }
 
     private void OnLoginSuccess()

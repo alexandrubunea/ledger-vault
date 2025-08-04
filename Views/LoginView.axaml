@@ -11,18 +11,18 @@
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
         <Border CornerRadius="15" Background="{DynamicResource SteelGray}" Padding="20">
             <StackPanel Spacing="10">
-                <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="24">
+                <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="24" HorizontalAlignment="Center">
                     LogIn to
                     <TextBlock Foreground="{DynamicResource LiliacPastel}">Your Ledger</TextBlock>
                 </TextBlock>
 
-                <TextBox PasswordChar="*" Watermark="Enter your password" FontFamily="{DynamicResource Merriweather}"
-                         FontSize="15" Margin="0 15 0 0" CornerRadius="5">
+                <TextBox PasswordChar="*" Watermark="Enter your password" FontFamily="{DynamicResource Poppins}"
+                         FontSize="18" Margin="0 15 0 0" CornerRadius="5" Width="300">
                 </TextBox>
 
                 <Button Classes="login" Content="LogIn" HorizontalAlignment="Center"
                         Margin="0 20" FontSize="18" CornerRadius="5"
-                        Command="{Binding ProcessLoginCommand}"/>
+                        Command="{Binding ProcessLoginCommand}" />
             </StackPanel>
         </Border>
     </StackPanel>

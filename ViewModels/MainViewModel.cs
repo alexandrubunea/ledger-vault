@@ -5,7 +5,7 @@ using ledger_vault.Factories;
 
 namespace ledger_vault.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel : CoreViewModel
 {
     private readonly PageFactory _pageFactory;
     
@@ -32,6 +32,8 @@ public partial class MainViewModel : ViewModelBase
 
     public MainViewModel(PageFactory pageFactory)
     {
+        ViewModelName = CoreViews.Main;
+        
         _pageFactory = pageFactory;
         SwitchPage(ApplicationPages.Home);
     }

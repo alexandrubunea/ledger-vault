@@ -1,9 +1,11 @@
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
+using ledger_vault.Data;
+using ledger_vault.Services;
 
 namespace ledger_vault.ViewModels;
 
-public partial class SetupViewModel : ViewModelBase
+public partial class SetupViewModel : CoreViewModel
 {
     [ObservableProperty] private bool _stepOne = true;
     [ObservableProperty] private bool _stepTwo;
@@ -28,6 +30,15 @@ public partial class SetupViewModel : ViewModelBase
                                       ConfirmPassword.Length > 0 &&
                                       Password != ConfirmPassword;
 
+    private readonly CoreViewNavigatorService _navigator;
+    
+    public SetupViewModel(CoreViewNavigatorService navigator)
+    {
+        ViewModelName = CoreViews.Setup;
+        
+        _navigator = navigator;
+    }
+    
     public void NextStep()
     {
         StepOne = false;
@@ -37,5 +48,7 @@ public partial class SetupViewModel : ViewModelBase
     public void Save()
     {
         StepTwo = false;
+        
+        _navigator.NavigateTo(CoreViews.Main);
     }
 }

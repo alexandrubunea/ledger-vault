@@ -1,5 +1,4 @@
 using System;
-using Avalonia;
 using ledger_vault.Data;
 using ledger_vault.Factories;
 using ledger_vault.ViewModels;
@@ -13,6 +12,7 @@ namespace ledger_vault.Services
         {
             // Services
             collection.AddSingleton<UserStateService>();
+            collection.AddSingleton<CoreViewNavigatorService>();
 
             // Functions
             collection.AddSingleton<Func<ApplicationPages, PageViewModel>>(x => name => name switch
@@ -27,12 +27,21 @@ namespace ledger_vault.Services
                 ApplicationPages.VerifyIntegrity => x.GetRequiredService<VerifyIntegrityViewModel>(),
                 _ => throw new InvalidOperationException(),
             });
+            collection.AddSingleton<Func<CoreViews, CoreViewModel>>(x => name => name switch
+            {
+                CoreViews.Main => x.GetRequiredService<MainViewModel>(),
+                CoreViews.Login =>  x.GetRequiredService<LoginViewModel>(),
+                CoreViews.Setup => x.GetRequiredService<SetupViewModel>(),
+                _ => throw new InvalidOperationException(),
+            });
 
             // Factories
             collection.AddSingleton<PageFactory>();
+            collection.AddSingleton<CoreViewFactory>();
 
             // ViewModels
             collection.AddTransient<SetupViewModel>();
+            collection.AddTransient<LoginViewModel>();
             collection.AddTransient<MainViewModel>();
             collection.AddTransient<BackupsViewModel>();
             collection.AddTransient<CashFlowViewModel>();

@@ -1,24 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using ledger_vault.Data;
+using ledger_vault.Services;
 
 namespace ledger_vault.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty] 
-    private ViewModelBase _currentViewModel;
+    [ObservableProperty] CoreViewNavigatorService _navigator;
     
-    private readonly MainViewModel _mainViewModel;
-
-    public MainWindowViewModel(MainViewModel mainViewModel, SetupViewModel setupViewModel)
+    public MainWindowViewModel(CoreViewNavigatorService navigatorService)
     {
-        _mainViewModel = mainViewModel;
+        _navigator = navigatorService;
         
-        // TODO: Verify if the application is set-up
-        CurrentViewModel = setupViewModel;
-    }
-
-    private void OnLoginSuccess()
-    {
-        CurrentViewModel = _mainViewModel;
+        navigatorService.NavigateTo(CoreViews.Setup);
     }
 }

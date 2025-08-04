@@ -1,20 +1,22 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.Input;
+using ledger_vault.Data;
+using ledger_vault.Services;
 
 namespace ledger_vault.ViewModels;
 
-public partial class LoginViewModel : ViewModelBase
+public partial class LoginViewModel : CoreViewModel
 {
-    private readonly Action _onLoginSuccess;
-
-    public LoginViewModel(Action onLoginSuccess)
+    private readonly CoreViewNavigatorService _navigator;
+    public LoginViewModel(CoreViewNavigatorService navigator)
     {
-        _onLoginSuccess = onLoginSuccess;
+        ViewModelName = CoreViews.Login;
+        
+        _navigator = navigator;
     }
-    
-    [RelayCommand]
-    private void ProcessLogin()
+
+    public void ProcessLoginCommand()
     {
-        _onLoginSuccess.Invoke();
+        _navigator.NavigateTo(CoreViews.Main);
     }
 }

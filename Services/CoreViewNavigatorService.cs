@@ -5,10 +5,15 @@ using ledger_vault.ViewModels;
 
 namespace ledger_vault.Services;
 
-public partial class CoreViewNavigatorService : ObservableObject
+public class CoreViewNavigatorService : ObservableObject
 {
-    [ObservableProperty] private CoreViewModel _currentViewModel;
-    
+    private CoreViewModel _currentViewModel;
+    public CoreViewModel CurrentViewModel
+    {
+        get => _currentViewModel;
+        private set => SetProperty(ref _currentViewModel, value);
+    }
+
     private readonly CoreViewFactory _coreViewFactory;
 
     public CoreViewNavigatorService(CoreViewFactory coreViewFactory)

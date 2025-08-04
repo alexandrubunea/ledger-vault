@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
@@ -46,6 +48,18 @@ public class App : Application
                 DataContext = vm
             };
         }
+        
+        // Database
+        var appDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "LedgerVault"
+        );
+        Directory.CreateDirectory(appDir); // creates if missing
+
+        var dbPath = Path.Combine(appDir, "ledger.db");
+        var connectionString = $"Data Source={dbPath}";
+        
+        DatabaseInitializer.Initialize(connectionString);
 
         base.OnFrameworkInitializationCompleted();
     }

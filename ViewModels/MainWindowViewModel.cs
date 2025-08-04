@@ -7,11 +7,11 @@ namespace ledger_vault.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     [ObservableProperty] CoreViewNavigatorService _navigator;
-    
-    public MainWindowViewModel(CoreViewNavigatorService navigatorService)
+
+    public MainWindowViewModel(CoreViewNavigatorService navigatorService, DatabaseManagerService dbManager)
     {
         _navigator = navigatorService;
-        
-        navigatorService.NavigateTo(CoreViews.Setup);
+
+        navigatorService.NavigateTo(dbManager.IsSetup() ? CoreViews.Login : CoreViews.Setup);
     }
 }

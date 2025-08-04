@@ -22,9 +22,9 @@ public partial class SettingsViewModel : PageViewModel
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
     private string _retypePassword = "";
 
-    [ObservableProperty] private ushort _currencyIndex;
+    [ObservableProperty] private short _currencyIndex;
 
-    [ObservableProperty] private ushort _themeIndex;
+    [ObservableProperty] private short _themeIndex;
 
     [ObservableProperty] private string _userCompleteName;
 

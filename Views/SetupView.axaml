@@ -9,7 +9,7 @@
              Background="{DynamicResource PrimaryBackground}"
              Foreground="{DynamicResource PrimaryForeground}">
     <Design.DataContext>
-        <vm:SetupViewModel />
+        <vm:CoreViewModel />
     </Design.DataContext>
     <StackPanel>
         <TextBlock Margin="0 50 0 0" HorizontalAlignment="Center" FontFamily="{DynamicResource MerriweatherBlack}"
@@ -61,6 +61,10 @@
                          Text="{Binding UserCompleteName}"
                          FontFamily="{DynamicResource Poppins}" FontSize="18" />
             </StackPanel>
+            <TextBlock FontFamily="{DynamicResource PoppinsLight}" IsVisible="{Binding EmptyUserName}"
+                       Foreground="{DynamicResource DarkWine}" FontSize="15" TextWrapping="WrapWithOverflow">
+                You need to type your full name.
+            </TextBlock>
             <StackPanel>
                 <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14">
                     The currency your prefer

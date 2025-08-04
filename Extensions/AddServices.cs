@@ -13,6 +13,8 @@ namespace ledger_vault.Services
             // Services
             collection.AddSingleton<UserStateService>();
             collection.AddSingleton<CoreViewNavigatorService>();
+            collection.AddSingleton<DatabaseManagerService>();
+            collection.AddSingleton<AuthService>();
 
             // Functions
             collection.AddSingleton<Func<ApplicationPages, PageViewModel>>(x => name => name switch

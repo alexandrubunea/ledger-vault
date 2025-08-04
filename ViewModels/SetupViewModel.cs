@@ -19,6 +19,7 @@ public partial class SetupViewModel : CoreViewModel
     private string _confirmPassword = "";
 
     [ObservableProperty] private string _userCompleteName = "";
+
     [ObservableProperty] private ushort _currencyIndex;
 
     [GeneratedRegex(@"^(?=.+)(?!(?=.*[A-Z])(?=.*[\d\W]).{8,}).*$")]
@@ -30,25 +31,48 @@ public partial class SetupViewModel : CoreViewModel
                                       ConfirmPassword.Length > 0 &&
                                       Password != ConfirmPassword;
 
+    private bool _emptyUserName;
+    public bool EmptyUserName
+    {
+        get => _emptyUserName;
+        private set => SetProperty(ref _emptyUserName, value);
+    }
+
+    private string _finalPassword = "";
+
     private readonly CoreViewNavigatorService _navigator;
-    
-    public SetupViewModel(CoreViewNavigatorService navigator)
+    private readonly DatabaseManagerService _dbManager;
+
+    public SetupViewModel(CoreViewNavigatorService navigator, DatabaseManagerService dbManager)
     {
         ViewModelName = CoreViews.Setup;
-        
+
         _navigator = navigator;
+        _dbManager = dbManager;
     }
-    
+
     public void NextStep()
     {
+        if (Password.Length == 0 || IsPasswordTooWeak || DifferentPasswords)
+            return;
+
+        _finalPassword = Password;
+        
         StepOne = false;
         StepTwo = true;
     }
 
     public void Save()
     {
-        StepTwo = false;
+        if (UserCompleteName.Length == 0)
+        {
+            EmptyUserName = true;
+            return;
+        }
         
-        _navigator.NavigateTo(CoreViews.Main);
+        _dbManager.CreateUser(UserCompleteName, _finalPassword, CurrencyIndex);
+
+        StepTwo = false;
+        _navigator.NavigateTo(CoreViews.Login);
     }
 }

@@ -3,9 +3,9 @@ namespace ledger_vault.Services;
 public class UserStateService
 {
     private string _fullUserName = "";
-    private ushort _currencyId = 0;
-    private ulong _balance = 0;
-    private ushort _themeId = 0;
+    private short _currencyId = 0;
+    private float _balance = 0;
+    private short _themeId = 0;
     
     public string FullUserName
     {
@@ -15,7 +15,7 @@ public class UserStateService
         set => _fullUserName = value;
     }
 
-    public ushort CurrencyId
+    public short CurrencyId
     {
         get => _currencyId;
         
@@ -23,7 +23,7 @@ public class UserStateService
         set => _currencyId = value;
     }
 
-    public ulong Balance
+    public float Balance
     {
         get => _balance;
         
@@ -31,7 +31,7 @@ public class UserStateService
         set => _balance = value;
     }
 
-    public ushort ThemeId
+    public short ThemeId
     {
         get => _themeId;
         

@@ -52,6 +52,67 @@ public class DatabaseManagerService
         command.ExecuteNonQuery();
     }
 
+    public void UpdateUserPassword(string password, string newPassword)
+    {
+        if (!CheckUserPassword(password))
+            return;
+
+        using var conn = GetConnection();
+        using var command = conn.CreateCommand();
+
+        command.CommandText = "UPDATE user_information SET password = @password WHERE id > 0";
+        command.Parameters.AddWithValue("@password", BCrypt.Net.BCrypt.EnhancedHashPassword(newPassword));
+        
+        command.ExecuteNonQuery();
+    }
+
+    public void UpdateUserName(string fullName)
+    {
+        using var conn = GetConnection();
+        using var command = conn.CreateCommand();
+        
+        command.CommandText = "UPDATE user_information SET full_name = @fullName WHERE id > 0";
+        command.Parameters.AddWithValue("@fullName", fullName);
+        
+        command.ExecuteNonQuery();
+    }
+
+    public void UpdateUserCurrencyId(short currencyId)
+    {
+        using var conn = GetConnection();
+        using var command = conn.CreateCommand();
+        
+        command.CommandText = "UPDATE user_information SET currencyId = @currencyId WHERE id > 0";
+        command.Parameters.AddWithValue("@currencyId", currencyId);
+
+        command.ExecuteNonQuery();
+    }
+
+    public void UpdateUserThemeId(short themeId)
+    {
+        using var conn = GetConnection();
+        using var command = conn.CreateCommand();
+        
+        command.CommandText = "UPDATE user_information SET themeId = @themeId WHERE id > 0";
+        command.Parameters.AddWithValue("@themeId", themeId);
+        
+        command.ExecuteNonQuery();
+    }
+
+    public bool CheckUserPassword(string password)
+    {
+        using var conn = GetConnection();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT password FROM user_information LIMIT 1";
+
+        using var reader = cmd.ExecuteReader();
+        if (!reader.Read())
+            return false;
+
+        string storedHash = reader.GetString(0);
+        return BCrypt.Net.BCrypt.EnhancedVerify(password, storedHash);
+    }
+
     private static string CreateConnectionString()
     {
         string appDir = Path.Combine(

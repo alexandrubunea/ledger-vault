@@ -8,11 +8,8 @@ namespace ledger_vault.ViewModels;
 
 public partial class SettingsViewModel : PageViewModel
 {
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(WrongCurrentPassword))]
-    private string _currentPassword = "";
-
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(WrongOldPassword))]
-    private string _oldPassword = "";
+    [ObservableProperty] private string _currentPassword = "";
+    [ObservableProperty] private string _oldPassword = "";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsPasswordTooWeak))]
@@ -23,46 +20,46 @@ public partial class SettingsViewModel : PageViewModel
     private string _retypePassword = "";
 
     [ObservableProperty] private short _currencyIndex;
-
     [ObservableProperty] private short _themeIndex;
-
     [ObservableProperty] private string _userCompleteName;
 
     [GeneratedRegex(@"^(?=.+)(?!(?=.*[A-Z])(?=.*[\d\W]).{8,}).*$")]
     private static partial Regex StrongPasswordRegex();
 
     private readonly UserStateService _userStateService;
+    private readonly AuthService _authService;
 
-    public bool WrongOldPassword => CheckPassword(OldPassword);
-    public bool WrongCurrentPassword => CheckPassword(CurrentPassword);
+    [ObservableProperty]
+    private bool _wrongOldPassword;
+    [ObservableProperty]
+    private bool _wrongCurrentPassword;
 
     public bool IsPasswordTooWeak => StrongPasswordRegex().IsMatch(NewPassword);
-
     public bool DifferentPasswords => NewPassword.Length > 0 &&
                                       RetypePassword.Length > 0 &&
                                       NewPassword != RetypePassword;
 
-    public SettingsViewModel(UserStateService userStateService)
+    public SettingsViewModel(UserStateService userStateService, AuthService authService)
     {
         PageName = ApplicationPages.Settings;
         _userStateService = userStateService;
+        _authService = authService;
 
         UserCompleteName = _userStateService.FullUserName;
         CurrencyIndex = _userStateService.CurrencyId;
         ThemeIndex = _userStateService.ThemeId;
     }
 
-    private bool CheckPassword(string password)
-    {
-        // Check if the user have the right password
-
-        return false;
-    }
-
     [RelayCommand]
     public void ChangePassword()
     {
         // Check old password
+        WrongOldPassword = false;
+        if (!_authService.CheckUserPassword(OldPassword))
+        {
+            WrongOldPassword = true;
+            return;
+        }
 
         // Check if the new password is valid
         if (IsPasswordTooWeak || NewPassword.Length == 0)
@@ -73,6 +70,7 @@ public partial class SettingsViewModel : PageViewModel
             return;
 
         // Update the password
+        _authService.UpdateUserPassword(OldPassword, NewPassword);
 
         // Reset data
         OldPassword = "";
@@ -86,11 +84,20 @@ public partial class SettingsViewModel : PageViewModel
         _userStateService.FullUserName = UserCompleteName;
         _userStateService.CurrencyId = CurrencyIndex;
         _userStateService.ThemeId = ThemeIndex;
+
+        _userStateService.SaveUserState();
     }
 
     [RelayCommand]
     public void DeleteData()
     {
-        // Implement this later...
+        WrongCurrentPassword = false;
+        if (!_authService.CheckUserPassword(CurrentPassword))
+        {
+            WrongCurrentPassword = true;
+            return;
+        }
+
+        _authService.DeleteAccount();
     }
 }

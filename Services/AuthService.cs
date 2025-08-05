@@ -42,6 +42,16 @@ public class AuthService
         }
     }
 
+    public void UpdateUserPassword(string password, string newPassword) =>
+        _dbManager.UpdateUserPassword(password, newPassword);
+
+    public bool CheckUserPassword(string password) => _dbManager.CheckUserPassword(password);
+
+    public void DeleteAccount()
+    {
+        // TODO: Implement this later...
+    }
+
     private void LoadUserState(SqliteConnection conn)
     {
         using var cmd = conn.CreateCommand();

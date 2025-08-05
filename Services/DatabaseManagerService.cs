@@ -113,6 +113,17 @@ public class DatabaseManagerService
         return BCrypt.Net.BCrypt.EnhancedVerify(password, storedHash);
     }
 
+    public void DeleteAllData()
+    {
+        using var conn = GetConnection();
+        using var command = conn.CreateCommand();
+        
+        command.CommandText = "DELETE FROM user_information WHERE id > 0";
+        command.ExecuteNonQuery();
+        
+        // TODO: Delete data from other tables too
+    }
+
     private static string CreateConnectionString()
     {
         string appDir = Path.Combine(

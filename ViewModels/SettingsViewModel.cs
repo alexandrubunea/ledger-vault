@@ -28,22 +28,24 @@ public partial class SettingsViewModel : PageViewModel
 
     private readonly UserStateService _userStateService;
     private readonly AuthService _authService;
+    private readonly CoreViewNavigatorService _navigator;
 
-    [ObservableProperty]
-    private bool _wrongOldPassword;
-    [ObservableProperty]
-    private bool _wrongCurrentPassword;
+    [ObservableProperty] private bool _wrongOldPassword;
+    [ObservableProperty] private bool _wrongCurrentPassword;
 
     public bool IsPasswordTooWeak => StrongPasswordRegex().IsMatch(NewPassword);
+
     public bool DifferentPasswords => NewPassword.Length > 0 &&
                                       RetypePassword.Length > 0 &&
                                       NewPassword != RetypePassword;
 
-    public SettingsViewModel(UserStateService userStateService, AuthService authService)
+    public SettingsViewModel(UserStateService userStateService, AuthService authService,
+        CoreViewNavigatorService navigator)
     {
         PageName = ApplicationPages.Settings;
         _userStateService = userStateService;
         _authService = authService;
+        _navigator = navigator;
 
         UserCompleteName = _userStateService.FullUserName;
         CurrencyIndex = _userStateService.CurrencyId;
@@ -99,5 +101,6 @@ public partial class SettingsViewModel : PageViewModel
         }
 
         _authService.DeleteAccount();
+        _navigator.NavigateTo(CoreViews.Setup);
     }
 }

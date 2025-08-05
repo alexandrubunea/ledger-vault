@@ -49,7 +49,7 @@ public class AuthService
 
     public void DeleteAccount()
     {
-        // TODO: Implement this later...
+        _dbManager.DeleteAllData();
     }
 
     private void LoadUserState(SqliteConnection conn)

@@ -6,6 +6,38 @@
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.IncomeView"
              x:DataType="vm:IncomeViewModel">
-    <Design.DataContext><vm:IncomeViewModel /></Design.DataContext>
-    Income View
+    <Design.DataContext>
+        <vm:PageViewModel />
+    </Design.DataContext>
+    <StackPanel>
+        <Grid ColumnDefinitions="*, *" Height="100">
+            <StackPanel Grid.Column="0" Margin="20 0 0 0" VerticalAlignment="Center">
+                <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="32">
+                    Your Income
+                </TextBlock>
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14" Text="Current balance:" />
+                    <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                               Text="{Binding GetFormattedBalance}" />
+                    <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14" Text="{Binding GetCurrency}" />
+                </StackPanel>
+            </StackPanel>
+            <Button Grid.Column="1" HorizontalAlignment="Right" Classes="action"
+                    Margin="0 0 20 0" CornerRadius="5" FontFamily="{DynamicResource PoppinsLight}"
+                    FontSize="18" VerticalAlignment="Center" Command="{Binding SwitchMode}"
+                    IsVisible="{Binding ShowIncomeMode}">
+                <StackPanel Orientation="Horizontal">
+                    <Label>Add Income</Label>
+                    <Label Classes="icon">&#xe3d4;</Label>
+                </StackPanel>
+            </Button>
+        </Grid>
+        <StackPanel IsVisible="{Binding AddIncomeMode}">
+        <!-- TODO: Add the form -->
+        </StackPanel>
+        <!-- TODO: Add the list of transactions that bring income -->
+        <StackPanel IsVisible="{Binding ShowIncomeMode}">
+
+        </StackPanel>
+    </StackPanel>
 </UserControl>

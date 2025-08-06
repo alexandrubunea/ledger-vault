@@ -22,6 +22,18 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        // Database
+        var appDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "LedgerVault"
+        );
+        Directory.CreateDirectory(appDir); // creates if missing
+
+        var dbPath = Path.Combine(appDir, "ledger.db");
+        var connectionString = $"Data Source={dbPath}";
+        
+        DatabaseInitializer.Initialize(connectionString);
+        
         // If you use CommunityToolkit, line below is needed to remove Avalonia data validation.
         // Without this line you will get duplicate validations from both Avalonia and CT
         BindingPlugins.DataValidators.RemoveAt(0);
@@ -48,18 +60,6 @@ public class App : Application
                 DataContext = vm
             };
         }
-        
-        // Database
-        var appDir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "LedgerVault"
-        );
-        Directory.CreateDirectory(appDir); // creates if missing
-
-        var dbPath = Path.Combine(appDir, "ledger.db");
-        var connectionString = $"Data Source={dbPath}";
-        
-        DatabaseInitializer.Initialize(connectionString);
 
         base.OnFrameworkInitializationCompleted();
     }

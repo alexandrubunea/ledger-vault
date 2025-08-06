@@ -30,5 +30,7 @@
         <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="9.0.8" />
         <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.7" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+        <PackageReference Include="SkiaSharp" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.119.0" />
     </ItemGroup>
 </Project>

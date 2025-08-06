@@ -69,6 +69,14 @@ public class Transaction
         return tx;
     }
 
+    public byte[] GetSigningData()
+    {
+        string tags =  string.Join(", ", Tags);
+        string data = $"{Id}{Description}{Amount}{Timestamp}{tags}";
+        
+        return System.Text.Encoding.UTF8.GetBytes(data);
+    }
+    
     public void SetSignature(byte[] signature)
     {
         if (Signature != "")

@@ -1,0 +1,79 @@
+using System;
+using System.Collections.Generic;
+using ledger_vault.Crypto;
+using Tmds.DBus.Protocol;
+
+namespace ledger_vault.Models;
+
+public class Transaction
+{
+    public uint Id { get; private set; }
+    public string Description { get; private set; }
+    public float Amount { get; private set; }
+    public List<string> Tags { get; private set; }
+    public string ReceiptImage { get; private set; }
+    public DateTime Timestamp { get; private set; }
+    public string Hash { get; private set; }
+    public string PreviousHash { get; private set; }
+    public string Signature { get; private set; }
+    public uint? ReversalOfTransactionId { get; private set; }
+
+
+    // Constructor for non-existing transaction in the database
+    private Transaction(string description, float amount, List<string> tags, string receiptImage,
+        string previousHash, uint? reversalOfTransactionId = null)
+    {
+        Description = description;
+        Amount = amount;
+        Tags = tags;
+        ReceiptImage = receiptImage;
+        PreviousHash = previousHash;
+        ReversalOfTransactionId = reversalOfTransactionId;
+        Timestamp = DateTime.Now;
+        Hash = "";
+        Signature = "";
+    }
+
+    // Constructor for existing transaction in the database
+    private Transaction(uint id, string description, float amount, List<string> tags, string receiptImage,
+        string previousHash, string hash, string signature, uint? reversalOfTransactionId = null)
+    {
+        Id = id;
+        Description = description;
+        Amount = amount;
+        Tags = tags;
+        ReceiptImage = receiptImage;
+        PreviousHash = previousHash;
+        ReversalOfTransactionId = reversalOfTransactionId;
+        Timestamp = DateTime.Now;
+        Signature = signature;
+        Hash = hash;
+    }
+
+    public static Transaction Create(string description, float amount, List<string> tags, string receiptImage,
+        string previousHash, uint? reversalOfTransactionId = null)
+    {
+        Transaction tx =
+            new Transaction(description, amount, tags, receiptImage, previousHash, reversalOfTransactionId);
+
+        tx.Hash = TransactionHashing.GenerateHash(tx);
+
+        return tx;
+    }
+
+    public static Transaction Load(uint id, string description, float amount, List<string> tags, string receiptImage,
+        string previousHash, string hash, string signature, uint? reversalOfTransactionId = null)
+    {
+        Transaction tx = new Transaction(id, description, amount, tags, receiptImage, previousHash, hash,
+            signature, reversalOfTransactionId);
+        return tx;
+    }
+
+    public void SetSignature(byte[] signature)
+    {
+        if (Signature != "")
+            return;
+        
+        Signature = Convert.ToBase64String(signature);
+    }
+}

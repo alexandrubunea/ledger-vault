@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using ledger_vault.Data;
 using ledger_vault.Factories;
 using ledger_vault.ViewModels;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ledger_vault.Services
@@ -15,6 +17,14 @@ namespace ledger_vault.Services
             collection.AddSingleton<CoreViewNavigatorService>();
             collection.AddSingleton<DatabaseManagerService>();
             collection.AddSingleton<AuthService>();
+            collection.AddSingleton<HmacService>();
+
+            // Security
+            collection.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LedgerVault",
+                        "keys")))
+                .SetApplicationName("LedgerVault");
 
             // Functions
             collection.AddSingleton<Func<ApplicationPages, PageViewModel>>(x => name => name switch
@@ -32,7 +42,7 @@ namespace ledger_vault.Services
             collection.AddSingleton<Func<CoreViews, CoreViewModel>>(x => name => name switch
             {
                 CoreViews.Main => x.GetRequiredService<MainViewModel>(),
-                CoreViews.Login =>  x.GetRequiredService<LoginViewModel>(),
+                CoreViews.Login => x.GetRequiredService<LoginViewModel>(),
                 CoreViews.Setup => x.GetRequiredService<SetupViewModel>(),
                 _ => throw new InvalidOperationException(),
             });
@@ -53,7 +63,7 @@ namespace ledger_vault.Services
             collection.AddTransient<PaymentsViewModel>();
             collection.AddTransient<SettingsViewModel>();
             collection.AddTransient<VerifyIntegrityViewModel>();
-            
+
             // Window
             collection.AddSingleton<MainWindowViewModel>();
         }

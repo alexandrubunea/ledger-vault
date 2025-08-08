@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
 using ledger_vault.Services;
 
@@ -179,9 +181,17 @@ public partial class IncomeViewModel : PageViewModel
 
     [ObservableProperty] private bool _addIncomeMode;
     [ObservableProperty] private bool _showIncomeMode = true;
-    
+
+    [ObservableProperty] private string _description = "";
+    [ObservableProperty] private float _amount = 1;
+    [ObservableProperty] private string _tagToAdd = "";
+
+    [ObservableProperty]
+    private ObservableCollection<string> _tags = [];
+
     public string GetCurrency => Currencies[_currencyId][..3];
-    public string GetFormattedBalance => _currentBalance.ToString("C");
+    public string GetFormattedBalance => _currentBalance.ToString("N");
+    public bool AnyTagExist => Tags.Count > 0;
 
     public IncomeViewModel(UserStateService userStateService)
     {
@@ -189,11 +199,39 @@ public partial class IncomeViewModel : PageViewModel
 
         _currentBalance = userStateService.Balance;
         _currencyId = userStateService.CurrencyId;
+        
+        Tags.CollectionChanged += (_, __) => OnPropertyChanged(nameof(AnyTagExist));
     }
 
+    [RelayCommand]
     public void SwitchMode()
     {
         AddIncomeMode = !AddIncomeMode;
         ShowIncomeMode = !ShowIncomeMode;
+    }
+
+    [RelayCommand]
+    public void AddTag()
+    {
+        Tags.Add(TagToAdd);
+        TagToAdd = "";
+    }
+
+    [RelayCommand]
+    public void RemoveTag(string tag)
+    {
+        Tags.Remove(tag);
+    }
+
+    [RelayCommand]
+    public void AddTransaction()
+    {
+        SwitchMode();
+    }
+    
+    [RelayCommand]
+    public void CancelTransaction()
+    {
+        SwitchMode();
     }
 }

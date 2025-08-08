@@ -5,9 +5,10 @@
              xmlns:vm="using:ledger_vault.ViewModels"
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.IncomeView"
-             x:DataType="vm:IncomeViewModel">
+             x:DataType="vm:IncomeViewModel"
+             x:Name="RootControl">
     <Design.DataContext>
-        <vm:PageViewModel />
+        <vm:IncomeViewModel />
     </Design.DataContext>
     <StackPanel>
         <Grid ColumnDefinitions="*, *" Height="100">
@@ -24,16 +25,102 @@
             </StackPanel>
             <Button Grid.Column="1" HorizontalAlignment="Right" Classes="action"
                     Margin="0 0 20 0" CornerRadius="5" FontFamily="{DynamicResource PoppinsLight}"
-                    FontSize="18" VerticalAlignment="Center" Command="{Binding SwitchMode}"
+                    FontSize="18" VerticalAlignment="Center" Command="{Binding SwitchModeCommand}"
                     IsVisible="{Binding ShowIncomeMode}">
                 <StackPanel Orientation="Horizontal">
-                    <Label>Add Income</Label>
                     <Label Classes="icon">&#xe3d4;</Label>
+                    <Label>New Transaction</Label>
                 </StackPanel>
             </Button>
         </Grid>
         <StackPanel IsVisible="{Binding AddIncomeMode}">
-        <!-- TODO: Add the form -->
+            <StackPanel Margin="20">
+                <Border CornerRadius="5" Background="{DynamicResource SecondaryBackground}" Padding="40">
+                    <StackPanel>
+                        <TextBlock FontFamily="{DynamicResource Merriweather}" FontSize="24" Text="New Transaction" />
+
+                        <Grid ColumnDefinitions="Auto, Auto" Margin="0 20 0 0" ColumnSpacing="50">
+                            <StackPanel Grid.Column="0">
+                                <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                                       Content="Transaction description" />
+                                <TextBox HorizontalAlignment="Left" CornerRadius="5" Width="300"
+                                         Watermark="E.g: phone bill from 5th july" Text="{Binding Description}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                                       Content="Transaction amount" />
+                                <NumericUpDown CornerRadius="5" Minimum="0.01" FormatString="N"
+                                               Value="{Binding Amount}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Margin="0 20 0 0">
+                            <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                                   Content="Add tag" />
+                            <StackPanel Orientation="Horizontal" Spacing="20">
+                                <!-- TODO: make this textbox same height as the description one -->
+                                <TextBox HorizontalAlignment="Left" CornerRadius="5" Width="300"
+                                         Watermark="E.g: groceries, taxes, debts" Text="{Binding TagToAdd}" />
+                                <Button Classes="action" Command="{Binding AddTagCommand}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label FontSize="15" FontFamily="{DynamicResource Phosphor}"
+                                               VerticalAlignment="Center">
+                                            &#xe3d4;
+                                        </Label>
+                                        <Label FontSize="12" FontFamily="{DynamicResource PoppinsLight}">Add tag</Label>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel IsVisible="{Binding AnyTagExist}" Margin="0 20 0 0">
+                                <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                                       Content="Current tags" />
+                                
+                                <!-- TODO: Test the wrap with many tags -->
+                                <StackPanel Orientation="Horizontal">
+                                    <ItemsControl ItemsSource="{Binding Tags}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel ItemSpacing="10" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button
+                                                    Foreground="{DynamicResource PrimaryBackground}"
+                                                    Background="{DynamicResource LiliacPastel}"
+                                                    FontFamily="{DynamicResource Poppins}"
+                                                    Classes="action" CornerRadius="5" FontSize="10"
+                                                    Command="{Binding DataContext.RemoveTagCommand, ElementName=RootControl}"
+                                                    CommandParameter="{Binding}">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Label Content="&#xe4f8;"
+                                                               FontFamily="{DynamicResource Phosphor}"
+                                                               FontSize="12" Margin="0 2 0 0" />
+                                                        <Label Content="{Binding}" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="20" Margin="0 50 0 0">
+                                <!-- TODO: Improve cancel button design -->
+                                <Button Classes="action" Content="Cancel" CornerRadius="5"
+                                        Command="{Binding CancelTransactionCommand}" FontSize="20"
+                                        HorizontalAlignment="Center" />
+                                
+                                <Button Classes="action" Content="Create" CornerRadius="5"
+                                        Command="{Binding AddTransactionCommand}" FontSize="20"
+                                        HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
         </StackPanel>
         <!-- TODO: Add the list of transactions that bring income -->
         <StackPanel IsVisible="{Binding ShowIncomeMode}">

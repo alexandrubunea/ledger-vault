@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -22,6 +23,10 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        // Numeric
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+        
         // Database
         var appDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),

@@ -13,7 +13,7 @@
             <StackPanel Spacing="10">
                 <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="24" HorizontalAlignment="Center">
                     LogIn to
-                    <TextBlock Foreground="{DynamicResource LiliacPastel}">Your Ledger</TextBlock>
+                    <TextBlock Foreground="{DynamicResource LilacPastel}">Your Ledger</TextBlock>
                 </TextBlock>
 
                 <TextBox PasswordChar="*" Watermark="Enter your password" FontFamily="{DynamicResource Poppins}"

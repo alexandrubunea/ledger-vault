@@ -204,33 +204,38 @@ public partial class IncomeViewModel : PageViewModel
     }
 
     [RelayCommand]
-    public void SwitchMode()
+    private void SwitchMode()
     {
         AddIncomeMode = !AddIncomeMode;
         ShowIncomeMode = !ShowIncomeMode;
     }
 
     [RelayCommand]
-    public void AddTag()
+    private void AddTag()
     {
-        Tags.Add(TagToAdd);
+        string lowercaseTag = TagToAdd.ToLower();
+        
+        if (lowercaseTag.Length == 0 || Tags.Contains(lowercaseTag))
+            return;
+        
+        Tags.Add(lowercaseTag);
         TagToAdd = "";
     }
 
     [RelayCommand]
-    public void RemoveTag(string tag)
+    private void RemoveTag(string tag)
     {
         Tags.Remove(tag);
     }
 
     [RelayCommand]
-    public void AddTransaction()
+    private void AddTransaction()
     {
         SwitchMode();
     }
     
     [RelayCommand]
-    public void CancelTransaction()
+    private void CancelTransaction()
     {
         SwitchMode();
     }

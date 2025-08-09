@@ -53,7 +53,7 @@ public partial class SettingsViewModel : PageViewModel
     }
 
     [RelayCommand]
-    public void ChangePassword()
+    private void ChangePassword()
     {
         // Check old password
         WrongOldPassword = false;
@@ -81,7 +81,7 @@ public partial class SettingsViewModel : PageViewModel
     }
 
     [RelayCommand]
-    public void UpdatePreferences()
+    private void UpdatePreferences()
     {
         _userStateService.FullUserName = UserCompleteName;
         _userStateService.CurrencyId = CurrencyIndex;
@@ -91,7 +91,7 @@ public partial class SettingsViewModel : PageViewModel
     }
 
     [RelayCommand]
-    public void DeleteData()
+    private void DeleteData()
     {
         WrongCurrentPassword = false;
         if (!_authService.CheckUserPassword(CurrentPassword))

@@ -27,22 +27,22 @@
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryForeground}" />
     </Style>
     <Style Selector="TextBox:focus /template/ Border">
-        <Setter Property="BorderBrush" Value="{DynamicResource LiliacPastel}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LilacPastel}" />
     </Style>
 
     <!-- Login -->
     <Style Selector="Button.login">
         <Setter Property="FontFamily" Value="{DynamicResource Merriweather}" />
-        <Setter Property="Background" Value="{DynamicResource LiliacPastel}" />
+        <Setter Property="Background" Value="{DynamicResource LilacPastel}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
     </Style>
     <Style Selector="Button.login:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+        <Setter Property="Background" Value="{DynamicResource DarkLilacPastel}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
         <Setter Property="Cursor" Value="Hand" />
     </Style>
     <Style Selector="Button.login:pressed /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource NightLiliacPastel}" />
+        <Setter Property="Background" Value="{DynamicResource NightLilacPastel}" />
     </Style>
 
     <!-- Sidebar -->
@@ -62,21 +62,21 @@
         <Setter Property="Margin" Value="0" />
     </Style>
     <Style Selector="Button.sidebar:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource LiliacPastel}" />
+        <Setter Property="Background" Value="{DynamicResource LilacPastel}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Margin" Value="15,0,0,0" />
     </Style>
     <Style Selector="Button.sidebar:pressed /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+        <Setter Property="Background" Value="{DynamicResource DarkLilacPastel}" />
     </Style>
     
     <Style Selector="Button.sidebar.active_sidebar">
-        <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+        <Setter Property="Background" Value="{DynamicResource DarkLilacPastel}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
     </Style>
     <Style Selector="Button.sidebar.active_sidebar /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+        <Setter Property="Background" Value="{DynamicResource DarkLilacPastel}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
         <Setter Property="Margin" Value="0" />
     </Style>
@@ -95,17 +95,36 @@
     <!-- Action Button -->
     <Style Selector="Button.action">
         <Setter Property="FontFamily" Value="{DynamicResource Poppins}" />
-        <Setter Property="Background" Value="{DynamicResource LiliacPastel}" />
+        <Setter Property="Background" Value="{DynamicResource LilacPastel}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
 
     </Style>
     <Style Selector="Button.action:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource DarkLiliacPastel}" />
+        <Setter Property="Background" Value="{DynamicResource DarkLilacPastel}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="RenderTransform" Value="scale(0.9)" />
     </Style>
     <Style Selector="Button.action:pressed /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource NightLiliacPastel}" />
+        <Setter Property="Background" Value="{DynamicResource NightLilacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+    </Style>
+    
+    <!-- Secondary Action Button -->
+    <Style Selector="Button.actionSecondary">
+        <Setter Property="FontFamily" Value="{DynamicResource Poppins}" />
+        <Setter Property="Background" Value="{DynamicResource SweetRed}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+
+    </Style>
+    <Style Selector="Button.actionSecondary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource RedSunset}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="RenderTransform" Value="scale(0.9)" />
+    </Style>
+    <Style Selector="Button.actionSecondary:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BleachedRed}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
     </Style>
 </Styles>

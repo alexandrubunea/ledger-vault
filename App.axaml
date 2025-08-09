@@ -5,14 +5,14 @@
              RequestedThemeVariant="Light">
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
     </Application.DataTemplates>
-  
+
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="Styles/DefaultStyle.axaml"></StyleInclude>
     </Application.Styles>
-    
+
     <Application.Resources>
         <!-- Brushes -->
         <SolidColorBrush x:Key="PrimaryBackground">#F3F4F2</SolidColorBrush>
@@ -20,11 +20,14 @@
         <SolidColorBrush x:Key="SecondaryBackground">#FCF9E3</SolidColorBrush>
         <SolidColorBrush x:Key="SteelGray">#E4E4E4</SolidColorBrush>
         <SolidColorBrush x:Key="SecondGray">#DADADA</SolidColorBrush>
-        <SolidColorBrush x:Key="LiliacPastel">#7386F7</SolidColorBrush>
-        <SolidColorBrush x:Key="DarkLiliacPastel">#505EAB</SolidColorBrush>
-        <SolidColorBrush x:Key="NightLiliacPastel">#404B89</SolidColorBrush>
+        <SolidColorBrush x:Key="LilacPastel">#7386F7</SolidColorBrush>
+        <SolidColorBrush x:Key="DarkLilacPastel">#505EAB</SolidColorBrush>
+        <SolidColorBrush x:Key="NightLilacPastel">#404B89</SolidColorBrush>
         <SolidColorBrush x:Key="DarkWine">#8E1A0C</SolidColorBrush>
-        
+        <SolidColorBrush x:Key="SweetRed">#F77484</SolidColorBrush>
+        <SolidColorBrush x:Key="RedSunset">#EF707F</SolidColorBrush>
+        <SolidColorBrush x:Key="BleachedRed">#AB505B</SolidColorBrush>
+
         <!-- Fonts -->
         <FontFamily x:Key="MerriweatherBlack">/Assets/Fonts/Merriweather_24pt-Black.ttf#Merriweather 24pt Black</FontFamily>
         <FontFamily x:Key="MerriweatherLight">/Assets/Fonts/Merriweather_24pt-Black.ttf#Merriweather 24pt Light</FontFamily>
@@ -32,6 +35,6 @@
         <FontFamily x:Key="PoppinsLight">/Assets/Fonts/Poppins-Light.ttf#Poppins Light</FontFamily>
         <FontFamily x:Key="Poppins">/Assets/Fonts/Poppins.ttf#Poppins</FontFamily>
         <FontFamily x:Key="Phosphor">/Assets/Fonts/Phosphor-Fill.ttf#Phosphor-Fill</FontFamily>
-        
+
     </Application.Resources>
 </Application>

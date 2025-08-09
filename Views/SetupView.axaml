@@ -14,7 +14,7 @@
     <StackPanel>
         <TextBlock Margin="0 50 0 0" HorizontalAlignment="Center" FontFamily="{DynamicResource MerriweatherBlack}"
                    FontSize="30">
-            Hello! It's a pleasure to meet <TextBlock Foreground="{DynamicResource LiliacPastel}">you</TextBlock>.
+            Hello! It's a pleasure to meet <TextBlock Foreground="{DynamicResource LilacPastel}">you</TextBlock>.
         </TextBlock>
         <TextBlock FontFamily="Poppins" FontSize="18" HorizontalAlignment="Center" Margin="0 30 0 0">
             To get started, please set up your security password and personal preferences.

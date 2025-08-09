@@ -26,7 +26,7 @@ public partial class LoginViewModel : CoreViewModel
     }
 
     [RelayCommand]
-    public void ProcessLoginCommand()
+    private void ProcessLogin()
     {
         WrongPassword = false;
         DatabaseError = false;

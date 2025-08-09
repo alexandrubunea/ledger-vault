@@ -35,11 +35,10 @@ public partial class MainViewModel : CoreViewModel
         ViewModelName = CoreViews.Main;
         
         _pageFactory = pageFactory;
-        SwitchPage(ApplicationPages.Home);
+        SwitchPageCommand(ApplicationPages.Home);
     }
 
-    [RelayCommand]
-    public void SwitchPage(ApplicationPages pageName)
+    public void SwitchPageCommand(ApplicationPages pageName)
     {
         CurrentPageViewModel = _pageFactory.GetPageViewModel(pageName);
     }

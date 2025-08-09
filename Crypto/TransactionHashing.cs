@@ -58,7 +58,7 @@ public static class TransactionHashing
     {
         string tags = string.Join(",", transaction.Tags);
         string input =
-            $"{transaction.Description}{transaction.Amount}{tags}{transaction.ReceiptImage}" +
+            $"{transaction.Counterparty}{transaction.Description}{transaction.Amount}{tags}{transaction.ReceiptImage}" +
             $"{transaction.PreviousHash}{transaction.ReversalOfTransactionId}{transaction.Timestamp}";
 
         return input;

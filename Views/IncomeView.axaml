@@ -40,14 +40,21 @@
                     <StackPanel>
                         <TextBlock FontFamily="{DynamicResource Merriweather}" FontSize="24" Text="New Transaction" />
 
-                        <Grid ColumnDefinitions="Auto, Auto" Margin="0 20 0 0" ColumnSpacing="50">
+                        <Grid ColumnDefinitions="Auto, Auto, Auto" Margin="0 20 0 0" ColumnSpacing="50">
                             <StackPanel Grid.Column="0">
+                                <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                                       Content="Transaction counterparty" />
+                                <TextBox HorizontalAlignment="Left" CornerRadius="5" Width="300" Height="35"
+                                         Watermark="E.g: Acme Corp, Electric Utility Co, Contoso Ltd"
+                                         Text="{Binding Counterparty}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
                                 <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
                                        Content="Transaction description" />
                                 <TextBox HorizontalAlignment="Left" CornerRadius="5" Width="300" Height="35"
                                          Watermark="E.g: phone bill from 5th july" Text="{Binding Description}" />
                             </StackPanel>
-                            <StackPanel Grid.Column="1">
+                            <StackPanel Grid.Column="2">
                                 <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
                                        Content="Transaction amount" />
                                 <NumericUpDown CornerRadius="5" Minimum="0.01" FormatString="N" Height="35"

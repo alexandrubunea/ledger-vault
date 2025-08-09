@@ -2,22 +2,27 @@ namespace ledger_vault.Services;
 
 public class UserStateService
 {
-    private readonly DatabaseManagerService _dbManager;
+    private readonly UserService _userService;
 
     public string FullUserName { get; set; } = "";
     public short CurrencyId { get; set; }
-    public float Balance { get; set; }
+    public decimal Balance { get; set; }
     public short ThemeId { get; set; }
 
-    public UserStateService(DatabaseManagerService dbManager)
+    public UserStateService(UserService userService)
     {
-        _dbManager = dbManager;
+        _userService = userService;
     }
 
     public void SaveUserState()
     {
-        _dbManager.UpdateUserName(FullUserName);
-        _dbManager.UpdateUserCurrencyId(CurrencyId);
-        _dbManager.UpdateUserThemeId(ThemeId);
+        _userService.UpdateUserName(FullUserName);
+        _userService.UpdateUserCurrencyId(CurrencyId);
+        _userService.UpdateUserThemeId(ThemeId);
+    }
+    
+    public void SaveUserBalance()
+    {
+        _userService.UpdateUserBalance(Balance);
     }
 }

@@ -18,6 +18,8 @@ namespace ledger_vault.Services
             collection.AddSingleton<DatabaseManagerService>();
             collection.AddSingleton<AuthService>();
             collection.AddSingleton<HmacService>();
+            collection.AddSingleton<UserService>();
+            collection.AddSingleton<TransactionService>();
 
             // Security
             collection.AddDataProtection()

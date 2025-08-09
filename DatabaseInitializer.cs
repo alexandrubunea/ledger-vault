@@ -19,10 +19,24 @@ public static class DatabaseInitializer
                                               balance REAL NOT NULL DEFAULT 0,
                                               password TEXT NOT NULL
                                           );
-
+                                        CREATE TABLE IF NOT EXISTS transactions (
+                                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            Counterparty TEXT NOT NULL,
+                                            Description TEXT NOT NULL,
+                                            Amount REAL NOT NULL,
+                                            Tags TEXT NOT NULL,
+                                            ReceiptImage TEXT,
+                                            DateTime TIMESTAMP NOT NULL,
+                                            Hash TEXT NOT NULL,
+                                            PreviousHash TEXT,
+                                            Signature TEXT NOT NULL,
+                                            ReversalOfTransactionId INTEGER,
+                                            
+                                            FOREIGN KEY (ReversalOfTransactionId) REFERENCES transactions(id)
+                                        );
                               """;
         command.ExecuteNonQuery();
-        
+
         connection.Close();
     }
 }

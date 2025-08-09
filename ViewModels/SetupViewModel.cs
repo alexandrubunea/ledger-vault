@@ -32,6 +32,7 @@ public partial class SetupViewModel : CoreViewModel
                                       Password != ConfirmPassword;
 
     private bool _emptyUserName;
+
     public bool EmptyUserName
     {
         get => _emptyUserName;
@@ -41,14 +42,14 @@ public partial class SetupViewModel : CoreViewModel
     private string _finalPassword = "";
 
     private readonly CoreViewNavigatorService _navigator;
-    private readonly DatabaseManagerService _dbManager;
+    private readonly UserService _userService;
 
-    public SetupViewModel(CoreViewNavigatorService navigator, DatabaseManagerService dbManager)
+    public SetupViewModel(CoreViewNavigatorService navigator, UserService userService)
     {
         ViewModelName = CoreViews.Setup;
 
         _navigator = navigator;
-        _dbManager = dbManager;
+        _userService = userService;
     }
 
     public void NextStep()
@@ -57,7 +58,7 @@ public partial class SetupViewModel : CoreViewModel
             return;
 
         _finalPassword = Password;
-        
+
         StepOne = false;
         StepTwo = true;
     }
@@ -69,8 +70,8 @@ public partial class SetupViewModel : CoreViewModel
             EmptyUserName = true;
             return;
         }
-        
-        _dbManager.CreateUser(UserCompleteName, _finalPassword, CurrencyIndex);
+
+        _userService.CreateUser(UserCompleteName, _finalPassword, CurrencyIndex);
 
         StepTwo = false;
         _navigator.NavigateTo(CoreViews.Login);

@@ -7,11 +7,11 @@ namespace ledger_vault.Factories;
 public class CoreViewFactory
 {
     private readonly Func<CoreViews, CoreViewModel> _factory;
-    
+
     public CoreViewFactory(Func<CoreViews, CoreViewModel> factory)
     {
-        _factory = factory;    
+        _factory = factory;
     }
-    
-    public CoreViewModel GetCoreViewModel(CoreViews coreName) =>_factory.Invoke(coreName);
+
+    public CoreViewModel GetCoreViewModel(CoreViews coreName) => _factory.Invoke(coreName);
 }

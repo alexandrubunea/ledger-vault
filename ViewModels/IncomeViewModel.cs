@@ -1,14 +1,15 @@
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
-using ledger_vault.Models;
+using ledger_vault.Factories;
+using ledger_vault.Messaging;
 using ledger_vault.Services;
 
 namespace ledger_vault.ViewModels;
 
-public partial class IncomeViewModel : PageViewModel
+public partial class IncomeViewModel : PageViewModel, IDisposable
 {
     private static readonly List<string> Currencies =
     [
@@ -177,91 +178,63 @@ public partial class IncomeViewModel : PageViewModel
         "ZWL - Zimbabwean Dollar"
     ];
 
+    private readonly PageComponentFactory _pageComponentFactory;
+    private readonly MediatorService<ReturnFromTransactionMessage> _cancelMediator;
+
+    [ObservableProperty] private PageComponentViewModel _activePageComponent;
+
+    [ObservableProperty] private bool _showIncomeMode = true;
+
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(GetFormattedBalance))]
     private decimal _currentBalance;
 
     private readonly short _currencyId;
 
-    [ObservableProperty] private bool _addIncomeMode;
-    [ObservableProperty] private bool _showIncomeMode = true;
-
-    [ObservableProperty] private string _counterparty = "";
-    [ObservableProperty] private string _description = "";
-    [ObservableProperty] private decimal _amount = 1;
-    [ObservableProperty] private string _tagToAdd = "";
-
-    [ObservableProperty] private ObservableCollection<string> _tags = [];
-
-    [ObservableProperty] private ObservableCollection<Transaction> _transactions = [];
-
     public string GetCurrency => Currencies[_currencyId][..3];
     public string GetFormattedBalance => CurrentBalance.ToString("N");
-    public bool AnyTagExist => Tags.Count > 0;
 
-    private readonly UserStateService _userStateService;
-    private readonly TransactionService _transactionService;
-
-    public IncomeViewModel(UserStateService userStateService, TransactionService transactionService)
+    public IncomeViewModel(UserStateService userStateService, PageComponentFactory pageComponentFactory,
+        MediatorService<ReturnFromTransactionMessage> cancelMediator)
     {
         PageName = ApplicationPages.Income;
+        _pageComponentFactory = pageComponentFactory;
+        _cancelMediator = cancelMediator;
 
-        _transactionService = transactionService;
-        _userStateService = userStateService;
+        _cancelMediator.Subscribe(OnCancelTransaction);
 
-        _currentBalance = _userStateService.Balance;
-        _currencyId = _userStateService.CurrencyId;
+        ActivePageComponent = pageComponentFactory.GetComponentPageViewModel(PageComponents.TransactionList);
 
-        Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(AnyTagExist));
+        CurrentBalance = userStateService.Balance;
+        _currencyId = userStateService.CurrencyId;
     }
 
     [RelayCommand]
     private void SwitchMode()
     {
-        AddIncomeMode = !AddIncomeMode;
         ShowIncomeMode = !ShowIncomeMode;
+
+        ActivePageComponent =
+            _pageComponentFactory.GetComponentPageViewModel(ShowIncomeMode
+                ? PageComponents.TransactionList
+                : PageComponents.TransactionForm);
+
+        if (ActivePageComponent is TransactionFormViewModel transactionForm)
+            transactionForm.TransactionType = TransactionType.Income;
     }
 
-    [RelayCommand]
-    private void AddTag()
+    private void OnCancelTransaction(ReturnFromTransactionMessage message)
     {
-        // TODO: Check if tags contains only valid alphanumerical chars, if not, show an error
-        string lowercaseTag = TagToAdd.ToLower();
+        ShowIncomeMode = true;
+        ActivePageComponent = _pageComponentFactory.GetComponentPageViewModel(PageComponents.TransactionList);
 
-        if (lowercaseTag.Length == 0 || Tags.Contains(lowercaseTag))
-            return;
-
-        Tags.Add(lowercaseTag);
-        TagToAdd = "";
+        if (message.TransactionConfirmed)
+        {
+            CurrentBalance += message.TransactionAmount;
+        }
     }
 
-    [RelayCommand]
-    private void RemoveTag(string tag)
+    public void Dispose()
     {
-        Tags.Remove(tag);
-    }
-
-    [RelayCommand]
-    private void AddTransaction()
-    {
-        // TODO: Add warning messages when empty
-        if (Counterparty.Length == 0)
-            return;
-        if (Description.Length == 0)
-            return;
-
-        Transaction tx = _transactionService.CreateTransaction(Counterparty, Description, Amount, [..Tags], "");
-        Transactions.Add(tx);
-
-        _userStateService.Balance += tx.Amount;
-        CurrentBalance = _userStateService.Balance;
-        _userStateService.SaveUserBalance();
-
-        SwitchMode();
-    }
-
-    [RelayCommand]
-    private void CancelTransaction()
-    {
-        SwitchMode();
+        _cancelMediator.Unsubscribe(OnCancelTransaction);
     }
 }

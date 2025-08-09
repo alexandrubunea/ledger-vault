@@ -20,6 +20,7 @@ namespace ledger_vault.Services
             collection.AddSingleton<HmacService>();
             collection.AddSingleton<UserService>();
             collection.AddSingleton<TransactionService>();
+            collection.AddSingleton(typeof(MediatorService<>));
 
             // Security
             collection.AddDataProtection()
@@ -48,10 +49,17 @@ namespace ledger_vault.Services
                 CoreViews.Setup => x.GetRequiredService<SetupViewModel>(),
                 _ => throw new InvalidOperationException(),
             });
+            collection.AddSingleton<Func<PageComponents, PageComponentViewModel>>(x => name => name switch
+            {
+                PageComponents.TransactionForm => x.GetRequiredService<TransactionFormViewModel>(),
+                PageComponents.TransactionList => x.GetRequiredService<TransactionsListViewModel>(),
+                _ => throw new InvalidOperationException(),
+            });
 
             // Factories
             collection.AddSingleton<PageFactory>();
             collection.AddSingleton<CoreViewFactory>();
+            collection.AddSingleton<PageComponentFactory>();
 
             // ViewModels
             collection.AddTransient<SetupViewModel>();
@@ -65,6 +73,8 @@ namespace ledger_vault.Services
             collection.AddTransient<PaymentsViewModel>();
             collection.AddTransient<SettingsViewModel>();
             collection.AddTransient<VerifyIntegrityViewModel>();
+            collection.AddTransient<TransactionFormViewModel>();
+            collection.AddTransient<TransactionsListViewModel>();
 
             // Window
             collection.AddSingleton<MainWindowViewModel>();

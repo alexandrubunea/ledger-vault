@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
 using ledger_vault.Factories;
@@ -40,6 +41,9 @@ public partial class MainViewModel : CoreViewModel
 
     public void SwitchPageCommand(ApplicationPages pageName)
     {
+        if (CurrentPageViewModel is IDisposable disposable)
+            disposable.Dispose();
+
         CurrentPageViewModel = _pageFactory.GetPageViewModel(pageName);
     }
 }

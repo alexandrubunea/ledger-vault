@@ -4,17 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ledger_vault.ViewModels"
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
-             x:Class="ledger_vault.Views.IncomeView"
-             x:DataType="vm:IncomeViewModel">
+             x:Class="ledger_vault.Views.TransactionsView"
+             x:DataType="vm:TransactionsViewModel">
     <Design.DataContext>
-        <vm:IncomeViewModel />
+        <vm:TransactionsViewModel />
     </Design.DataContext>
     <StackPanel>
         <Grid ColumnDefinitions="*, *" Height="100">
             <StackPanel Grid.Column="0" Margin="20 0 0 0" VerticalAlignment="Center">
-                <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="32">
-                    Your Income
-                </TextBlock>
+                <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="32" Text="{Binding PageTitle}" />
                 <StackPanel Orientation="Horizontal" Spacing="5">
                     <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14" Text="Current balance:" />
                     <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14"

@@ -1,6 +1,5 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
 using ledger_vault.Factories;
 
@@ -11,8 +10,17 @@ public partial class MainViewModel : CoreViewModel
     #region PUBLIC PROPERTIES
 
     public bool HomePageIsActive => CurrentPageViewModel is HomeViewModel;
-    public bool IncomePageIsActive => CurrentPageViewModel is IncomeViewModel;
-    public bool PaymentsPageIsActive => CurrentPageViewModel is PaymentsViewModel;
+
+    public bool IncomePageIsActive => CurrentPageViewModel is TransactionsViewModel
+    {
+        TransactionType: TransactionType.Income
+    };
+
+    public bool PaymentsPageIsActive => CurrentPageViewModel is TransactionsViewModel
+    {
+        TransactionType: TransactionType.Payment
+    };
+
     public bool CashFlowPageIsActive => CurrentPageViewModel is CashFlowViewModel;
     public bool VerifyIntegrityPageIsActive => CurrentPageViewModel is VerifyIntegrityViewModel;
     public bool ExportPageIsActive => CurrentPageViewModel is ExportViewModel;
@@ -36,7 +44,21 @@ public partial class MainViewModel : CoreViewModel
         if (CurrentPageViewModel is IDisposable disposable)
             disposable.Dispose();
 
-        CurrentPageViewModel = _pageFactory.GetPageViewModel(pageName);
+        if (pageName != ApplicationPages.Payments && pageName != ApplicationPages.Income)
+        {
+            CurrentPageViewModel = _pageFactory.GetPageViewModel(pageName);
+            return;
+        }
+
+        // Handle the chase were the user press "income" or "payments"
+        // Do not change the current page view model before setting the transaction type
+        TransactionsViewModel? vm =
+            _pageFactory.GetPageViewModel(ApplicationPages.Transaction) as TransactionsViewModel;
+        if (vm == null)
+            throw new NullReferenceException($"{nameof(TransactionsViewModel)} must not be null");
+
+        vm.TransactionType = pageName == ApplicationPages.Income ?  TransactionType.Income : TransactionType.Payment;
+        CurrentPageViewModel = vm;
     }
 
     #endregion

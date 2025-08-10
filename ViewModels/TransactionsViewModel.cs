@@ -9,17 +9,24 @@ using ledger_vault.Services;
 
 namespace ledger_vault.ViewModels;
 
-public partial class IncomeViewModel : PageViewModel, IDisposable
+public partial class TransactionsViewModel : PageViewModel, IDisposable
 {
+    #region PUBLIC PROPERTIES
+
+    public TransactionType TransactionType { get; set; }
+
+    #endregion
+
     #region PUBLIC API
 
     public string GetCurrency => Currencies[_currencyId][..3];
     public string GetFormattedBalance => CurrentBalance.ToString("N");
+    public string PageTitle => TransactionType == TransactionType.Income ? "Your income" : "Your payments";
 
-    public IncomeViewModel(UserStateService userStateService, PageComponentFactory pageComponentFactory,
+    public TransactionsViewModel(UserStateService userStateService, PageComponentFactory pageComponentFactory,
         MediatorService<ReturnFromTransactionMessage> cancelMediator)
     {
-        PageName = ApplicationPages.Income;
+        PageName = ApplicationPages.Transaction;
         _pageComponentFactory = pageComponentFactory;
         _cancelMediator = cancelMediator;
 
@@ -234,7 +241,9 @@ public partial class IncomeViewModel : PageViewModel, IDisposable
                 : PageComponents.TransactionForm);
 
         if (ActivePageComponent is TransactionFormViewModel transactionForm)
-            transactionForm.TransactionType = TransactionType.Income;
+            transactionForm.TransactionType = TransactionType;
+        if (ActivePageComponent is TransactionsListViewModel transactionsList)
+            transactionsList.TransactionType = TransactionType;
     }
 
     private void OnCancelTransaction(ReturnFromTransactionMessage message)

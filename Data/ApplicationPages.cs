@@ -3,11 +3,14 @@ namespace ledger_vault.Data;
 public enum ApplicationPages : byte
 {
     Home,
-    Income,
-    Payments,
+    Transaction,
     CashFlow,
     VerifyIntegrity,
     Settings,
     Export,
     Backups,
+    
+    // Not used in factory, just for convenience
+    Income,
+    Payments
 }

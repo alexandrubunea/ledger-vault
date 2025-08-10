@@ -7,31 +7,7 @@ namespace ledger_vault.ViewModels;
 
 public partial class SetupViewModel : CoreViewModel
 {
-    [ObservableProperty] private bool _stepOne = true;
-    [ObservableProperty] private bool _stepTwo;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsPasswordTooWeak))]
-    [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
-    private string _password = "";
-
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
-    private string _confirmPassword = "";
-
-    [ObservableProperty] private string _userCompleteName = "";
-
-    [ObservableProperty] private ushort _currencyIndex;
-
-    [GeneratedRegex(@"^(?=.+)(?!(?=.*[A-Z])(?=.*[\d\W]).{8,}).*$")]
-    private static partial Regex StrongPasswordRegex();
-
-    public bool IsPasswordTooWeak => StrongPasswordRegex().IsMatch(Password);
-
-    public bool DifferentPasswords => Password.Length > 0 &&
-                                      ConfirmPassword.Length > 0 &&
-                                      Password != ConfirmPassword;
-
-    private bool _emptyUserName;
+    #region PUBLIC API
 
     public bool EmptyUserName
     {
@@ -39,10 +15,11 @@ public partial class SetupViewModel : CoreViewModel
         private set => SetProperty(ref _emptyUserName, value);
     }
 
-    private string _finalPassword = "";
+    public bool IsPasswordTooWeak => StrongPasswordRegex().IsMatch(Password);
 
-    private readonly CoreViewNavigatorService _navigator;
-    private readonly UserService _userService;
+    public bool DifferentPasswords => Password.Length > 0 &&
+                                      ConfirmPassword.Length > 0 &&
+                                      Password != ConfirmPassword;
 
     public SetupViewModel(CoreViewNavigatorService navigator, UserService userService)
     {
@@ -76,4 +53,34 @@ public partial class SetupViewModel : CoreViewModel
         StepTwo = false;
         _navigator.NavigateTo(CoreViews.Login);
     }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
+    private readonly CoreViewNavigatorService _navigator;
+    private readonly UserService _userService;
+
+    [ObservableProperty] private bool _stepOne = true;
+    [ObservableProperty] private bool _stepTwo;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsPasswordTooWeak))]
+    [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
+    private string _password = "";
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
+    private string _confirmPassword = "";
+
+    [ObservableProperty] private string _userCompleteName = "";
+
+    [ObservableProperty] private ushort _currencyIndex;
+
+    [GeneratedRegex(@"^(?=.+)(?!(?=.*[A-Z])(?=.*[\d\W]).{8,}).*$")]
+    private static partial Regex StrongPasswordRegex();
+
+    private bool _emptyUserName;
+    private string _finalPassword = "";
+
+    #endregion
 }

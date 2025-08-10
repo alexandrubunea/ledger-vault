@@ -7,9 +7,32 @@ namespace ledger_vault.Services;
 
 public class HmacService
 {
+    #region PUBLIC API
+
+    public HmacService(IDataProtectionProvider provider)
+    {
+        _protector = provider.CreateProtector(Purpose);
+        LoadOrGenerateKey();
+    }
+
+    public byte[] ComputeSignature(byte[] data)
+    {
+        using var hmac = new HMACSHA256(_hmacKey);
+        return hmac.ComputeHash(data);
+    }
+
+    public bool VerifySignature(byte[] data, byte[] signature)
+    {
+        var computed = ComputeSignature(data);
+        return CryptographicOperations.FixedTimeEquals(computed, signature);
+    }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
     private readonly IDataProtector _protector;
     private byte[] _hmacKey = [];
-
     private const string Purpose = "LedgerVault.TransactionSigning";
 
     private readonly string _keyFilePath = Path.Combine(
@@ -17,11 +40,9 @@ public class HmacService
         "LedgerVault",
         "hmac_key.protected");
 
-    public HmacService(IDataProtectionProvider provider)
-    {
-        _protector = provider.CreateProtector(Purpose);
-        LoadOrGenerateKey();
-    }
+    #endregion
+
+    #region PRIVATE METHODS
 
     private void LoadOrGenerateKey()
     {
@@ -41,15 +62,5 @@ public class HmacService
         File.WriteAllBytes(_keyFilePath, protectedData);
     }
 
-    public byte[] ComputeSignature(byte[] data)
-    {
-        using var hmac = new HMACSHA256(_hmacKey);
-        return hmac.ComputeHash(data);
-    }
-
-    public bool VerifySignature(byte[] data, byte[] signature)
-    {
-        var computed = ComputeSignature(data);
-        return CryptographicOperations.FixedTimeEquals(computed, signature);
-    }
+    #endregion
 }

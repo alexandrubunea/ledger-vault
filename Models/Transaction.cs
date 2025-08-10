@@ -7,6 +7,8 @@ namespace ledger_vault.Models;
 
 public class Transaction
 {
+    #region PUBLIC PROPERTIES
+
     public uint Id { get; private set; }
     public string Counterparty { get; private set; }
     public string Description { get; private set; }
@@ -20,43 +22,9 @@ public class Transaction
     public string Signature { get; private set; }
     public uint? ReversalOfTransactionId { get; private set; }
 
+    #endregion
 
-    // Constructor for non-existing transaction in the database
-    private Transaction(string counterparty, string description, decimal amount, List<string> tags, string receiptImage,
-        string previousHash, uint? reversalOfTransactionId = null)
-    {
-        Counterparty = counterparty;
-        Description = description;
-        Amount = amount;
-        Tags = tags;
-        ReceiptImage = receiptImage;
-        PreviousHash = previousHash;
-        ReversalOfTransactionId = reversalOfTransactionId;
-        Timestamp = DateTime.Now;
-
-        ReceiptImageHash = "";
-        Hash = "";
-        Signature = "";
-    }
-
-    // Constructor for existing transaction in the database
-    private Transaction(uint id, string counterparty, string description, decimal amount, List<string> tags,
-        string receiptImage, string receiptImageHash, string previousHash, DateTime timestamp, string hash,
-        string signature, uint? reversalOfTransactionId = null)
-    {
-        Id = id;
-        Counterparty = counterparty;
-        Description = description;
-        Amount = amount;
-        Tags = tags;
-        ReceiptImage = receiptImage;
-        ReceiptImageHash = receiptImageHash;
-        PreviousHash = previousHash;
-        ReversalOfTransactionId = reversalOfTransactionId;
-        Timestamp = timestamp;
-        Signature = signature;
-        Hash = hash;
-    }
+    #region PUBLIC API
 
     public static Transaction Create(string counterparty, string description, decimal amount, List<string> tags,
         string receiptImagePath, string previousHash, uint? reversalOfTransactionId = null)
@@ -104,4 +72,47 @@ public class Transaction
 
         Signature = Convert.ToBase64String(signature);
     }
+
+    #endregion
+
+    #region PRIVATE CONSTRUCTORS
+
+    // Constructor for non-existing transaction in the database
+    private Transaction(string counterparty, string description, decimal amount, List<string> tags, string receiptImage,
+        string previousHash, uint? reversalOfTransactionId = null)
+    {
+        Counterparty = counterparty;
+        Description = description;
+        Amount = amount;
+        Tags = tags;
+        ReceiptImage = receiptImage;
+        PreviousHash = previousHash;
+        ReversalOfTransactionId = reversalOfTransactionId;
+        Timestamp = DateTime.Now;
+
+        ReceiptImageHash = "";
+        Hash = "";
+        Signature = "";
+    }
+
+    // Constructor for existing transaction in the database
+    private Transaction(uint id, string counterparty, string description, decimal amount, List<string> tags,
+        string receiptImage, string receiptImageHash, string previousHash, DateTime timestamp, string hash,
+        string signature, uint? reversalOfTransactionId = null)
+    {
+        Id = id;
+        Counterparty = counterparty;
+        Description = description;
+        Amount = amount;
+        Tags = tags;
+        ReceiptImage = receiptImage;
+        ReceiptImageHash = receiptImageHash;
+        PreviousHash = previousHash;
+        ReversalOfTransactionId = reversalOfTransactionId;
+        Timestamp = timestamp;
+        Signature = signature;
+        Hash = hash;
+    }
+
+    #endregion
 }

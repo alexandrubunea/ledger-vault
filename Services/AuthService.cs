@@ -3,26 +3,21 @@ using Microsoft.Data.Sqlite;
 
 namespace ledger_vault.Services;
 
-public class AuthService
+public class AuthService(DatabaseManagerService dbManager, UserStateService userState, UserService userService)
 {
-    private readonly DatabaseManagerService _dbManager;
-    private readonly UserStateService _userState;
-    private readonly UserService _userService;
+    #region PUBLIC PROPERTIES
 
     public bool LoggedIn { get; private set; }
 
-    public AuthService(DatabaseManagerService dbManager, UserStateService userState,  UserService userService)
-    {
-        _dbManager = dbManager;
-        _userState = userState;
-        _userService = userService;
-    }
+    #endregion
+
+    #region PUBLIC API
 
     public LoginResult Login(string password)
     {
         try
         {
-            using var conn = _dbManager.GetConnection();
+            using var conn = dbManager.GetConnection();
             using var cmd = conn.CreateCommand();
             cmd.CommandText = "SELECT password FROM user_information LIMIT 1";
 
@@ -45,14 +40,18 @@ public class AuthService
     }
 
     public void UpdateUserPassword(string password, string newPassword) =>
-        _userService.UpdateUserPassword(password, newPassword);
+        userService.UpdateUserPassword(password, newPassword);
 
-    public bool CheckUserPassword(string password) => _userService.CheckUserPassword(password);
+    public bool CheckUserPassword(string password) => userService.CheckUserPassword(password);
 
     public void DeleteAccount()
     {
-        _userService.DeleteAllUserData();
+        userService.DeleteAllUserData();
     }
+
+    #endregion
+
+    #region PRIVATE METHODS
 
     private void LoadUserState(SqliteConnection conn)
     {
@@ -62,9 +61,11 @@ public class AuthService
         using var reader = cmd.ExecuteReader();
         if (!reader.Read()) return;
 
-        _userState.FullUserName = reader.GetString(0);
-        _userState.Balance = reader.GetDecimal(1);
-        _userState.CurrencyId = reader.GetInt16(2);
-        _userState.ThemeId = reader.GetInt16(3);
+        userState.FullUserName = reader.GetString(0);
+        userState.Balance = reader.GetDecimal(1);
+        userState.CurrencyId = reader.GetInt16(2);
+        userState.ThemeId = reader.GetInt16(3);
     }
+
+    #endregion
 }

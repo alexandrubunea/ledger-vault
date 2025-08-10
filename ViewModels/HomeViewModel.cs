@@ -6,12 +6,20 @@ namespace ledger_vault.ViewModels;
 
 public partial class HomeViewModel : PageViewModel
 {
-    [ObservableProperty] private string _userFullName;
+    #region PUBLIC API
 
     public HomeViewModel(UserStateService userStateService)
     {
         PageName = ApplicationPages.Home;
 
-        UserFullName = userStateService.FullUserName;
+        _userFullName = userStateService.FullUserName;
     }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
+    [ObservableProperty] private string _userFullName;
+
+    #endregion
 }

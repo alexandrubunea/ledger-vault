@@ -1,20 +1,15 @@
 namespace ledger_vault.Services;
 
-public class UserService
+public class UserService(DatabaseManagerService databaseManagerService)
 {
-    private readonly DatabaseManagerService _databaseManagerService;
+    #region PUBLIC API
 
-    public UserService(DatabaseManagerService databaseManagerService)
-    {
-        _databaseManagerService = databaseManagerService;
-    }
-    
     public void CreateUser(string fullName, string password, ushort currencyId)
     {
-        if (_databaseManagerService.IsSetup())
+        if (databaseManagerService.IsSetup())
             return;
 
-        using var conn = _databaseManagerService.GetConnection();
+        using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
 
         command.CommandText =
@@ -35,7 +30,7 @@ public class UserService
         if (!CheckUserPassword(password))
             return;
 
-        using var conn = _databaseManagerService.GetConnection();
+        using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
 
         command.CommandText = "UPDATE user_information SET password = @password WHERE id > 0";
@@ -46,7 +41,7 @@ public class UserService
 
     public void UpdateUserName(string fullName)
     {
-        using var conn = _databaseManagerService.GetConnection();
+        using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
 
         command.CommandText = "UPDATE user_information SET full_name = @fullName WHERE id > 0";
@@ -57,7 +52,7 @@ public class UserService
 
     public void UpdateUserCurrencyId(short currencyId)
     {
-        using var conn = _databaseManagerService.GetConnection();
+        using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
 
         command.CommandText = "UPDATE user_information SET currencyId = @currencyId WHERE id > 0";
@@ -68,7 +63,7 @@ public class UserService
 
     public void UpdateUserThemeId(short themeId)
     {
-        using var conn = _databaseManagerService.GetConnection();
+        using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
 
         command.CommandText = "UPDATE user_information SET themeId = @themeId WHERE id > 0";
@@ -79,18 +74,18 @@ public class UserService
 
     public void UpdateUserBalance(decimal balance)
     {
-        using var conn = _databaseManagerService.GetConnection();
+        using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
-        
+
         command.CommandText = "UPDATE user_information SET balance = @balance WHERE id > 0";
         command.Parameters.AddWithValue("@balance", balance);
-        
+
         command.ExecuteNonQuery();
     }
 
     public bool CheckUserPassword(string password)
     {
-        using var conn = _databaseManagerService.GetConnection();
+        using var conn = databaseManagerService.GetConnection();
         using var cmd = conn.CreateCommand();
         cmd.CommandText = "SELECT password FROM user_information LIMIT 1";
 
@@ -104,12 +99,15 @@ public class UserService
 
     public void DeleteAllUserData()
     {
-        using var conn = _databaseManagerService.GetConnection();
+        using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
 
-        command.CommandText = "DELETE FROM user_information WHERE id > 0";
+        command.CommandText = """
+                              DROP TABLE user_information;
+                              DROP TABLE transactions;
+                              """;
         command.ExecuteNonQuery();
-
-        // TODO: Delete data from other tables too
     }
+
+    #endregion
 }

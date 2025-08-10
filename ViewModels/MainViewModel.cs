@@ -8,20 +8,8 @@ namespace ledger_vault.ViewModels;
 
 public partial class MainViewModel : CoreViewModel
 {
-    private readonly PageFactory _pageFactory;
-    
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HomePageIsActive))]
-    [NotifyPropertyChangedFor(nameof(IncomePageIsActive))]
-    [NotifyPropertyChangedFor(nameof(PaymentsPageIsActive))]
-    [NotifyPropertyChangedFor(nameof(CashFlowPageIsActive))]
-    [NotifyPropertyChangedFor(nameof(VerifyIntegrityPageIsActive))]
-    [NotifyPropertyChangedFor(nameof(ExportPageIsActive))]
-    [NotifyPropertyChangedFor(nameof(BackupsPageIsActive))]
-    [NotifyPropertyChangedFor(nameof(SettingsPageIsActive))]
-    private PageViewModel _currentPageViewModel = new();
+    #region PUBLIC PROPERTIES
 
-    // Related to styling active buttons
     public bool HomePageIsActive => CurrentPageViewModel is HomeViewModel;
     public bool IncomePageIsActive => CurrentPageViewModel is IncomeViewModel;
     public bool PaymentsPageIsActive => CurrentPageViewModel is PaymentsViewModel;
@@ -31,10 +19,14 @@ public partial class MainViewModel : CoreViewModel
     public bool BackupsPageIsActive => CurrentPageViewModel is BackupsViewModel;
     public bool SettingsPageIsActive => CurrentPageViewModel is SettingsViewModel;
 
+    #endregion
+
+    #region PUBLIC API
+
     public MainViewModel(PageFactory pageFactory)
     {
         ViewModelName = CoreViews.Main;
-        
+
         _pageFactory = pageFactory;
         SwitchPageCommand(ApplicationPages.Home);
     }
@@ -46,4 +38,23 @@ public partial class MainViewModel : CoreViewModel
 
         CurrentPageViewModel = _pageFactory.GetPageViewModel(pageName);
     }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
+    private readonly PageFactory _pageFactory;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HomePageIsActive))]
+    [NotifyPropertyChangedFor(nameof(IncomePageIsActive))]
+    [NotifyPropertyChangedFor(nameof(PaymentsPageIsActive))]
+    [NotifyPropertyChangedFor(nameof(CashFlowPageIsActive))]
+    [NotifyPropertyChangedFor(nameof(VerifyIntegrityPageIsActive))]
+    [NotifyPropertyChangedFor(nameof(ExportPageIsActive))]
+    [NotifyPropertyChangedFor(nameof(BackupsPageIsActive))]
+    [NotifyPropertyChangedFor(nameof(SettingsPageIsActive))]
+    private PageViewModel _currentPageViewModel = new();
+
+    #endregion
 }

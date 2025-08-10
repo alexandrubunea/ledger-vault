@@ -4,15 +4,12 @@ using ledger_vault.ViewModels;
 
 namespace ledger_vault.Factories;
 
-public class PageComponentFactory
+public class PageComponentFactory(Func<PageComponents, PageComponentViewModel> factory)
 {
-    private readonly Func<PageComponents, PageComponentViewModel> _factory;
-
-    public PageComponentFactory(Func<PageComponents, PageComponentViewModel> factory)
-    {
-        _factory = factory;
-    }
+    #region PUBLIC API
 
     public PageComponentViewModel GetComponentPageViewModel(PageComponents pageComponent) =>
-        _factory.Invoke(pageComponent);
+        factory.Invoke(pageComponent);
+
+    #endregion
 }

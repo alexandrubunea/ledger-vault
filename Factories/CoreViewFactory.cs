@@ -4,14 +4,11 @@ using ledger_vault.ViewModels;
 
 namespace ledger_vault.Factories;
 
-public class CoreViewFactory
+public class CoreViewFactory(Func<CoreViews, CoreViewModel> factory)
 {
-    private readonly Func<CoreViews, CoreViewModel> _factory;
+    #region PUBLIC API
 
-    public CoreViewFactory(Func<CoreViews, CoreViewModel> factory)
-    {
-        _factory = factory;
-    }
+    public CoreViewModel GetCoreViewModel(CoreViews coreName) => factory.Invoke(coreName);
 
-    public CoreViewModel GetCoreViewModel(CoreViews coreName) => _factory.Invoke(coreName);
+    #endregion
 }

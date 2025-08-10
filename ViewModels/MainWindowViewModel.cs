@@ -6,7 +6,7 @@ namespace ledger_vault.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty] CoreViewNavigatorService _navigator;
+    #region PUBLIC API
 
     public MainWindowViewModel(CoreViewNavigatorService navigatorService, DatabaseManagerService dbManager)
     {
@@ -14,4 +14,12 @@ public partial class MainWindowViewModel : ViewModelBase
 
         navigatorService.NavigateTo(dbManager.IsSetup() ? CoreViews.Login : CoreViews.Setup);
     }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
+    [ObservableProperty] private CoreViewNavigatorService _navigator;
+
+    #endregion
 }

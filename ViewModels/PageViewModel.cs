@@ -5,5 +5,9 @@ namespace ledger_vault.ViewModels;
 
 public partial class PageViewModel : ViewModelBase
 {
+    #region PRIVATE PROPERTIES
+
     [ObservableProperty] private ApplicationPages _pageName;
+
+    #endregion
 }

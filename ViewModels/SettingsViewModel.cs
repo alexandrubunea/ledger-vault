@@ -8,6 +8,31 @@ namespace ledger_vault.ViewModels;
 
 public partial class SettingsViewModel : PageViewModel
 {
+    #region PUBLIC API
+
+    public bool IsPasswordTooWeak => StrongPasswordRegex().IsMatch(NewPassword);
+
+    public bool DifferentPasswords => NewPassword.Length > 0 &&
+                                      RetypePassword.Length > 0 &&
+                                      NewPassword != RetypePassword;
+
+    public SettingsViewModel(UserStateService userStateService, AuthService authService,
+        CoreViewNavigatorService navigator)
+    {
+        PageName = ApplicationPages.Settings;
+        _userStateService = userStateService;
+        _authService = authService;
+        _navigator = navigator;
+
+        UserCompleteName = _userStateService.FullUserName;
+        CurrencyIndex = _userStateService.CurrencyId;
+        ThemeIndex = _userStateService.ThemeId;
+    }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
     [ObservableProperty] private string _currentPassword = "";
     [ObservableProperty] private string _oldPassword = "";
 
@@ -33,24 +58,9 @@ public partial class SettingsViewModel : PageViewModel
     [ObservableProperty] private bool _wrongOldPassword;
     [ObservableProperty] private bool _wrongCurrentPassword;
 
-    public bool IsPasswordTooWeak => StrongPasswordRegex().IsMatch(NewPassword);
+    #endregion
 
-    public bool DifferentPasswords => NewPassword.Length > 0 &&
-                                      RetypePassword.Length > 0 &&
-                                      NewPassword != RetypePassword;
-
-    public SettingsViewModel(UserStateService userStateService, AuthService authService,
-        CoreViewNavigatorService navigator)
-    {
-        PageName = ApplicationPages.Settings;
-        _userStateService = userStateService;
-        _authService = authService;
-        _navigator = navigator;
-
-        UserCompleteName = _userStateService.FullUserName;
-        CurrencyIndex = _userStateService.CurrencyId;
-        ThemeIndex = _userStateService.ThemeId;
-    }
+    #region PRIVATE METHODS
 
     [RelayCommand]
     private void ChangePassword()
@@ -103,4 +113,6 @@ public partial class SettingsViewModel : PageViewModel
         _authService.DeleteAccount();
         _navigator.NavigateTo(CoreViews.Setup);
     }
+
+    #endregion
 }

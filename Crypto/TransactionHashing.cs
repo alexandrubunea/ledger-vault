@@ -9,6 +9,8 @@ namespace ledger_vault.Crypto;
 
 public static class TransactionHashing
 {
+    #region PUBLIC API
+
     public static string GenerateHash(Transaction transaction)
     {
         using SHA256 sha256 = SHA256.Create();
@@ -47,6 +49,10 @@ public static class TransactionHashing
 
         return IterateTransactions(transactions, start, transactions.Count);
     }
+
+    #endregion
+
+    #region PRIVATE METHODS
 
     private static bool VerifyImageHash(Transaction tx) =>
         tx.ReceiptImageHash.Length > 0 && tx.ReceiptImageHash == GenerateHash(tx.ReceiptImage);
@@ -91,4 +97,6 @@ public static class TransactionHashing
 
         return input;
     }
+
+    #endregion
 }

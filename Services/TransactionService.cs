@@ -8,16 +8,9 @@ using ledger_vault.Models;
 
 namespace ledger_vault.Services;
 
-public class TransactionService
+public class TransactionService(DatabaseManagerService databaseManagerService, HmacService hmacService)
 {
-    private readonly DatabaseManagerService _databaseManagerService;
-    private readonly HmacService _hmacService;
-
-    public TransactionService(DatabaseManagerService databaseManagerService, HmacService hmacService)
-    {
-        _databaseManagerService = databaseManagerService;
-        _hmacService = hmacService;
-    }
+    #region PUBLIC API
 
     public Transaction CreateTransaction(string counterparty, string description, decimal amount, List<string> tags,
         string receiptImagePath, uint? reversalOfTransactionId = null)
@@ -28,7 +21,7 @@ public class TransactionService
         Transaction tx = Transaction.Create(counterparty, description, amount, tags, receiptPath,
             previousHash, reversalOfTransactionId);
 
-        byte[] signature = _hmacService.ComputeSignature(tx.GetSigningData());
+        byte[] signature = hmacService.ComputeSignature(tx.GetSigningData());
         tx.SetSignature(signature);
 
         SaveTransaction(tx);
@@ -37,6 +30,10 @@ public class TransactionService
 
         return tx;
     }
+
+    #endregion
+
+    #region PRIVATE METHODS
 
     private string HandleReceipt(string path)
     {
@@ -62,7 +59,7 @@ public class TransactionService
 
     private string GetLastHash()
     {
-        using var conn = _databaseManagerService.GetConnection();
+        using var conn = databaseManagerService.GetConnection();
         using var cmd = conn.CreateCommand();
 
         cmd.CommandText = "SELECT hash FROM transactions ORDER BY id DESC LIMIT 1";
@@ -71,9 +68,11 @@ public class TransactionService
         return reader.Read() ? reader.GetString(0) : "";
     }
 
+    #region DATABASE QUERIES
+
     private Transaction GetLastTransaction()
     {
-        using var conn = _databaseManagerService.GetConnection();
+        using var conn = databaseManagerService.GetConnection();
         using var cmd = conn.CreateCommand();
 
         cmd.CommandText = @"SELECT * FROM transactions ORDER BY id DESC LIMIT 1;";
@@ -103,7 +102,7 @@ public class TransactionService
 
     private void SaveTransaction(Transaction transaction)
     {
-        using var conn = _databaseManagerService.GetConnection();
+        using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
         string tags = string.Join(",", transaction.Tags);
 
@@ -153,4 +152,8 @@ public class TransactionService
             throw new Exception(message);
         }
     }
+
+    #endregion
+
+    #endregion
 }

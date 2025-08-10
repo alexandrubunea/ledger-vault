@@ -6,12 +6,7 @@ namespace ledger_vault.Services;
 
 public class DatabaseManagerService
 {
-    private readonly string _connectionString;
-
-    public DatabaseManagerService()
-    {
-        _connectionString = CreateConnectionString();
-    }
+    #region PUBLIC API
 
     public SqliteConnection GetConnection()
     {
@@ -31,6 +26,16 @@ public class DatabaseManagerService
         return result > 0;
     }
 
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
+    private readonly string _connectionString = CreateConnectionString();
+
+    #endregion
+
+    #region PRIVATE METHODS
+
     private static string CreateConnectionString()
     {
         string appDir = Path.Combine(
@@ -42,4 +47,6 @@ public class DatabaseManagerService
         string dbPath = Path.Combine(appDir, "ledger.db");
         return $"Data Source={dbPath}";
     }
+
+    #endregion
 }

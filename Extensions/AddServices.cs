@@ -12,7 +12,8 @@ namespace ledger_vault.Services
     {
         public static void AddAppServices(this IServiceCollection collection)
         {
-            // Services
+            #region SERVICES
+
             collection.AddSingleton<UserStateService>();
             collection.AddSingleton<CoreViewNavigatorService>();
             collection.AddSingleton<DatabaseManagerService>();
@@ -22,14 +23,20 @@ namespace ledger_vault.Services
             collection.AddSingleton<TransactionService>();
             collection.AddSingleton(typeof(MediatorService<>));
 
-            // Security
+            #endregion
+
+            #region SECURITY
+
             collection.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo(
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LedgerVault",
                         "keys")))
                 .SetApplicationName("LedgerVault");
 
-            // Functions
+            #endregion
+
+            #region FUNCTIONS
+
             collection.AddSingleton<Func<ApplicationPages, PageViewModel>>(x => name => name switch
             {
                 ApplicationPages.Home => x.GetRequiredService<HomeViewModel>(),
@@ -56,12 +63,18 @@ namespace ledger_vault.Services
                 _ => throw new InvalidOperationException(),
             });
 
-            // Factories
+            #endregion
+
+            #region FACTORIES
+
             collection.AddSingleton<PageFactory>();
             collection.AddSingleton<CoreViewFactory>();
             collection.AddSingleton<PageComponentFactory>();
 
-            // ViewModels
+            #endregion
+
+            #region VIEWMODELS
+
             collection.AddTransient<SetupViewModel>();
             collection.AddTransient<LoginViewModel>();
             collection.AddTransient<MainViewModel>();
@@ -76,8 +89,13 @@ namespace ledger_vault.Services
             collection.AddTransient<TransactionFormViewModel>();
             collection.AddTransient<TransactionsListViewModel>();
 
-            // Window
+            #endregion
+
+            #region WINDOW
+
             collection.AddSingleton<MainWindowViewModel>();
+
+            #endregion
         }
     }
 }

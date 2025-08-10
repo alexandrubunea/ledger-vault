@@ -8,6 +8,22 @@ namespace ledger_vault.ViewModels;
 
 public partial class LoginViewModel : CoreViewModel
 {
+    #region PUBLIC API
+
+    public LoginViewModel(CoreViewNavigatorService navigator, AuthService authService)
+    {
+        ViewModelName = CoreViews.Login;
+
+        _password = "";
+
+        _navigator = navigator;
+        _authService = authService;
+    }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
     private readonly CoreViewNavigatorService _navigator;
     private readonly AuthService _authService;
 
@@ -15,22 +31,16 @@ public partial class LoginViewModel : CoreViewModel
     [ObservableProperty] private bool _databaseError;
     [ObservableProperty] private string _password;
 
-    public LoginViewModel(CoreViewNavigatorService navigator, AuthService authService)
-    {
-        ViewModelName = CoreViews.Login;
+    #endregion
 
-        Password = "";
-
-        _navigator = navigator;
-        _authService = authService;
-    }
+    #region PRIVATE METHODS
 
     [RelayCommand]
     private void ProcessLogin()
     {
         WrongPassword = false;
         DatabaseError = false;
-        
+
         LoginResult result = _authService.Login(Password);
 
         switch (result)
@@ -52,4 +62,6 @@ public partial class LoginViewModel : CoreViewModel
                 throw new ArgumentOutOfRangeException();
         }
     }
+
+    #endregion
 }

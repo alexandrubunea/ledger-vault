@@ -16,19 +16,7 @@ namespace ledger_vault.ViewModels;
 
 public partial class TransactionFormViewModel : PageComponentViewModel
 {
-    private readonly TransactionService _transactionService;
-    private readonly UserStateService _userStateService;
-    private readonly MediatorService<ReturnFromTransactionMessage> _cancelMediator;
-
-    [ObservableProperty] private string _counterparty = "";
-    [ObservableProperty] private string _description = "";
-    [ObservableProperty] private decimal _amount = 1;
-    [ObservableProperty] private string _tagToAdd = "";
-    [ObservableProperty] private ObservableCollection<string> _tags = [];
-    [ObservableProperty] private string _attachmentPath = "";
-
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(SelectFileButtonContent))]
-    private string _attachmentName = "";
+    #region PUBLIC API
 
     public TransactionType TransactionType { get; set; }
     public bool AnyTagExist => Tags.Count > 0;
@@ -46,6 +34,28 @@ public partial class TransactionFormViewModel : PageComponentViewModel
 
         Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(AnyTagExist));
     }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
+    private readonly TransactionService _transactionService;
+    private readonly UserStateService _userStateService;
+    private readonly MediatorService<ReturnFromTransactionMessage> _cancelMediator;
+
+    [ObservableProperty] private string _counterparty = "";
+    [ObservableProperty] private string _description = "";
+    [ObservableProperty] private decimal _amount = 1;
+    [ObservableProperty] private string _tagToAdd = "";
+    [ObservableProperty] private ObservableCollection<string> _tags = [];
+    [ObservableProperty] private string _attachmentPath = "";
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(SelectFileButtonContent))]
+    private string _attachmentName = "";
+
+    #endregion
+
+    #region PRIVATE METHODS
 
     [RelayCommand]
     private void AddTag()
@@ -153,4 +163,6 @@ public partial class TransactionFormViewModel : PageComponentViewModel
             TransactionConfirmed = confirmed,
             TransactionAmount = amount
         };
+
+    #endregion
 }

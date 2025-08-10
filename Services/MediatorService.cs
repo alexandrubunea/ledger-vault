@@ -5,7 +5,7 @@ namespace ledger_vault.Services;
 
 public class MediatorService<TMessage>
 {
-    private readonly List<Action<TMessage>> _subscribers = [];
+    #region PUBLIC API
 
     public void Subscribe(Action<TMessage> callback)
     {
@@ -23,4 +23,12 @@ public class MediatorService<TMessage>
         foreach (var callback in _subscribers)
             callback.Invoke(message);
     }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
+    private readonly List<Action<TMessage>> _subscribers = [];
+
+    #endregion
 }

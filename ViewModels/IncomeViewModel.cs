@@ -11,6 +11,35 @@ namespace ledger_vault.ViewModels;
 
 public partial class IncomeViewModel : PageViewModel, IDisposable
 {
+    #region PUBLIC API
+
+    public string GetCurrency => Currencies[_currencyId][..3];
+    public string GetFormattedBalance => CurrentBalance.ToString("N");
+
+    public IncomeViewModel(UserStateService userStateService, PageComponentFactory pageComponentFactory,
+        MediatorService<ReturnFromTransactionMessage> cancelMediator)
+    {
+        PageName = ApplicationPages.Income;
+        _pageComponentFactory = pageComponentFactory;
+        _cancelMediator = cancelMediator;
+
+        _cancelMediator.Subscribe(OnCancelTransaction);
+
+        ActivePageComponent = pageComponentFactory.GetComponentPageViewModel(PageComponents.TransactionList);
+
+        CurrentBalance = userStateService.Balance;
+        _currencyId = userStateService.CurrencyId;
+    }
+
+    public void Dispose()
+    {
+        _cancelMediator.Unsubscribe(OnCancelTransaction);
+    }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
     private static readonly List<string> Currencies =
     [
         "AED - United Arab Emirates Dirham",
@@ -190,23 +219,9 @@ public partial class IncomeViewModel : PageViewModel, IDisposable
 
     private readonly short _currencyId;
 
-    public string GetCurrency => Currencies[_currencyId][..3];
-    public string GetFormattedBalance => CurrentBalance.ToString("N");
+    #endregion
 
-    public IncomeViewModel(UserStateService userStateService, PageComponentFactory pageComponentFactory,
-        MediatorService<ReturnFromTransactionMessage> cancelMediator)
-    {
-        PageName = ApplicationPages.Income;
-        _pageComponentFactory = pageComponentFactory;
-        _cancelMediator = cancelMediator;
-
-        _cancelMediator.Subscribe(OnCancelTransaction);
-
-        ActivePageComponent = pageComponentFactory.GetComponentPageViewModel(PageComponents.TransactionList);
-
-        CurrentBalance = userStateService.Balance;
-        _currencyId = userStateService.CurrencyId;
-    }
+    #region PRIVATE METHODS
 
     [RelayCommand]
     private void SwitchMode()
@@ -233,8 +248,5 @@ public partial class IncomeViewModel : PageViewModel, IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        _cancelMediator.Unsubscribe(OnCancelTransaction);
-    }
+    #endregion
 }

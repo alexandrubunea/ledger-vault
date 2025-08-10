@@ -5,10 +5,9 @@ using ledger_vault.ViewModels;
 
 namespace ledger_vault.Services;
 
-public class CoreViewNavigatorService : ObservableObject
+public class CoreViewNavigatorService(CoreViewFactory coreViewFactory, AuthService authService) : ObservableObject
 {
-    private CoreViewModel _currentViewModel = new();
-    private readonly AuthService _authService;
+    #region PUBLIC API
 
     public CoreViewModel CurrentViewModel
     {
@@ -16,22 +15,22 @@ public class CoreViewNavigatorService : ObservableObject
         private set => SetProperty(ref _currentViewModel, value);
     }
 
-    private readonly CoreViewFactory _coreViewFactory;
-
-    public CoreViewNavigatorService(CoreViewFactory coreViewFactory, AuthService authService)
-    {
-        _coreViewFactory = coreViewFactory;
-        _authService = authService;
-    }
-
     public void NavigateTo(CoreViews coreView)
     {
-        if (coreView == CoreViews.Main && !_authService.LoggedIn)
+        if (coreView == CoreViews.Main && !authService.LoggedIn)
         {
-            CurrentViewModel = _coreViewFactory.GetCoreViewModel(CoreViews.Login);
+            CurrentViewModel = coreViewFactory.GetCoreViewModel(CoreViews.Login);
             return;
         }
 
-        CurrentViewModel = _coreViewFactory.GetCoreViewModel(coreView);
+        CurrentViewModel = coreViewFactory.GetCoreViewModel(coreView);
     }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
+    private CoreViewModel _currentViewModel = new();
+
+    #endregion
 }

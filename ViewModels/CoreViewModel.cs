@@ -5,5 +5,9 @@ namespace ledger_vault.ViewModels;
 
 public partial class CoreViewModel : ViewModelBase
 {
+    #region PRIVATE PROPERTIES
+
     [ObservableProperty] private CoreViews _viewModelName;
+
+    #endregion
 }

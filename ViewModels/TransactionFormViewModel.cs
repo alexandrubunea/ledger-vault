@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -34,6 +35,13 @@ public partial class TransactionFormViewModel : PageComponentViewModel
 
         Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(AnyTagExist));
     }
+
+#pragma warning disable
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public TransactionFormViewModel()
+    {
+    }
+#pragma warning restore
 
     #endregion
 

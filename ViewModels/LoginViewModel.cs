@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
@@ -19,6 +20,13 @@ public partial class LoginViewModel : CoreViewModel
         _navigator = navigator;
         _authService = authService;
     }
+
+#pragma warning disable
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public LoginViewModel()
+    {
+    }
+#pragma warning restore
 
     #endregion
 

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ledger_vault.Data;
@@ -28,6 +29,13 @@ public partial class SetupViewModel : CoreViewModel
         _navigator = navigator;
         _userService = userService;
     }
+    
+#pragma warning disable
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public SetupViewModel()
+    {
+    }
+#pragma warning restore
 
     public void NextStep()
     {

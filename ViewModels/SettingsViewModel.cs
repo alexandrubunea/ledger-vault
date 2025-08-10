@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -28,6 +29,13 @@ public partial class SettingsViewModel : PageViewModel
         CurrencyIndex = _userStateService.CurrencyId;
         ThemeIndex = _userStateService.ThemeId;
     }
+
+#pragma warning disable
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public SettingsViewModel()
+    {
+    }
+#pragma warning restore
 
     #endregion
 

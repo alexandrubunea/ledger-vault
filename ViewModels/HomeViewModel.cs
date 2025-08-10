@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ledger_vault.Data;
 using ledger_vault.Services;
@@ -14,6 +15,13 @@ public partial class HomeViewModel : PageViewModel
 
         _userFullName = userStateService.FullUserName;
     }
+
+#pragma warning disable
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public HomeViewModel()
+    {
+    }
+#pragma warning restore
 
     #endregion
 

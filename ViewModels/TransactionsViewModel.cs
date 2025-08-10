@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
@@ -37,6 +38,13 @@ public partial class TransactionsViewModel : PageViewModel, IDisposable
         CurrentBalance = userStateService.Balance;
         _currencyId = userStateService.CurrencyId;
     }
+
+#pragma warning disable
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public TransactionsViewModel()
+    {
+    }
+#pragma warning restore
 
     public void Dispose()
     {

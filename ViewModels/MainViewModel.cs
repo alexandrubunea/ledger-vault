@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ledger_vault.Data;
 using ledger_vault.Factories;
@@ -39,6 +40,13 @@ public partial class MainViewModel : CoreViewModel
         SwitchPageCommand(ApplicationPages.Home);
     }
 
+#pragma warning disable
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public MainViewModel()
+    {
+    }
+#pragma warning restore
+
     public void SwitchPageCommand(ApplicationPages pageName)
     {
         if (CurrentPageViewModel is IDisposable disposable)
@@ -57,7 +65,7 @@ public partial class MainViewModel : CoreViewModel
         if (vm == null)
             throw new NullReferenceException($"{nameof(TransactionsViewModel)} must not be null");
 
-        vm.TransactionType = pageName == ApplicationPages.Income ?  TransactionType.Income : TransactionType.Payment;
+        vm.TransactionType = pageName == ApplicationPages.Income ? TransactionType.Income : TransactionType.Payment;
         CurrentPageViewModel = vm;
     }
 

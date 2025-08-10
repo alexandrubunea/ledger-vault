@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ledger_vault.Data;
 using ledger_vault.Services;
 
@@ -14,6 +15,13 @@ public partial class MainWindowViewModel : ViewModelBase
 
         navigatorService.NavigateTo(dbManager.IsSetup() ? CoreViews.Login : CoreViews.Setup);
     }
+
+#pragma warning disable
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public MainWindowViewModel()
+    {
+    }
+#pragma warning restore
 
     #endregion
 

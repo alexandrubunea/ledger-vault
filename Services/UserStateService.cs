@@ -1,6 +1,8 @@
+using ledger_vault.Data;
+
 namespace ledger_vault.Services;
 
-public class UserStateService(UserService userService)
+public class UserStateService(UserRepository userRepository)
 {
     #region PUBLIC PROPERTIES
 
@@ -15,14 +17,14 @@ public class UserStateService(UserService userService)
 
     public void SaveUserState()
     {
-        userService.UpdateUserName(FullUserName);
-        userService.UpdateUserCurrencyId(CurrencyId);
-        userService.UpdateUserThemeId(ThemeId);
+        userRepository.UpdateUserName(FullUserName);
+        userRepository.UpdateUserCurrencyId(CurrencyId);
+        userRepository.UpdateUserThemeId(ThemeId);
     }
 
     public void SaveUserBalance()
     {
-        userService.UpdateUserBalance(Balance);
+        userRepository.UpdateUserBalance(Balance);
     }
 
     #endregion

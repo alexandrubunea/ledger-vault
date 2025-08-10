@@ -19,7 +19,8 @@ namespace ledger_vault.Services
             collection.AddSingleton<DatabaseManagerService>();
             collection.AddSingleton<AuthService>();
             collection.AddSingleton<HmacService>();
-            collection.AddSingleton<UserService>();
+            collection.AddSingleton<UserRepository>();
+            collection.AddSingleton<TransactionRepository>();
             collection.AddSingleton<TransactionService>();
             collection.AddSingleton(typeof(MediatorService<>));
 

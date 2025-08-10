@@ -22,12 +22,12 @@ public partial class SetupViewModel : CoreViewModel
                                       ConfirmPassword.Length > 0 &&
                                       Password != ConfirmPassword;
 
-    public SetupViewModel(CoreViewNavigatorService navigator, UserService userService)
+    public SetupViewModel(CoreViewNavigatorService navigator, UserRepository userRepository)
     {
         ViewModelName = CoreViews.Setup;
 
         _navigator = navigator;
-        _userService = userService;
+        _userRepository = userRepository;
     }
     
 #pragma warning disable
@@ -56,7 +56,7 @@ public partial class SetupViewModel : CoreViewModel
             return;
         }
 
-        _userService.CreateUser(UserCompleteName, _finalPassword, CurrencyIndex);
+        _userRepository.CreateUser(UserCompleteName, _finalPassword, CurrencyIndex);
 
         StepTwo = false;
         _navigator.NavigateTo(CoreViews.Login);
@@ -67,7 +67,7 @@ public partial class SetupViewModel : CoreViewModel
     #region PRIVATE PROPERTIES
 
     private readonly CoreViewNavigatorService _navigator;
-    private readonly UserService _userService;
+    private readonly UserRepository _userRepository;
 
     [ObservableProperty] private bool _stepOne = true;
     [ObservableProperty] private bool _stepTwo;

@@ -1,6 +1,8 @@
+using ledger_vault.Data;
+
 namespace ledger_vault.Services;
 
-public class UserService(DatabaseManagerService databaseManagerService)
+public class UserRepository(DatabaseManagerService databaseManagerService)
 {
     #region PUBLIC API
 
@@ -27,7 +29,7 @@ public class UserService(DatabaseManagerService databaseManagerService)
 
     public void UpdateUserPassword(string password, string newPassword)
     {
-        if (!CheckUserPassword(password))
+        if (CheckUserPassword(password) != LoginResult.Success)
             return;
 
         using var conn = databaseManagerService.GetConnection();
@@ -83,18 +85,28 @@ public class UserService(DatabaseManagerService databaseManagerService)
         command.ExecuteNonQuery();
     }
 
-    public bool CheckUserPassword(string password)
+    public LoginResult CheckUserPassword(string password)
     {
-        using var conn = databaseManagerService.GetConnection();
-        using var cmd = conn.CreateCommand();
-        cmd.CommandText = "SELECT password FROM user_information LIMIT 1";
+        try
+        {
+            using var conn = databaseManagerService.GetConnection();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT password FROM user_information LIMIT 1";
 
-        using var reader = cmd.ExecuteReader();
-        if (!reader.Read())
-            return false;
+            using var reader = cmd.ExecuteReader();
+            if (!reader.Read())
+                return LoginResult.NoUser;
 
-        string storedHash = reader.GetString(0);
-        return BCrypt.Net.BCrypt.EnhancedVerify(password, storedHash);
+            string storedHash = reader.GetString(0);
+
+            return !BCrypt.Net.BCrypt.EnhancedVerify(password, storedHash)
+                ? LoginResult.WrongPassword
+                : LoginResult.Success;
+        }
+        catch
+        {
+            return LoginResult.DatabaseError;
+        }
     }
 
     public void DeleteAllUserData()
@@ -107,6 +119,23 @@ public class UserService(DatabaseManagerService databaseManagerService)
                               DROP TABLE transactions;
                               """;
         command.ExecuteNonQuery();
+    }
+
+    public UserData? LoadUserState()
+    {
+        using var conn = databaseManagerService.GetConnection();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT full_name, balance, currencyId, themeId FROM user_information LIMIT 1";
+
+        using var reader = cmd.ExecuteReader();
+        if (!reader.Read()) return null;
+
+        return new UserData(
+            reader.GetString(0),
+            reader.GetDecimal(1),
+            reader.GetInt16(2),
+            reader.GetInt16(3)
+        );
     }
 
     #endregion

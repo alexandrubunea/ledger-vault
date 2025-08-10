@@ -26,6 +26,7 @@ public static class DatabaseInitializer
                                             Amount REAL NOT NULL,
                                             Tags TEXT NOT NULL,
                                             ReceiptImage TEXT,
+                                            ReceiptImageHash TEXT,
                                             DateTime TIMESTAMP NOT NULL,
                                             Hash TEXT NOT NULL,
                                             PreviousHash TEXT,

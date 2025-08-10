@@ -19,6 +19,7 @@
         <SolidColorBrush x:Key="PrimaryForeground">#2B2C2E</SolidColorBrush>
         <SolidColorBrush x:Key="SecondaryBackground">#FCF9E3</SolidColorBrush>
         <SolidColorBrush x:Key="SteelGray">#E4E4E4</SolidColorBrush>
+        <SolidColorBrush x:Key="DarkGray">#595959</SolidColorBrush>
         <SolidColorBrush x:Key="SecondGray">#DADADA</SolidColorBrush>
         <SolidColorBrush x:Key="LilacPastel">#7386F7</SolidColorBrush>
         <SolidColorBrush x:Key="DarkLilacPastel">#505EAB</SolidColorBrush>

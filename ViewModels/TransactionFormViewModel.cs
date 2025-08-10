@@ -1,4 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
@@ -19,9 +25,15 @@ public partial class TransactionFormViewModel : PageComponentViewModel
     [ObservableProperty] private decimal _amount = 1;
     [ObservableProperty] private string _tagToAdd = "";
     [ObservableProperty] private ObservableCollection<string> _tags = [];
+    [ObservableProperty] private string _attachmentPath = "";
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(SelectFileButtonContent))]
+    private string _attachmentName = "";
 
     public TransactionType TransactionType { get; set; }
     public bool AnyTagExist => Tags.Count > 0;
+
+    public string SelectFileButtonContent => AttachmentName.Length > 0 ? "Change file" : "Select file";
 
     public TransactionFormViewModel(UserStateService userStateService, TransactionService transactionService,
         MediatorService<ReturnFromTransactionMessage> cancelMediator)
@@ -66,7 +78,8 @@ public partial class TransactionFormViewModel : PageComponentViewModel
         // If the transaction is a payment, the amount is negative
         decimal amount = (TransactionType == TransactionType.Income) ? Amount : -Amount;
 
-        Transaction tx = _transactionService.CreateTransaction(Counterparty, Description, amount, [..Tags], "");
+        Transaction tx =
+            _transactionService.CreateTransaction(Counterparty, Description, amount, [..Tags], AttachmentPath);
 
         _userStateService.Balance += amount;
         _userStateService.SaveUserBalance();
@@ -80,6 +93,59 @@ public partial class TransactionFormViewModel : PageComponentViewModel
     {
         _cancelMediator.Publish(CreateReturnFromTransactionMessage(false, 0));
     }
+
+    [RelayCommand]
+    private async Task SelectFile()
+    {
+        var file = await PickTransactionFileAsync();
+
+        if (file.Count == 0)
+            return;
+
+        AttachmentPath = file[0].TryGetLocalPath() ?? "";
+
+        string name = file[0].Name;
+        AttachmentName = name.Length > 50
+            ? name[..50] + "..."
+            : name;
+    }
+
+    private static async Task<IReadOnlyList<IStorageFile>> PickTransactionFileAsync()
+    {
+        try
+        {
+            var topLevel = TopLevel.GetTopLevel(
+                Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+                    ? desktop.MainWindow
+                    : null);
+
+            if (topLevel?.StorageProvider == null)
+                return [];
+
+            var file = await topLevel.StorageProvider.OpenFilePickerAsync(
+                new FilePickerOpenOptions
+                {
+                    Title = "Attach receipt or invoice",
+                    FileTypeFilter = [ImageAndPdfFiles],
+                    AllowMultiple = false
+                });
+
+            return file;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"File picker error: {ex.Message}");
+            return [];
+        }
+    }
+
+    private static FilePickerFileType ImageAndPdfFiles =>
+        new("Image and PDF Files")
+        {
+            Patterns = ["*.png", "*.jpg", "*.jpeg", "*.pdf"],
+            AppleUniformTypeIdentifiers = ["public.image", "public.pdf"],
+            MimeTypes = ["image/png", "image/jpeg", "application/pdf"]
+        };
 
     private static ReturnFromTransactionMessage CreateReturnFromTransactionMessage(bool confirmed, decimal amount) =>
         new()

@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Security.Cryptography;
+using ledger_vault.Crypto;
 using ledger_vault.Models;
 
 namespace ledger_vault.Services;
@@ -17,11 +20,13 @@ public class TransactionService
     }
 
     public Transaction CreateTransaction(string counterparty, string description, decimal amount, List<string> tags,
-        string receiptImage, uint? reversalOfTransactionId = null)
+        string receiptImagePath, uint? reversalOfTransactionId = null)
     {
         string previousHash = GetLastHash();
-        Transaction tx = Transaction.Create(counterparty, description, amount, tags, receiptImage, previousHash,
-            reversalOfTransactionId);
+        string receiptPath = HandleReceipt(receiptImagePath);
+
+        Transaction tx = Transaction.Create(counterparty, description, amount, tags, receiptPath,
+            previousHash, reversalOfTransactionId);
 
         byte[] signature = _hmacService.ComputeSignature(tx.GetSigningData());
         tx.SetSignature(signature);
@@ -31,6 +36,28 @@ public class TransactionService
         tx = GetLastTransaction();
 
         return tx;
+    }
+
+    private string HandleReceipt(string path)
+    {
+        if (path.Length == 0 || !File.Exists(path))
+            return "";
+
+        string name = Path.GetFileNameWithoutExtension(path);
+        string extension = Path.GetExtension(path);
+        string randomness = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
+        string newName = TransactionHashing.GenerateHash(name + randomness) + extension;
+
+        string attachmentsFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LedgerVault", "attachments");
+        if (!Directory.Exists(attachmentsFolder))
+            Directory.CreateDirectory(attachmentsFolder);
+
+        string newPath = Path.Combine(attachmentsFolder, newName);
+
+        File.Copy(path, newPath);
+
+        return newPath;
     }
 
     private string GetLastHash()
@@ -60,15 +87,17 @@ public class TransactionService
         decimal amount = reader.GetDecimal(3);
         string tagsString = reader.GetString(4);
         string receiptImage = reader.GetString(5);
-        DateTime timestamp = reader.GetDateTime(6);
-        string hash = reader.GetString(7);
-        string previousHash = reader.GetString(8);
-        string signature = reader.GetString(9);
-        uint? reversalOfTransactionId = reader.IsDBNull(10) ? null : (uint)reader.GetInt32(10);
+        string receiptImageHash = reader.GetString(6);
+        DateTime timestamp = reader.GetDateTime(7);
+        string hash = reader.GetString(8);
+        string previousHash = reader.GetString(9);
+        string signature = reader.GetString(10);
+        uint? reversalOfTransactionId = reader.IsDBNull(11) ? null : (uint)reader.GetInt32(11);
 
         List<string> tags = tagsString.Split(",").ToList();
 
-        return Transaction.Load(id, counterparty, description, amount, tags, receiptImage, timestamp, hash,
+        return Transaction.Load(id, counterparty, description, amount, tags, receiptImage, receiptImageHash, timestamp,
+            hash,
             previousHash, signature, reversalOfTransactionId);
     }
 
@@ -81,9 +110,9 @@ public class TransactionService
         try
         {
             command.CommandText = """
-                                    INSERT INTO transactions(counterparty, description, amount, tags, receiptimage, 
+                                    INSERT INTO transactions(counterparty, description, amount, tags, receiptimage, receiptimagehash,
                                                              datetime, hash, previoushash, signature, reversaloftransactionid)
-                                    VALUES(@counterparty, @description, @amount, @tags, @receiptImage, 
+                                    VALUES(@counterparty, @description, @amount, @tags, @receiptImage, @receiptImageHash,
                                            @datetime, @hash, @previousHash, @signature, @reversalOfTransactionId);
                                   """;
 
@@ -92,6 +121,7 @@ public class TransactionService
             command.Parameters.AddWithValue("@amount", transaction.Amount);
             command.Parameters.AddWithValue("@tags", tags);
             command.Parameters.AddWithValue("@receiptImage", transaction.ReceiptImage);
+            command.Parameters.AddWithValue("@receiptImageHash", transaction.ReceiptImageHash);
             command.Parameters.AddWithValue("@datetime", transaction.Timestamp);
             command.Parameters.AddWithValue("@hash", transaction.Hash);
             command.Parameters.AddWithValue("@previousHash", transaction.PreviousHash);
@@ -112,6 +142,7 @@ public class TransactionService
                               Amount: {transaction.Amount}
                               Tags: {tags}
                               Receipt Image: {transaction.ReceiptImage}
+                              Receipt ImageHash: {transaction.ReceiptImageHash}
                               DateTime: {transaction.Timestamp}
                               Hash: {transaction.Hash}
                               Previous Hash: {transaction.PreviousHash}

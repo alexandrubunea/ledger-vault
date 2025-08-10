@@ -40,16 +40,15 @@
                 <StackPanel Margin="0 20 0 0">
                     <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
                            Content="Add tag" />
-                    <StackPanel Orientation="Horizontal" Spacing="20">
-                        <TextBox HorizontalAlignment="Left" CornerRadius="5" Width="300"
-                                 Watermark="E.g: groceries, taxes, debts" Text="{Binding TagToAdd}" />
-                        <Button Classes="action" Command="{Binding AddTagCommand}" Height="35">
+                    <StackPanel Orientation="Horizontal" Spacing="20" Height="50">
+                        <TextBox HorizontalAlignment="Left" CornerRadius="5" Width="300" Height="35"
+                                 Watermark="E.g: groceries, taxes, debts" Text="{Binding TagToAdd}"
+                                 VerticalAlignment="Center" />
+                        <Button Classes="action" Command="{Binding AddTagCommand}" VerticalAlignment="Center">
                             <StackPanel Orientation="Horizontal">
                                 <Label FontSize="15" FontFamily="{DynamicResource Phosphor}"
-                                       VerticalAlignment="Center">
-                                    &#xe3d4;
-                                </Label>
-                                <Label FontSize="11" FontFamily="{DynamicResource PoppinsLight}"
+                                       VerticalAlignment="Center" Content="&#xe3d4;" />
+                                <Label FontSize="15" FontFamily="{DynamicResource PoppinsLight}"
                                        VerticalAlignment="Center" Content="Add tag" />
                             </StackPanel>
                         </Button>
@@ -73,19 +72,39 @@
                                             Foreground="{DynamicResource PrimaryBackground}"
                                             Background="{DynamicResource LilacPastel}"
                                             FontFamily="{DynamicResource Poppins}"
-                                            Classes="action" CornerRadius="5" FontSize="10"
+                                            Classes="action" CornerRadius="5"
                                             Command="{Binding DataContext.RemoveTagCommand, ElementName=RootControl}"
                                             CommandParameter="{Binding}">
                                             <StackPanel Orientation="Horizontal">
                                                 <Label Content="&#xe4f8;"
                                                        FontFamily="{DynamicResource Phosphor}"
-                                                       FontSize="12" Margin="0 2 0 0" />
-                                                <Label Content="{Binding}" VerticalAlignment="Center" />
+                                                       FontSize="12" Margin="0 2 0 0"
+                                                       VerticalAlignment="Center" />
+                                                <Label FontSize="12" Content="{Binding}" VerticalAlignment="Center" />
                                             </StackPanel>
                                         </Button>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Margin="0 20 0 0">
+                        <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                               Content="Attach a receipt or invoice" />
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Button Classes="action" CornerRadius="5" Command="{Binding SelectFileCommand}"
+                                    FontFamily="{DynamicResource PoppinsLight}" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <Label FontFamily="{DynamicResource Phosphor}"
+                                           FontSize="15" Margin="0 2 0 0" Content="&#xe23a;" VerticalAlignment="Center" />
+                                    <Label FontSize="15" VerticalAlignment="Center"
+                                           Content="{Binding SelectFileButtonContent}" />
+                                </StackPanel>
+                            </Button>
+                            <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="15"
+                                   Content="{Binding AttachmentName}" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource DarkGray}" FontStyle="Italic" />
                         </StackPanel>
                     </StackPanel>
 

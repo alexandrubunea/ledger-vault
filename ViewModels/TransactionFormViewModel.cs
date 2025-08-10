@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -61,6 +62,13 @@ public partial class TransactionFormViewModel : PageComponentViewModel
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(SelectFileButtonContent))]
     private string _attachmentName = "";
 
+    [ObservableProperty] private bool _invalidTag;
+    [ObservableProperty] private bool _invalidCounterparty;
+    [ObservableProperty] private bool _invalidDescription;
+
+    [GeneratedRegex(@"^[a-zA-Z0-9]+$")]
+    private static partial Regex AlphaNumericalRegex();
+
     #endregion
 
     #region PRIVATE METHODS
@@ -68,9 +76,11 @@ public partial class TransactionFormViewModel : PageComponentViewModel
     [RelayCommand]
     private void AddTag()
     {
-        // TODO: Check if tags contains only valid alphanumerical chars, if not, show an error
+        InvalidTag = !AlphaNumericalRegex().IsMatch(TagToAdd);
+        if (InvalidTag)
+            return;
+        
         string lowercaseTag = TagToAdd.ToLower();
-
         if (lowercaseTag.Length == 0 || Tags.Contains(lowercaseTag))
             return;
 
@@ -87,10 +97,10 @@ public partial class TransactionFormViewModel : PageComponentViewModel
     [RelayCommand]
     private void AddTransaction()
     {
-        // TODO: Add warning messages when empty
-        if (Counterparty.Length == 0)
-            return;
-        if (Description.Length == 0)
+        InvalidCounterparty = Counterparty.Length == 0;
+        InvalidDescription = Description.Length == 0;
+        
+        if (InvalidCounterparty || InvalidDescription)
             return;
 
         // If the transaction is a payment, the amount is negative

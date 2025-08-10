@@ -18,16 +18,22 @@
                 <Grid ColumnDefinitions="Auto, Auto, Auto" Margin="0 20 0 0" ColumnSpacing="50">
                     <StackPanel Grid.Column="0">
                         <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
-                               Content="Transaction counterparty" />
+                               Content="Transaction counterparty *" />
                         <TextBox HorizontalAlignment="Left" CornerRadius="5" Width="300" Height="35"
                                  Watermark="E.g: Acme Corp, Electric Utility Co, Contoso Ltd"
                                  Text="{Binding Counterparty}" />
+                        <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="12"
+                               Content="* This field is required." Foreground="{DynamicResource SweetRed}"
+                               IsVisible="{Binding InvalidCounterparty}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1">
                         <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
-                               Content="Transaction description" />
+                               Content="Transaction description *" />
                         <TextBox HorizontalAlignment="Left" CornerRadius="5" Width="300" Height="35"
                                  Watermark="E.g: phone bill from 5th july" Text="{Binding Description}" />
+                        <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="12"
+                               Content="* This field is required." Foreground="{DynamicResource SweetRed}"
+                               IsVisible="{Binding InvalidDescription}" />
                     </StackPanel>
                     <StackPanel Grid.Column="2">
                         <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
@@ -41,9 +47,16 @@
                     <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
                            Content="Add tag" />
                     <StackPanel Orientation="Horizontal" Spacing="20" Height="50">
-                        <TextBox HorizontalAlignment="Left" CornerRadius="5" Width="300" Height="35"
-                                 Watermark="E.g: groceries, taxes, debts" Text="{Binding TagToAdd}"
-                                 VerticalAlignment="Center" />
+                        <StackPanel>
+                            <TextBox HorizontalAlignment="Left" CornerRadius="5" Width="300" Height="35"
+                                     Watermark="E.g: groceries, taxes, debts" Text="{Binding TagToAdd}"
+                                     VerticalAlignment="Center" />
+                            <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="12"
+                                   Content="Tags can only be letters and numbers."
+                                   Foreground="{DynamicResource SweetRed}"
+                                   IsVisible="{Binding InvalidTag}" />
+                        </StackPanel>
+
                         <Button Classes="action" Command="{Binding AddTagCommand}" VerticalAlignment="Center">
                             <StackPanel Orientation="Horizontal">
                                 <Label FontSize="15" FontFamily="{DynamicResource Phosphor}"

@@ -8,8 +8,10 @@
              x:DataType="vm:MainViewModel"
              Background="{DynamicResource PrimaryBackground}"
              Foreground="{DynamicResource PrimaryForeground}">
-    
-    <Design.DataContext><vm:MainViewModel /></Design.DataContext>
+
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
 
     <Grid ColumnDefinitions="Auto, *">
         <!-- Sidebar -->
@@ -17,7 +19,7 @@
             <!-- Logo -->
             <StackPanel Background="{DynamicResource SteelGray}">
                 <Image Source="{SvgImage /Assets/Images/LedgerVaultLogo.svg}"
-                       Width="170" Margin="20"/>
+                       Width="170" Margin="20" />
             </StackPanel>
 
             <!-- Menu -->
@@ -82,7 +84,8 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-
-        <ContentControl Grid.Column="1" Content="{Binding CurrentPageViewModel}" />
+        <ScrollViewer Grid.Column="1">
+            <ContentControl Content="{Binding CurrentPageViewModel}" />
+        </ScrollViewer>
     </Grid>
 </UserControl>

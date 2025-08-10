@@ -3,14 +3,13 @@
         xmlns:vm="using:ledger_vault.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="500"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
         x:Class="ledger_vault.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="Ledger Vault"
-        Height="720"
-        Width="1280"
+        MinHeight="720"
+        MinWidth="1280"
         WindowStartupLocation="CenterScreen"
-        CanResize="False"
         Icon="avares://ledger-vault/Assets/app.ico">
 
     <Design.DataContext>

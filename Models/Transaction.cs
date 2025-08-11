@@ -22,6 +22,10 @@ public class Transaction
     public string Signature { get; private set; }
     public uint? ReversalOfTransactionId { get; private set; }
 
+    // Not database related properties
+    public bool HashVerified { get; set; }
+    public bool SignatureVerified { get; set; }
+
     #endregion
 
     #region PUBLIC API

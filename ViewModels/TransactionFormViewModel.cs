@@ -26,7 +26,7 @@ public partial class TransactionFormViewModel : PageComponentViewModel
     public string SelectFileButtonContent => AttachmentName.Length > 0 ? "Change file" : "Select file";
 
     public TransactionFormViewModel(UserStateService userStateService, TransactionService transactionService,
-        MediatorService<ReturnFromTransactionMessage> cancelMediator)
+        MediatorService<ReturnFromTransactionFormMessage> cancelMediator)
     {
         PageComponentName = PageComponents.TransactionForm;
 
@@ -50,7 +50,7 @@ public partial class TransactionFormViewModel : PageComponentViewModel
 
     private readonly TransactionService _transactionService;
     private readonly UserStateService _userStateService;
-    private readonly MediatorService<ReturnFromTransactionMessage> _cancelMediator;
+    private readonly MediatorService<ReturnFromTransactionFormMessage> _cancelMediator;
 
     [ObservableProperty] private string _counterparty = "";
     [ObservableProperty] private string _description = "";
@@ -79,7 +79,7 @@ public partial class TransactionFormViewModel : PageComponentViewModel
         InvalidTag = !AlphaNumericalRegex().IsMatch(TagToAdd);
         if (InvalidTag)
             return;
-        
+
         string lowercaseTag = TagToAdd.ToLower();
         if (lowercaseTag.Length == 0 || Tags.Contains(lowercaseTag))
             return;
@@ -99,7 +99,7 @@ public partial class TransactionFormViewModel : PageComponentViewModel
     {
         InvalidCounterparty = Counterparty.Length == 0;
         InvalidDescription = Description.Length == 0;
-        
+
         if (InvalidCounterparty || InvalidDescription)
             return;
 
@@ -113,13 +113,13 @@ public partial class TransactionFormViewModel : PageComponentViewModel
         _userStateService.SaveUserBalance();
 
         // Return to the list
-        _cancelMediator.Publish(CreateReturnFromTransactionMessage(true, amount));
+        _cancelMediator.Publish(CreateReturnFromTransactionMessage(true, amount, tx));
     }
 
     [RelayCommand]
     private void CancelTransaction()
     {
-        _cancelMediator.Publish(CreateReturnFromTransactionMessage(false, 0));
+        _cancelMediator.Publish(CreateReturnFromTransactionMessage(false, 0, null));
     }
 
     [RelayCommand]
@@ -175,11 +175,13 @@ public partial class TransactionFormViewModel : PageComponentViewModel
             MimeTypes = ["image/png", "image/jpeg", "application/pdf"]
         };
 
-    private static ReturnFromTransactionMessage CreateReturnFromTransactionMessage(bool confirmed, decimal amount) =>
+    private static ReturnFromTransactionFormMessage CreateReturnFromTransactionMessage(bool confirmed, decimal amount,
+        Transaction? tx) =>
         new()
         {
             TransactionConfirmed = confirmed,
-            TransactionAmount = amount
+            TransactionAmount = amount,
+            Transaction = tx
         };
 
     #endregion

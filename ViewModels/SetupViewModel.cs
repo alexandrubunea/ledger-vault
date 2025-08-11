@@ -29,7 +29,7 @@ public partial class SetupViewModel : CoreViewModel
         _navigator = navigator;
         _userRepository = userRepository;
     }
-    
+
 #pragma warning disable
     [EditorBrowsable(EditorBrowsableState.Never)]
     public SetupViewModel()

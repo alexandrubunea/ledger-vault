@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia.Threading;
 using ledger_vault.Crypto;
 using ledger_vault.Models;
 
 namespace ledger_vault.Services;
 
-public class TransactionService(TransactionRepository transactionRepository, HmacService hmacService)
+public class TransactionService(
+    TransactionCacheService transactionCacheService,
+    TransactionRepository transactionRepository,
+    TransactionLoader transactionLoader,
+    HmacService hmacService)
 {
     #region PUBLIC API
 
@@ -30,6 +37,56 @@ public class TransactionService(TransactionRepository transactionRepository, Hma
 
         return tx;
     }
+
+    public async Task<List<Transaction>> GetTransactionsAsync()
+    {
+        try
+        {
+            await RefreshCache();
+            return transactionCacheService.GetCachedTransactions();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error getting transactions", ex);
+        }
+    }
+
+    public async Task AddTransaction(Transaction transaction)
+    {
+        try
+        {
+            if (!transactionCacheService.IsCacheValid())
+            {
+                // Transactions need to be queried from the database again
+                // It's not needed to add the transaction anymore
+                // because it's stored already in the database
+                await RefreshCache();
+                return;
+            }
+
+            Transaction lastTransaction = transactionCacheService.GetCachedTransactions().Last();
+            transaction.HashVerified = transaction.PreviousHash == lastTransaction.Hash &&
+                                       lastTransaction.HashVerified &&
+                                       await TransactionHashing.VerifyHashAsync(transaction, CancellationToken.None) &&
+                                       await TransactionHashing.VerifyFileHashAsync(transaction,
+                                           CancellationToken.None);
+
+            transaction.SignatureVerified = await hmacService.VerifySignatureAsync(transaction.GetSigningData(),
+                System.Text.Encoding.UTF8.GetBytes(transaction.Signature), CancellationToken.None);
+
+            transactionCacheService.AddTransaction(transaction);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error adding transaction", ex);
+        }
+    }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
+    private readonly SemaphoreSlim _refreshSemaphore = new(1, 1);
 
     #endregion
 
@@ -55,6 +112,25 @@ public class TransactionService(TransactionRepository transactionRepository, Hma
         File.Copy(path, newPath);
 
         return newPath;
+    }
+
+    private async Task RefreshCache()
+    {
+        await _refreshSemaphore.WaitAsync();
+        try
+        {
+            if (transactionCacheService.IsCacheValid())
+                return;
+
+            transactionCacheService.InvalidateCache();
+
+            List<Transaction> transactions = await transactionLoader.LoadAndVerifyTransactionsAsync();
+            transactionCacheService.SetCache(transactions);
+        }
+        finally
+        {
+            _refreshSemaphore.Release();
+        }
     }
 
     #endregion

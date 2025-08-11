@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace ledger_vault.Services;
@@ -21,9 +23,9 @@ public class HmacService
         return hmac.ComputeHash(data);
     }
 
-    public bool VerifySignature(byte[] data, byte[] signature)
+    public async Task<bool> VerifySignatureAsync(byte[] data, byte[] signature, CancellationToken ct)
     {
-        var computed = ComputeSignature(data);
+        var computed = await ComputeSignatureAsync(data, ct);
         return CryptographicOperations.FixedTimeEquals(computed, signature);
     }
 
@@ -43,6 +45,17 @@ public class HmacService
     #endregion
 
     #region PRIVATE METHODS
+
+    private Task<byte[]> ComputeSignatureAsync(byte[] data, CancellationToken ct)
+    {
+        return Task.Run(() =>
+        {
+            ct.ThrowIfCancellationRequested();
+
+            using var hmac = new HMACSHA256(_hmacKey);
+            return hmac.ComputeHash(data);
+        }, ct);
+    }
 
     private void LoadOrGenerateKey()
     {

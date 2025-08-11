@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ledger_vault.Data;
 using ledger_vault.Factories;
+using ledger_vault.Services;
 
 namespace ledger_vault.ViewModels;
 
@@ -32,9 +34,15 @@ public partial class MainViewModel : CoreViewModel
 
     #region PUBLIC API
 
-    public MainViewModel(PageFactory pageFactory)
+    public MainViewModel(PageFactory pageFactory, TransactionService transactionService)
     {
         ViewModelName = CoreViews.Main;
+
+        // Start getting transactions before user starts using the app
+        Task.Run(async () =>
+        {
+            await transactionService.GetTransactionsAsync();
+        });
 
         _pageFactory = pageFactory;
         SwitchPageCommand(ApplicationPages.Home);

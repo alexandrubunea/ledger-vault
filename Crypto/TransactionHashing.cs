@@ -1,8 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using ledger_vault.Models;
 
 namespace ledger_vault.Crypto;
@@ -31,6 +32,9 @@ public static class TransactionHashing
 
     public static string GenerateFileHash(string filePath)
     {
+        if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+            return "";
+
         using SHA256 sha256 = SHA256.Create();
         using FileStream stream = File.OpenRead(filePath);
         byte[] hashBytes = sha256.ComputeHash(stream);
@@ -38,54 +42,42 @@ public static class TransactionHashing
         return Convert.ToHexString(hashBytes);
     }
 
-    public static bool VerifyTransactions(List<Transaction> transactions)
-    {
-        return IterateTransactions(transactions, 1, transactions.Count);
-    }
+    public static async Task<bool> VerifyHashAsync(Transaction tx, CancellationToken ct) =>
+        tx.Hash.Length > 0 && tx.Hash == await GenerateHashAsync(tx.Hash, ct);
 
-    public static bool VerifyRecentTransactions(List<Transaction> transactions, int windowSize = 100)
-    {
-        int start = Math.Max(1, transactions.Count - windowSize);
-
-        return IterateTransactions(transactions, start, transactions.Count);
-    }
+    public static async Task<bool> VerifyFileHashAsync(Transaction tx, CancellationToken ct) =>
+        tx.ReceiptImageHash.Length > 0 && tx.ReceiptImageHash ==
+        await GenerateFileHashAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "attachments", tx.ReceiptImage), ct);
 
     #endregion
 
     #region PRIVATE METHODS
 
-    private static bool VerifyImageHash(Transaction tx) =>
-        tx.ReceiptImageHash.Length > 0 && tx.ReceiptImageHash == GenerateHash(tx.ReceiptImage);
-
-    private static bool IterateTransactions(List<Transaction> transactions, int start, int stop)
+    private static Task<string> GenerateHashAsync(string input, CancellationToken ct = default)
     {
-        if (start < 1 || stop > transactions.Count)
-            throw new ArgumentOutOfRangeException(nameof(start));
-
-        if (!VerifyImageHash(transactions[start - 1]))
-            return false;
-
-        for (int i = start; i < stop; i++)
+        return Task.Run(() =>
         {
-            Transaction currentTx = transactions[i];
-            Transaction previousTx = transactions[i - 1];
+            ct.ThrowIfCancellationRequested();
 
-            if (!VerifyChainBetweenTransactions(currentTx, previousTx))
-                return false;
+            using SHA256 sha256 = SHA256.Create();
+            byte[] bytes = Encoding.UTF8.GetBytes(input);
+            byte[] hashBytes = sha256.ComputeHash(bytes);
 
-            if (!VerifyImageHash(currentTx))
-                return false;
-        }
-
-        return true;
+            return Convert.ToHexString(hashBytes);
+        }, ct);
     }
 
-    private static bool VerifyChainBetweenTransactions(Transaction transactionA, Transaction transactionB)
+    private static async Task<string> GenerateFileHashAsync(string filePath, CancellationToken ct)
     {
-        if (transactionA.PreviousHash != transactionB.Hash)
-            return false;
+        if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+            return "";
 
-        return GenerateHash(transactionA) == transactionA.Hash;
+        using SHA256 sha256 = SHA256.Create();
+        await using var stream = File.OpenRead(filePath);
+        byte[] hashBytes = await sha256.ComputeHashAsync(stream, ct);
+
+        return Convert.ToHexString(hashBytes);
     }
 
     private static string GenerateInput(Transaction transaction)

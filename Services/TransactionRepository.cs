@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using ledger_vault.Models;
+using Microsoft.Data.Sqlite;
 
 namespace ledger_vault.Services;
 
@@ -20,6 +23,26 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
         return reader.Read() ? reader.GetString(0) : "";
     }
 
+    public async IAsyncEnumerable<Transaction> StreamTransactionsAsync(
+        [EnumeratorCancellation] CancellationToken ct = default)
+    {
+        await using var conn = databaseManagerService.GetConnection();
+        await using var cmd = conn.CreateCommand();
+
+        cmd.CommandText = "SELECT * FROM transactions ORDER BY id DESC;";
+        await using var reader = await cmd.ExecuteReaderAsync(ct);
+
+        while (await reader.ReadAsync(ct))
+        {
+            Transaction? tx = ExtractTransactionFromReader(reader);
+
+            if (tx == null)
+                throw new Exception("Could not read transaction");
+
+            yield return tx;
+        }
+    }
+
     public Transaction GetLastTransaction()
     {
         using var conn = databaseManagerService.GetConnection();
@@ -30,23 +53,12 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
         if (!reader.Read())
             throw new Exception("No transaction found");
 
-        uint id = (uint)reader.GetInt32(0);
-        string counterparty = reader.GetString(1);
-        string description = reader.GetString(2);
-        decimal amount = reader.GetDecimal(3);
-        string tagsString = reader.GetString(4);
-        string receiptImage = reader.GetString(5);
-        string receiptImageHash = reader.GetString(6);
-        DateTime timestamp = reader.GetDateTime(7);
-        string hash = reader.GetString(8);
-        string previousHash = reader.GetString(9);
-        string signature = reader.GetString(10);
-        uint? reversalOfTransactionId = reader.IsDBNull(11) ? null : (uint)reader.GetInt32(11);
+        Transaction? tx = ExtractTransactionFromReader(reader);
 
-        List<string> tags = tagsString.Split(",").ToList();
+        if (tx == null)
+            throw new Exception("Could not read transaction");
 
-        return Transaction.Load(id, counterparty, description, amount, tags, receiptImage, receiptImageHash, timestamp,
-            hash, previousHash, signature, reversalOfTransactionId);
+        return tx;
     }
 
     public void SaveTransaction(Transaction transaction)
@@ -100,6 +112,43 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
                               """;
             throw new Exception(message);
         }
+    }
+
+    #endregion
+
+    #region PRIVATE METHODS
+
+    // I don't think this should be used with any other database
+    // If this is the case, maybe implement the same function for different readers
+    private Transaction? ExtractTransactionFromReader(SqliteDataReader reader)
+    {
+        try
+        {
+            uint id = (uint)reader.GetInt32(0);
+            string counterparty = reader.GetString(1);
+            string description = reader.GetString(2);
+            decimal amount = reader.GetDecimal(3);
+            string tagsString = reader.GetString(4);
+            string receiptImage = reader.GetString(5);
+            string receiptImageHash = reader.GetString(6);
+            DateTime timestamp = reader.GetDateTime(7);
+            string hash = reader.GetString(8);
+            string previousHash = reader.GetString(9);
+            string signature = reader.GetString(10);
+            uint? reversalOfTransactionId = reader.IsDBNull(11) ? null : (uint)reader.GetInt32(11);
+
+            List<string> tags = tagsString.Split(",").ToList();
+
+            return Transaction.Load(id, counterparty, description, amount, tags, receiptImage, receiptImageHash,
+                timestamp,
+                hash, previousHash, signature, reversalOfTransactionId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error reading transaction: {ex.Message}");
+        }
+
+        return null;
     }
 
     #endregion

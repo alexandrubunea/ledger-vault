@@ -25,13 +25,15 @@ public partial class TransactionsViewModel : PageViewModel, IDisposable
     public string PageTitle => TransactionType == TransactionType.Income ? "Your income" : "Your payments";
 
     public TransactionsViewModel(UserStateService userStateService, PageComponentFactory pageComponentFactory,
-        MediatorService<ReturnFromTransactionMessage> cancelMediator)
+        MediatorService<ReturnFromTransactionFormMessage> formMediator,
+        MediatorService<AddToTransactionListMessage> addToTransactionListMediator)
     {
         PageName = ApplicationPages.Transaction;
         _pageComponentFactory = pageComponentFactory;
-        _cancelMediator = cancelMediator;
+        _formMediator = formMediator;
+        _addToTransactionListMediator = addToTransactionListMediator;
 
-        _cancelMediator.Subscribe(OnCancelTransaction);
+        _formMediator.Subscribe(OnCancelTransaction);
 
         ActivePageComponent = pageComponentFactory.GetComponentPageViewModel(PageComponents.TransactionList);
 
@@ -48,7 +50,7 @@ public partial class TransactionsViewModel : PageViewModel, IDisposable
 
     public void Dispose()
     {
-        _cancelMediator.Unsubscribe(OnCancelTransaction);
+        _formMediator.Unsubscribe(OnCancelTransaction);
     }
 
     #endregion
@@ -223,7 +225,8 @@ public partial class TransactionsViewModel : PageViewModel, IDisposable
     ];
 
     private readonly PageComponentFactory _pageComponentFactory;
-    private readonly MediatorService<ReturnFromTransactionMessage> _cancelMediator;
+    private readonly MediatorService<ReturnFromTransactionFormMessage> _formMediator;
+    private readonly MediatorService<AddToTransactionListMessage> _addToTransactionListMediator;
 
     [ObservableProperty] private PageComponentViewModel _activePageComponent;
 
@@ -254,14 +257,20 @@ public partial class TransactionsViewModel : PageViewModel, IDisposable
             transactionsList.TransactionType = TransactionType;
     }
 
-    private void OnCancelTransaction(ReturnFromTransactionMessage message)
+    private void OnCancelTransaction(ReturnFromTransactionFormMessage formMessage)
     {
         ShowIncomeMode = true;
         ActivePageComponent = _pageComponentFactory.GetComponentPageViewModel(PageComponents.TransactionList);
 
-        if (message.TransactionConfirmed)
+        if (formMessage.TransactionConfirmed)
         {
-            CurrentBalance += message.TransactionAmount;
+            CurrentBalance += formMessage.TransactionAmount;
+
+            if (formMessage.Transaction != null)
+                return;
+
+            _addToTransactionListMediator.Publish(new AddToTransactionListMessage
+                { Transaction = formMessage.Transaction });
         }
     }
 

@@ -23,9 +23,9 @@ public class HmacService
         return hmac.ComputeHash(data);
     }
 
-    public async Task<bool> VerifySignatureAsync(byte[] data, byte[] signature, CancellationToken ct)
+    public bool VerifySignature(byte[] data, byte[] signature)
     {
-        var computed = await ComputeSignatureAsync(data, ct);
+        var computed = ComputeSignature(data);
         return CryptographicOperations.FixedTimeEquals(computed, signature);
     }
 
@@ -45,17 +45,6 @@ public class HmacService
     #endregion
 
     #region PRIVATE METHODS
-
-    private Task<byte[]> ComputeSignatureAsync(byte[] data, CancellationToken ct)
-    {
-        return Task.Run(() =>
-        {
-            ct.ThrowIfCancellationRequested();
-
-            using var hmac = new HMACSHA256(_hmacKey);
-            return hmac.ComputeHash(data);
-        }, ct);
-    }
 
     private void LoadOrGenerateKey()
     {

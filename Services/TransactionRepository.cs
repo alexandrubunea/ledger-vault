@@ -140,12 +140,11 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
             List<string> tags = tagsString.Split(",").ToList();
 
             return Transaction.Load(id, counterparty, description, amount, tags, receiptImage, receiptImageHash,
-                timestamp,
-                hash, previousHash, signature, reversalOfTransactionId);
+                timestamp, previousHash, hash, signature, reversalOfTransactionId);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error reading transaction: {ex.Message}");
+            throw new Exception($"Error reading transaction: {ex.Message}");
         }
 
         return null;

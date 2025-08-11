@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using ledger_vault.Crypto;
 
@@ -63,8 +64,12 @@ public class Transaction
 
     public byte[] GetSigningData()
     {
-        string tags = string.Join(", ", Tags);
-        string data = $"{Id}{Counterparty}{Description}{Amount}{Timestamp}{tags}{ReceiptImage}{ReceiptImageHash}";
+        string tags = string.Join(",", Tags);
+        string amountString = Amount.ToString("0.########", CultureInfo.InvariantCulture);
+        string timestampString = Timestamp.ToString("M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+        string data =
+            $"{Counterparty}{Description}{amountString}{timestampString}{tags}{ReceiptImage}{ReceiptImageHash}";
 
         return System.Text.Encoding.UTF8.GetBytes(data);
     }

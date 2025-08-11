@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -18,7 +19,7 @@ public static class TransactionHashing
         byte[] bytes = Encoding.UTF8.GetBytes(GenerateInput(transaction));
         byte[] hashBytes = sha256.ComputeHash(bytes);
 
-        return BitConverter.ToString(hashBytes).Replace("-", "");
+        return Convert.ToHexString(hashBytes);
     }
 
     public static string GenerateHash(string input)
@@ -43,27 +44,34 @@ public static class TransactionHashing
     }
 
     public static async Task<bool> VerifyHashAsync(Transaction tx, CancellationToken ct) =>
-        tx.Hash.Length > 0 && tx.Hash == await GenerateHashAsync(tx.Hash, ct);
+        tx.Hash.Length > 0 && tx.Hash == await GenerateHashAsync(tx, ct);
 
-    public static async Task<bool> VerifyFileHashAsync(Transaction tx, CancellationToken ct) =>
-        tx.ReceiptImageHash.Length > 0 && tx.ReceiptImageHash ==
-        await GenerateFileHashAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "attachments", tx.ReceiptImage), ct);
+    public static async Task<bool> VerifyFileHashAsync(Transaction tx, CancellationToken ct)
+    {
+        if (string.IsNullOrEmpty(tx.ReceiptImage))
+            return true;
+
+        var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "attachments", tx.ReceiptImage);
+
+        var expectedHash = await GenerateFileHashAsync(filePath, ct);
+        return tx.ReceiptImageHash.Equals(expectedHash, StringComparison.OrdinalIgnoreCase);
+    }
 
     #endregion
 
     #region PRIVATE METHODS
 
-    private static Task<string> GenerateHashAsync(string input, CancellationToken ct = default)
+    private static Task<string> GenerateHashAsync(Transaction tx, CancellationToken ct = default)
     {
         return Task.Run(() =>
         {
             ct.ThrowIfCancellationRequested();
 
             using SHA256 sha256 = SHA256.Create();
-            byte[] bytes = Encoding.UTF8.GetBytes(input);
+            byte[] bytes = Encoding.UTF8.GetBytes(GenerateInput(tx));
             byte[] hashBytes = sha256.ComputeHash(bytes);
-
+            
             return Convert.ToHexString(hashBytes);
         }, ct);
     }
@@ -83,9 +91,12 @@ public static class TransactionHashing
     private static string GenerateInput(Transaction transaction)
     {
         string tags = string.Join(",", transaction.Tags);
+        string amountString = transaction.Amount.ToString("0.########", CultureInfo.InvariantCulture);
+        string timestampString = transaction.Timestamp.ToString("M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
         string input =
-            $"{transaction.Counterparty}{transaction.Description}{transaction.Amount}{tags}{transaction.ReceiptImage}" +
-            $"{transaction.ReceiptImageHash}{transaction.PreviousHash}{transaction.ReversalOfTransactionId}{transaction.Timestamp}";
+            $"{transaction.Counterparty}{transaction.Description}{amountString}{tags}{transaction.ReceiptImage}" +
+            $"{transaction.ReceiptImageHash}{transaction.PreviousHash}{transaction.ReversalOfTransactionId}{timestampString}";
 
         return input;
     }

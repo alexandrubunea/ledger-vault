@@ -30,8 +30,7 @@ public class TransactionLoader(TransactionRepository transactionRepository, Hmac
                                   await TransactionHashing.VerifyFileHashAsync(tx, ct);
 
                 tx.SignatureVerified =
-                    await hmacService.VerifySignatureAsync(tx.GetSigningData(),
-                        System.Text.Encoding.UTF8.GetBytes(tx.Signature), ct);
+                    hmacService.VerifySignature(tx.GetSigningData(), Convert.FromBase64String(tx.Signature));
 
                 verifiedTransactions.Add(tx);
             }
@@ -59,10 +58,18 @@ public class TransactionLoader(TransactionRepository transactionRepository, Hmac
 
     private void VerifyChain(List<Transaction> transactions)
     {
+        bool brokenChain = false;
+
         for (int i = 1; i < transactions.Count; i++)
         {
-            if (transactions[i - 1].HashVerified)
-                transactions[i].HashVerified = transactions[i].Hash == transactions[i - 1].Hash;
+            if (brokenChain)
+            {
+                transactions[i].HashVerified = false;
+                continue;
+            }
+
+            if (!(transactions[i - 1].HashVerified && transactions[i].PreviousHash == transactions[i - 1].Hash))
+                brokenChain = true;
         }
     }
 

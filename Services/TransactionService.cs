@@ -71,8 +71,8 @@ public class TransactionService(
                                        await TransactionHashing.VerifyFileHashAsync(transaction,
                                            CancellationToken.None);
 
-            transaction.SignatureVerified = await hmacService.VerifySignatureAsync(transaction.GetSigningData(),
-                System.Text.Encoding.UTF8.GetBytes(transaction.Signature), CancellationToken.None);
+            transaction.SignatureVerified = hmacService.VerifySignature(transaction.GetSigningData(),
+                Convert.FromBase64String(transaction.Signature));
 
             transactionCacheService.AddTransaction(transaction);
         }

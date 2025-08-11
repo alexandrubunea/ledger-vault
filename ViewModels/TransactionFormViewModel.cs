@@ -162,8 +162,7 @@ public partial class TransactionFormViewModel : PageComponentViewModel
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"File picker error: {ex.Message}");
-            return [];
+            throw new Exception($"File picker error: {ex.Message}");
         }
     }
 

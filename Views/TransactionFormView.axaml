@@ -6,7 +6,8 @@
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.TransactionFormView"
              x:DataType="vm:TransactionFormViewModel"
-             x:Name="RootControl">
+             x:Name="RootControl"
+             Unloaded="OnUnloaded">
     <Design.DataContext>
         <vm:TransactionFormViewModel />
     </Design.DataContext>

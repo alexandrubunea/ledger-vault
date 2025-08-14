@@ -52,7 +52,7 @@ public static class TransactionHashing
             return true;
 
         var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "attachments", tx.ReceiptImage);
+            "LedgerVault", "attachments", tx.ReceiptImage);
 
         var expectedHash = await GenerateFileHashAsync(filePath, ct);
         return tx.ReceiptImageHash.Equals(expectedHash, StringComparison.OrdinalIgnoreCase);

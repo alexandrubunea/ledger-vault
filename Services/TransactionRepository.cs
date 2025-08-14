@@ -146,8 +146,6 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
         {
             throw new Exception($"Error reading transaction: {ex.Message}");
         }
-
-        return null;
     }
 
     #endregion

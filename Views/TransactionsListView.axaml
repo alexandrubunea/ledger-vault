@@ -3,8 +3,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ledger_vault.ViewModels"
+             xmlns:view="using:ledger_vault.Views"
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.TransactionsListView"
-             x:DataType="vm:TransactionsListViewModel">
-    list of transactions
+             x:DataType="vm:TransactionsListViewModel"
+             Unloaded="OnUnloaded">
+    <Design.DataContext>
+        <vm:TransactionsListViewModel />
+    </Design.DataContext>
+    <StackPanel>
+        <ItemsControl ItemsSource="{Binding Transactions}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <view:TransactionView Margin="0 20 0 0" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
 </UserControl>

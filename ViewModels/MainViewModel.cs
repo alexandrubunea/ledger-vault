@@ -4,11 +4,12 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ledger_vault.Data;
 using ledger_vault.Factories;
+using ledger_vault.Messaging;
 using ledger_vault.Services;
 
 namespace ledger_vault.ViewModels;
 
-public partial class MainViewModel : CoreViewModel
+public partial class MainViewModel : CoreViewModel, IDisposable
 {
     #region PUBLIC PROPERTIES
 
@@ -16,12 +17,12 @@ public partial class MainViewModel : CoreViewModel
 
     public bool IncomePageIsActive => CurrentPageViewModel is TransactionsViewModel
     {
-        TransactionType: TransactionType.Income
+        CurrentTransactionType: TransactionType.Income
     };
 
     public bool PaymentsPageIsActive => CurrentPageViewModel is TransactionsViewModel
     {
-        TransactionType: TransactionType.Payment
+        CurrentTransactionType: TransactionType.Payment
     };
 
     public bool CashFlowPageIsActive => CurrentPageViewModel is CashFlowViewModel;
@@ -34,18 +35,25 @@ public partial class MainViewModel : CoreViewModel
 
     #region PUBLIC API
 
-    public MainViewModel(PageFactory pageFactory, TransactionService transactionService)
+    public MainViewModel(PageFactory pageFactory, TransactionService transactionService,
+        MediatorService<UpdateSidebarMessage> updateSidebarMessageService)
     {
         ViewModelName = CoreViews.Main;
 
         // Start getting transactions before user starts using the app
-        Task.Run(async () =>
-        {
-            await transactionService.GetTransactionsAsync();
-        });
+        Task.Run(async () => { await transactionService.GetTransactionsAsync(); });
 
         _pageFactory = pageFactory;
+        _updateSidebarMessage = updateSidebarMessageService;
+
+        _updateSidebarMessage.Subscribe(OnSidebarUpdate);
+
         SwitchPageCommand(ApplicationPages.Home);
+    }
+
+    public void Dispose()
+    {
+        _updateSidebarMessage.Unsubscribe(OnSidebarUpdate);
     }
 
 #pragma warning disable
@@ -73,7 +81,11 @@ public partial class MainViewModel : CoreViewModel
         if (vm == null)
             throw new NullReferenceException($"{nameof(TransactionsViewModel)} must not be null");
 
-        vm.TransactionType = pageName == ApplicationPages.Income ? TransactionType.Income : TransactionType.Payment;
+        vm.CurrentTransactionType =
+            pageName == ApplicationPages.Income ? TransactionType.Income : TransactionType.Payment;
+
+        vm.SetActivePageComponent(PageComponents.TransactionList);
+
         CurrentPageViewModel = vm;
     }
 
@@ -82,6 +94,7 @@ public partial class MainViewModel : CoreViewModel
     #region PRIVATE PROPERTIES
 
     private readonly PageFactory _pageFactory;
+    private readonly MediatorService<UpdateSidebarMessage> _updateSidebarMessage;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HomePageIsActive))]
@@ -93,6 +106,20 @@ public partial class MainViewModel : CoreViewModel
     [NotifyPropertyChangedFor(nameof(BackupsPageIsActive))]
     [NotifyPropertyChangedFor(nameof(SettingsPageIsActive))]
     private PageViewModel _currentPageViewModel = new();
+
+    #endregion
+
+    #region PRIVATE METHODS
+
+    private void OnSidebarUpdate(UpdateSidebarMessage message)
+    {
+        // Read the comment in UpdateSidebarMessage.cs to understand the necessity of this mediator.
+        if (CurrentPageViewModel is not TransactionsViewModel vm) return;
+
+        vm.CurrentTransactionType = message.TransactionType;
+        OnPropertyChanged(nameof(IncomePageIsActive));
+        OnPropertyChanged(nameof(PaymentsPageIsActive));
+    }
 
     #endregion
 }

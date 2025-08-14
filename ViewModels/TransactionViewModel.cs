@@ -1,79 +1,63 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.Input;
-using ledger_vault.Data;
-using ledger_vault.Factories;
-using ledger_vault.Messaging;
 using ledger_vault.Models;
-using ledger_vault.Services;
 
 namespace ledger_vault.ViewModels;
 
-public partial class TransactionsViewModel : PageViewModel, IDisposable
+public partial class TransactionViewModel(Transaction transaction, int currencyId, Action<Transaction> reverseTransactionAction)
 {
-    #region PUBLIC PROPERTIES
+    #region PUBLIC API
 
-    public TransactionType CurrentTransactionType { get; set; }
+    public string GetFormattedTitle =>
+        transaction.Counterparty + " — " + Math.Abs(transaction.Amount) + " " + Currencies[currencyId][..3];
+
+    public string GetFormattedTimestamp => transaction.Timestamp.ToString("dd MMM yyyy HH:mm:ss");
+    public string Description => transaction.Description;
+    public string FormattedTags => string.Join(", ", transaction.Tags);
+    public bool DoesHaveAttachment => transaction.ReceiptImage.Length > 0;
+    public bool IsNotReversedPayment => transaction.ReversalOfTransactionId == null;
 
     #endregion
 
-    #region PUBLIC API
+    #region PRIVATE METHODS
 
-    public string GetCurrency => Currencies[_currencyId][..3];
-    public string GetFormattedBalance => CurrentBalance.ToString("N");
-    public string PageTitle => CurrentTransactionType == TransactionType.Income ? "Your income" : "Your payments";
-
-    public TransactionsViewModel(UserStateService userStateService, PageComponentFactory pageComponentFactory,
-        MediatorService<ReturnFromTransactionFormMessage> formMediator,
-        MediatorService<AddToTransactionListMessage> addToTransactionListMediator,
-        MediatorService<ReverseTransactionMessage> reverseTransactionMediator,
-        MediatorService<UpdateSidebarMessage> updateSidebarMediator)
+    [RelayCommand]
+    private void OpenAttachment()
     {
-        PageName = ApplicationPages.Transaction;
-        _pageComponentFactory = pageComponentFactory;
-        _formMediator = formMediator;
-        _addToTransactionListMediator = addToTransactionListMediator;
-        _reverseTransactionMediator = reverseTransactionMediator;
-        _sidebarUpdateMediator = updateSidebarMediator;
+        if (transaction.ReceiptImage.Length == 0)
+            return;
 
-        _formMediator.Subscribe(OnCancelTransaction);
-        _reverseTransactionMediator.Subscribe(OnReverseTransaction);
+        var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "LedgerVault", "attachments", transaction.ReceiptImage);
+        
+        if (!File.Exists(filePath))
+            return;
 
-        CurrentBalance = userStateService.Balance;
-        _currencyId = userStateService.CurrencyId;
+        // Windows
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+
+        // Linux
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            Process.Start("xdg-open", filePath);
+
+        // macOS (not tested)
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            Process.Start("open", filePath);
+
+        else
+            throw new PlatformNotSupportedException("Unsupported OS");
     }
 
-    public void SetActivePageComponent(PageComponents pageComponent)
+    [RelayCommand]
+    private void ReverseTransaction()
     {
-        PageComponentViewModel? vm = pageComponent == PageComponents.TransactionList
-            ? _pageComponentFactory.GetComponentPageViewModel(PageComponents.TransactionList) as
-                TransactionsListViewModel
-            : _pageComponentFactory.GetComponentPageViewModel(PageComponents.TransactionForm) as
-                TransactionFormViewModel;
-        if (vm == null)
-            throw new NullReferenceException($"{nameof(TransactionFormViewModel)} is null");
-
-        vm.CurrentTransactionType = CurrentTransactionType;
-
-        ActivePageComponent = vm;
+        reverseTransactionAction.Invoke(transaction);
     }
-
-    public void Dispose()
-    {
-        _formMediator.Unsubscribe(OnCancelTransaction);
-        _reverseTransactionMediator.Unsubscribe(OnReverseTransaction);
-    }
-
-#pragma warning disable
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public TransactionsViewModel()
-    {
-    }
-#pragma warning restore
 
     #endregion
 
@@ -245,79 +229,6 @@ public partial class TransactionsViewModel : PageViewModel, IDisposable
         "ZMW - Zambian Kwacha",
         "ZWL - Zimbabwean Dollar"
     ];
-
-    private readonly PageComponentFactory _pageComponentFactory;
-    private readonly MediatorService<ReturnFromTransactionFormMessage> _formMediator;
-    private readonly MediatorService<AddToTransactionListMessage> _addToTransactionListMediator;
-    private readonly MediatorService<ReverseTransactionMessage> _reverseTransactionMediator;
-    private readonly MediatorService<UpdateSidebarMessage> _sidebarUpdateMediator;
-
-    [ObservableProperty] private PageComponentViewModel? _activePageComponent;
-
-    [ObservableProperty] private bool _showIncomeMode = true;
-
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(GetFormattedBalance))]
-    private decimal _currentBalance;
-
-    private readonly short _currencyId;
-
-    #endregion
-
-    #region PRIVATE METHODS
-
-    [RelayCommand]
-    private void SwitchMode()
-    {
-        ShowIncomeMode = !ShowIncomeMode;
-
-        SetActivePageComponent(ShowIncomeMode ? PageComponents.TransactionList : PageComponents.TransactionForm);
-    }
-
-    private void OnCancelTransaction(ReturnFromTransactionFormMessage formMessage)
-    {
-        ShowIncomeMode = true;
-        SetActivePageComponent(PageComponents.TransactionList);
-
-        if (!formMessage.TransactionConfirmed) return;
-        CurrentBalance += formMessage.TransactionAmount;
-
-        if (formMessage.Transaction == null)
-            return;
-
-        _addToTransactionListMediator.Publish(new AddToTransactionListMessage
-            { Transaction = formMessage.Transaction });
-    }
-
-    private void OnReverseTransaction(ReverseTransactionMessage reverseTransactionMessage)
-    {
-        if (reverseTransactionMessage.Transaction == null)
-            return;
-
-        Transaction tx = reverseTransactionMessage.Transaction;
-
-        TransactionFormViewModel? form =
-            _pageComponentFactory.GetComponentPageViewModel(PageComponents.TransactionForm) as TransactionFormViewModel;
-        if (form == null)
-            return;
-
-        form.Description =
-            $"Reverse of transaction #{tx.Id}. From counterparty: {tx.Counterparty}. Made at: {tx.Timestamp:dd MMM yyyy HH:mm:ss}. Amount: {tx.Amount}";
-
-        form.Counterparty = tx.Counterparty;
-        form.Tags = new ObservableCollection<string>(tx.Tags);
-        form.ReverseTransactionId = tx.Id;
-        form.Amount = Math.Abs(tx.Amount);
-
-        ShowIncomeMode = false;
-        CurrentTransactionType = CurrentTransactionType == TransactionType.Income
-            ? TransactionType.Payment
-            : TransactionType.Income;
-        form.CurrentTransactionType = CurrentTransactionType;
-
-        ActivePageComponent = form;
-        _sidebarUpdateMediator.Publish(new UpdateSidebarMessage { TransactionType = CurrentTransactionType });
-        OnPropertyChanged(nameof(PageTitle));
-    }
 
     #endregion
 }

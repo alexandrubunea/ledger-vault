@@ -46,7 +46,7 @@ public class TransactionLoader(TransactionRepository transactionRepository, Hmac
 
         await Task.WhenAll(workers);
 
-        List<Transaction> ordered = verifiedTransactions.OrderBy(t => t.Id).ToList();
+        List<Transaction> ordered = verifiedTransactions.OrderByDescending(t => t.Id).ToList();
         VerifyChain(ordered);
 
         return ordered;

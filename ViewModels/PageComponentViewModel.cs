@@ -8,6 +8,7 @@ public partial class PageComponentViewModel : ViewModelBase
     #region PRIVATE PROPERTIES
 
     [ObservableProperty] private PageComponents _pageComponentName;
+    [ObservableProperty] private TransactionType _currentTransactionType;
 
     #endregion
 }

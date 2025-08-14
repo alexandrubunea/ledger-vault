@@ -12,4 +12,12 @@ public partial class TransactionFormView : UserControl
     {
         InitializeComponent();
     }
+
+    private void OnUnloaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+    }
 }

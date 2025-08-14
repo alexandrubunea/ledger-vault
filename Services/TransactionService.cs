@@ -64,7 +64,8 @@ public class TransactionService(
                 return;
             }
 
-            Transaction lastTransaction = transactionCacheService.GetCachedTransactions().Last();
+            Transaction lastTransaction =
+                transactionCacheService.GetCachedTransactions().First(); // Assuming that is ordered desc by id
             transaction.HashVerified = transaction.PreviousHash == lastTransaction.Hash &&
                                        lastTransaction.HashVerified &&
                                        await TransactionHashing.VerifyHashAsync(transaction, CancellationToken.None) &&

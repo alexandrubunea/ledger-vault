@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -9,5 +10,13 @@ public partial class TransactionsListView : UserControl
     public TransactionsListView()
     {
         InitializeComponent();
+    }
+
+    private void OnUnloaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
     }
 }

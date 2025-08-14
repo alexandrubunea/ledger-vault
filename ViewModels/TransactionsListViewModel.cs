@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using ledger_vault.Data;
 using ledger_vault.Messaging;
 using ledger_vault.Models;
@@ -12,28 +15,59 @@ public class TransactionsListViewModel : PageComponentViewModel, IDisposable
 {
     #region PUBLIC PROPERTIES
 
-    public TransactionType TransactionType { get; set; }
-
-    public ObservableCollection<Transaction> Transactions { get; private set; } = [];
+    public ObservableCollection<TransactionViewModel> Transactions { get; private set; } = [];
 
     #endregion
 
     #region PUBLIC API
 
     public TransactionsListViewModel(TransactionService transactionService,
-        MediatorService<AddToTransactionListMessage> addToListMediator)
+        MediatorService<AddToTransactionListMessage> addToListMediator,
+        MediatorService<ReverseTransactionMessage> reverseTransactionMediator,
+        UserStateService userStateService)
     {
         PageComponentName = PageComponents.TransactionList;
         _transactionService = transactionService;
         _addToListMediator = addToListMediator;
+        _reverseTransactionMediator = reverseTransactionMediator;
+        _userStateService = userStateService;
 
-        Task.Run(async () =>
+        // Loading transactions
+        _ = Task.Run(async () =>
         {
-            Transactions = new ObservableCollection<Transaction>(await transactionService.GetTransactionsAsync());
+            try
+            {
+                List<Transaction> transactions = await _transactionService.GetTransactionsAsync();
+
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    Transactions.Clear();
+                    foreach (Transaction tx in transactions)
+                    {
+                        if ((CurrentTransactionType == TransactionType.Income && tx.Amount <= 0) ||
+                            (CurrentTransactionType == TransactionType.Payment && tx.Amount > 0))
+                            continue;
+
+                        var vm = new TransactionViewModel(tx, _userStateService.CurrencyId, ReverseTransaction);
+                        Transactions.Add(vm);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in transaction list", ex);
+            }
         });
 
         _addToListMediator.Subscribe(OnSuccessfulTransaction);
     }
+
+#pragma warning disable
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public TransactionsListViewModel()
+    {
+    }
+#pragma warning restore
 
     public void Dispose()
     {
@@ -46,6 +80,8 @@ public class TransactionsListViewModel : PageComponentViewModel, IDisposable
 
     private readonly TransactionService _transactionService;
     private readonly MediatorService<AddToTransactionListMessage> _addToListMediator;
+    private readonly UserStateService _userStateService;
+    private readonly MediatorService<ReverseTransactionMessage> _reverseTransactionMediator;
 
     #endregion
 
@@ -56,8 +92,29 @@ public class TransactionsListViewModel : PageComponentViewModel, IDisposable
         if (message.Transaction == null)
             return;
 
-        Task.Run(async () => { await _transactionService.AddTransaction(message.Transaction); });
-        Transactions.Add(message.Transaction);
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await _transactionService.AddTransaction(message.Transaction);
+
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    var newTransactionViewModel = new TransactionViewModel(message.Transaction,
+                        _userStateService.CurrencyId, ReverseTransaction);
+                    Transactions.Insert(0, newTransactionViewModel);
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error while adding transaction", ex);
+            }
+        });
+    }
+
+    private void ReverseTransaction(Transaction transaction)
+    {
+        _reverseTransactionMediator.Publish(new ReverseTransactionMessage { Transaction = transaction });
     }
 
     #endregion

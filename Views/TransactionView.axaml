@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ledger_vault.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="150"
+             x:Class="ledger_vault.Views.TransactionView"
+             x:DataType="vm:TransactionViewModel">
+    <Border CornerRadius="5" HorizontalAlignment="Center" Width="800" MinHeight="150"
+            Background="{DynamicResource SecondaryBackground}" Padding="10">
+        <StackPanel>
+            <Grid ColumnDefinitions="*, *">
+                <StackPanel Grid.Column="0">
+                    <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="24"
+                               Text="{Binding GetFormattedTitle}" TextWrapping="Wrap" />
+                    <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="13"
+                               Text="{Binding GetFormattedTimestamp}" TextWrapping="Wrap"
+                               Foreground="{DynamicResource DarkGray}" />
+                    <StackPanel Margin="0, 5, 0, 0">
+                        <Grid RowDefinitions="50, *">
+                            <TextBlock Grid.Row="0" FontFamily="{DynamicResource Poppins}" FontSize="15"
+                                       Text="{Binding Description}" TextWrapping="Wrap" />
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                                <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="12" Text="Tags: " />
+                                <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="12"
+                                           Text="{Binding FormattedTags}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Spacing="10">
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Classes="actionSecondary"
+                            FontFamily="{DynamicResource PoppinsLight}" CornerRadius="5"
+                            Content="Reverse transaction" IsVisible="{Binding IsNotReversedPayment}"
+                            Command="{Binding ReverseTransactionCommand}" />
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Classes="action"
+                            FontFamily="{DynamicResource PoppinsLight}" CornerRadius="5"
+                            Content="See Receipt/Invoice" IsVisible="{Binding DoesHaveAttachment}"
+                            Command="{Binding OpenAttachmentCommand}" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

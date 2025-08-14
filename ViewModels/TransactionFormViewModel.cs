@@ -20,7 +20,7 @@ public partial class TransactionFormViewModel : PageComponentViewModel
 {
     #region PUBLIC API
 
-    public TransactionType TransactionType { get; set; }
+    public uint? ReverseTransactionId { get; set; }
     public bool AnyTagExist => Tags.Count > 0;
 
     public string SelectFileButtonContent => AttachmentName.Length > 0 ? "Change file" : "Select file";
@@ -104,10 +104,11 @@ public partial class TransactionFormViewModel : PageComponentViewModel
             return;
 
         // If the transaction is a payment, the amount is negative
-        decimal amount = (TransactionType == TransactionType.Income) ? Amount : -Amount;
+        decimal amount = (CurrentTransactionType == TransactionType.Income) ? Amount : -Amount;
 
         Transaction tx =
-            _transactionService.CreateTransaction(Counterparty, Description, amount, [..Tags], AttachmentPath);
+            _transactionService.CreateTransaction(Counterparty, Description, amount, [..Tags], AttachmentPath,
+                ReverseTransactionId);
 
         _userStateService.Balance += amount;
         _userStateService.SaveUserBalance();

@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
 using ledger_vault.Messaging;
 using ledger_vault.Models;
@@ -12,11 +14,11 @@ using ledger_vault.Services;
 
 namespace ledger_vault.ViewModels;
 
-public class TransactionsListViewModel : PageComponentViewModel, IDisposable
+public partial class TransactionsListViewModel : PageComponentViewModel, IDisposable
 {
     #region PUBLIC PROPERTIES
 
-    public ObservableCollection<TransactionViewModel> Transactions { get; private set; } = [];
+    public ObservableCollection<TransactionViewModel> TransactionsOnPage { get; private set; } = [];
 
     #endregion
 
@@ -38,6 +40,11 @@ public class TransactionsListViewModel : PageComponentViewModel, IDisposable
         _addToListMediator.Subscribe(OnSuccessfulTransaction);
     }
 
+    public void Dispose()
+    {
+        _addToListMediator.Unsubscribe(OnSuccessfulTransaction);
+    }
+
 #pragma warning disable
     [EditorBrowsable(EditorBrowsableState.Never)]
     public TransactionsListViewModel()
@@ -45,10 +52,10 @@ public class TransactionsListViewModel : PageComponentViewModel, IDisposable
     }
 #pragma warning restore
 
-    public void Dispose()
-    {
-        _addToListMediator.Unsubscribe(OnSuccessfulTransaction);
-    }
+    public ObservableCollection<TransactionViewModel> GetCurrentPageContent =>
+        new(_transactions.Skip(TransactionsPerPage * (CurrentPage - 1)).Take(TransactionsPerPage).ToList());
+
+    public int NumberOfPages => (int)Math.Ceiling((double)_transactions.Count / TransactionsPerPage);
 
     #endregion
 
@@ -59,9 +66,33 @@ public class TransactionsListViewModel : PageComponentViewModel, IDisposable
     private readonly UserStateService _userStateService;
     private readonly MediatorService<ReverseTransactionMessage> _reverseTransactionMediator;
 
+    private readonly List<TransactionViewModel> _transactions = [];
+    private const int TransactionsPerPage = 5;
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(GetCurrentPageContent))]
+    private int _currentPage = 1;
+
     #endregion
 
     #region PRIVATE METHODS
+
+    [RelayCommand]
+    private void NextPage()
+    {
+        if (CurrentPage + 1 > NumberOfPages)
+            return;
+
+        CurrentPage += 1;
+    }
+
+    [RelayCommand]
+    private void PreviousPage()
+    {
+        if (CurrentPage - 1 <= 0)
+            return;
+
+        CurrentPage -= 1;
+    }
 
     private void OnSuccessfulTransaction(AddToTransactionListMessage message)
     {
@@ -88,13 +119,11 @@ public class TransactionsListViewModel : PageComponentViewModel, IDisposable
         {
             try
             {
-                // This will improve when pagination will be implemented.
-                // Then only a limited number of elements will be iterated and displayed.
                 List<Transaction> transactions = await _transactionService.GetTransactionsAsync();
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    Transactions.Clear();
+                    _transactions.Clear();
                     foreach (Transaction tx in Enumerable.Reverse(transactions))
                     {
                         if ((CurrentTransactionType == TransactionType.Income && tx.Amount <= 0) ||
@@ -102,8 +131,10 @@ public class TransactionsListViewModel : PageComponentViewModel, IDisposable
                             continue;
 
                         var vm = new TransactionViewModel(tx, _userStateService.CurrencyId, ReverseTransaction);
-                        Transactions.Add(vm);
+                        _transactions.Add(vm);
                     }
+
+                    OnPropertyChanged(nameof(GetCurrentPageContent));
                 });
             }
             catch (Exception ex)

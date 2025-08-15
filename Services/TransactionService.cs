@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +36,11 @@ public class TransactionService(
         transactionRepository.SaveTransaction(tx);
 
         tx = transactionRepository.GetLastTransaction();
+
+        if (tx.ReversalOfTransactionId == null)
+            return tx;
+
+        transactionRepository.AddReverseRelation(tx);
 
         return tx;
     }
@@ -90,6 +97,18 @@ public class TransactionService(
             if (hmacService.VerifySignature(transaction.GetSigningData(),
                     Convert.FromBase64String(transaction.Signature)))
                 transaction.SignatureVerifiedStatus = SignatureStatus.Valid;
+
+            if (transaction.ReversalOfTransactionId.HasValue)
+            {
+                Transaction txToSearch = new Transaction((uint)transaction.ReversalOfTransactionId);
+                
+                // Maybe in the future use a Map for O(1), but consider the fact that is more memory consuming
+                // and the Transaction object is pretty big already, balance the performance
+                int index = transactionCacheService.GetCachedTransactions().BinarySearch(txToSearch);
+
+                if (index >= 0)
+                    transactionCacheService.GetCachedTransactions()[index].SetIsReverted(true);
+            }
 
             transactionCacheService.AddTransaction(transaction);
         }

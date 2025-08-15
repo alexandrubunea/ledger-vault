@@ -24,7 +24,7 @@ public partial class TransactionViewModel(
     public string FormattedTags => string.Join(", ", transaction.Tags);
     public bool DoesHaveTags => !String.IsNullOrEmpty(FormattedTags);
     public bool DoesHaveAttachment => transaction.ReceiptImage.Length > 0;
-    public bool IsNotReversedPayment => transaction.ReversalOfTransactionId == null;
+    public bool IsNotReversedPayment => transaction.ReversalOfTransactionId == null && !transaction.IsReverted;
     public bool IsTransactionHashValid => transaction.HashVerifiedStatus == HashStatus.Valid;
     public bool IsTransactionHashBrokenChain => transaction.HashVerifiedStatus == HashStatus.BrokenChain;
     public bool IsTransactionHashInvalid => transaction.HashVerifiedStatus == HashStatus.Invalid;

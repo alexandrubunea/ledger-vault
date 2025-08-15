@@ -11,14 +11,14 @@ public static class DatabaseInitializer
 
         using var command = connection.CreateCommand();
         command.CommandText = """
-                                          CREATE TABLE IF NOT EXISTS user_information (
-                                              id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                              full_name TEXT NOT NULL,
-                                              currencyId INTEGER NOT NULL,
-                                              themeId INTEGER NOT NULL,
-                                              balance REAL NOT NULL DEFAULT 0,
-                                              password TEXT NOT NULL
-                                          );
+                                        CREATE TABLE IF NOT EXISTS user_information (
+                                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            full_name TEXT NOT NULL,
+                                            currencyId INTEGER NOT NULL,
+                                            themeId INTEGER NOT NULL,
+                                            balance REAL NOT NULL DEFAULT 0,
+                                            password TEXT NOT NULL
+                                        );
                                         CREATE TABLE IF NOT EXISTS transactions (
                                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                                             Counterparty TEXT NOT NULL,
@@ -34,6 +34,14 @@ public static class DatabaseInitializer
                                             ReversalOfTransactionId INTEGER,
                                             
                                             FOREIGN KEY (ReversalOfTransactionId) REFERENCES transactions(id)
+                                        );
+                                        CREATE TABLE IF NOT EXISTS reversed_transactions (
+                                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            TransactionId INTEGER NOT NULL,
+                                            ReversedByTransactionId INTEGER NOT NULL,
+                                            
+                                            FOREIGN KEY (TransactionId) REFERENCES transactions(id),
+                                            FOREIGN KEY (ReversedByTransactionId) REFERENCES transactions(id)
                                         );
                               """;
         command.ExecuteNonQuery();

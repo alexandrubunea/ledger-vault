@@ -7,7 +7,7 @@ using ledger_vault.Data;
 
 namespace ledger_vault.Models;
 
-public class Transaction
+public class Transaction : IComparable<Transaction>
 {
     #region PUBLIC PROPERTIES
 
@@ -23,6 +23,7 @@ public class Transaction
     public string PreviousHash { get; private set; }
     public string Signature { get; private set; }
     public uint? ReversalOfTransactionId { get; private set; }
+    public bool IsReverted { get; private set; }
 
     // Not database related properties
     public HashStatus HashVerifiedStatus { get; set; } = HashStatus.InProgress;
@@ -31,7 +32,27 @@ public class Transaction
     #endregion
 
     #region PUBLIC API
+    
+    /// <summary>
+    /// Creates a dummy transaction.
+    /// Example when needed: trying to binary search an id in a ordered list of transactions.
+    /// USE WITH CAUTION.
+    /// </summary>
+    /// <param name="id">id of the transaction, should be an already existing id</param>
+    public Transaction(uint id)
+    {
+        Id = id;
 
+        Counterparty = string.Empty;
+        Description = string.Empty;
+        Tags = [];
+        ReceiptImage = string.Empty;
+        ReceiptImageHash = string.Empty;
+        Hash = string.Empty;
+        PreviousHash = string.Empty;
+        Signature = string.Empty;
+    }
+    
     public static Transaction Create(string counterparty, string description, decimal amount, List<string> tags,
         string receiptImagePath, string previousHash, uint? reversalOfTransactionId = null)
     {
@@ -54,11 +75,10 @@ public class Transaction
 
     public static Transaction Load(uint id, string counterparty, string description, decimal amount, List<string> tags,
         string receiptImage, string receiptImageHash, DateTime timestamp, string previousHash, string hash,
-        string signature,
-        uint? reversalOfTransactionId = null)
+        string signature, bool isReverted, uint? reversalOfTransactionId = null)
     {
         Transaction tx = new Transaction(id, counterparty, description, amount, tags, receiptImage, receiptImageHash,
-            previousHash, timestamp, hash, signature, reversalOfTransactionId);
+            previousHash, timestamp, hash, signature, isReverted, reversalOfTransactionId);
 
         return tx;
     }
@@ -82,6 +102,25 @@ public class Transaction
 
         Signature = Convert.ToBase64String(signature);
     }
+
+    public void SetIsReverted(bool isReverted)
+    {
+        if (_isRevertedSetOnce) return;
+
+        _isRevertedSetOnce = true;
+        IsReverted = isReverted;
+    }
+
+    public int CompareTo(Transaction? other)
+    {
+        return other == null ? 1 : Id.CompareTo(other.Id);
+    }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
+    private bool _isRevertedSetOnce = false;
 
     #endregion
 
@@ -108,7 +147,7 @@ public class Transaction
     // Constructor for existing transaction in the database
     private Transaction(uint id, string counterparty, string description, decimal amount, List<string> tags,
         string receiptImage, string receiptImageHash, string previousHash, DateTime timestamp, string hash,
-        string signature, uint? reversalOfTransactionId = null)
+        string signature, bool isReverted, uint? reversalOfTransactionId = null)
     {
         Id = id;
         Counterparty = counterparty;
@@ -119,6 +158,7 @@ public class Transaction
         ReceiptImageHash = receiptImageHash;
         PreviousHash = previousHash;
         ReversalOfTransactionId = reversalOfTransactionId;
+        IsReverted = isReverted;
         Timestamp = timestamp;
         Signature = signature;
         Hash = hash;

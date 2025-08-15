@@ -12,7 +12,7 @@
         <vm:TransactionsListViewModel />
     </Design.DataContext>
     <StackPanel>
-        <ItemsControl ItemsSource="{Binding Transactions}">
+        <ItemsControl ItemsSource="{Binding Transactions}" Margin="0 20">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <view:TransactionView Margin="0 20 0 0" />

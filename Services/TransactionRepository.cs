@@ -29,7 +29,16 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
         await using var conn = databaseManagerService.GetConnection();
         await using var cmd = conn.CreateCommand();
 
-        cmd.CommandText = "SELECT * FROM transactions ORDER BY id DESC;";
+        cmd.CommandText = """
+                          SELECT
+                            t.*,
+                            CASE WHEN rt.TransactionId IS NOT NULL THEN 1 ELSE 0 END AS is_reverted
+                          FROM
+                            transactions AS t
+                          LEFT JOIN
+                            reversed_transactions AS rt ON t.id = rt.TransactionId
+                          ORDER BY t.id;
+                          """;
         await using var reader = await cmd.ExecuteReaderAsync(ct);
 
         while (await reader.ReadAsync(ct))
@@ -48,7 +57,19 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
         using var conn = databaseManagerService.GetConnection();
         using var cmd = conn.CreateCommand();
 
-        cmd.CommandText = @"SELECT * FROM transactions ORDER BY id DESC LIMIT 1;";
+        cmd.CommandText = """
+                          SELECT
+                            t.*,
+                            CASE WHEN rt.TransactionId IS NOT NULL THEN 1 ELSE 0 END AS is_reverted
+                          FROM
+                            transactions AS t
+                          LEFT JOIN
+                            reversed_transactions AS rt ON t.id = rt.TransactionId
+                          ORDER BY
+                            t.id DESC
+                          LIMIT 1;
+                          """;
+
         using var reader = cmd.ExecuteReader();
         if (!reader.Read())
             throw new Exception("No transaction found");
@@ -59,6 +80,35 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
             throw new Exception("Could not read transaction");
 
         return tx;
+    }
+
+    public void AddReverseRelation(Transaction transaction)
+    {
+        if (transaction.ReversalOfTransactionId == null)
+            return;
+
+        using var conn = databaseManagerService.GetConnection();
+        using var command = conn.CreateCommand();
+
+        uint? transactionId = transaction.ReversalOfTransactionId;
+        uint reversedByTransactionId = transaction.Id;
+
+        try
+        {
+            command.CommandText = """
+                                  INSERT INTO reversed_transactions(TransactionId, reversedByTransactionId)
+                                  VALUES(@transactionId, @reversedByTransactionId);
+                                  """;
+
+            command.Parameters.AddWithValue("@transactionId", transactionId);
+            command.Parameters.AddWithValue("@reversedByTransactionId", reversedByTransactionId);
+
+            command.ExecuteNonQuery();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Could not add reverse relation", ex);
+        }
     }
 
     public void SaveTransaction(Transaction transaction)
@@ -136,11 +186,12 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
             string previousHash = reader.GetString(9);
             string signature = reader.GetString(10);
             uint? reversalOfTransactionId = reader.IsDBNull(11) ? null : (uint)reader.GetInt32(11);
+            bool isReverted = !reader.IsDBNull(12) && reader.GetBoolean(12);
 
             List<string> tags = tagsString.Split(",").ToList();
 
             return Transaction.Load(id, counterparty, description, amount, tags, receiptImage, receiptImageHash,
-                timestamp, previousHash, hash, signature, reversalOfTransactionId);
+                timestamp, previousHash, hash, signature, isReverted, reversalOfTransactionId);
         }
         catch (Exception ex)
         {

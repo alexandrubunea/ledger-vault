@@ -112,11 +112,11 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Spacing="10">
-                    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Classes="actionSecondary"
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Classes="actionSecondaryNoMotion"
                             FontFamily="{DynamicResource PoppinsLight}" CornerRadius="5"
                             Content="Reverse transaction" IsVisible="{Binding IsNotReversedPayment}"
                             Command="{Binding ReverseTransactionCommand}" />
-                    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Classes="action"
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Classes="actionNoMotion"
                             FontFamily="{DynamicResource PoppinsLight}" CornerRadius="5"
                             Content="See Receipt/Invoice" IsVisible="{Binding DoesHaveAttachment}"
                             Command="{Binding OpenAttachmentCommand}" />

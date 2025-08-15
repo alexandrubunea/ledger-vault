@@ -70,7 +70,7 @@
     <Style Selector="Button.sidebar:pressed /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource DarkLilacPastel}" />
     </Style>
-    
+
     <Style Selector="Button.sidebar.active_sidebar">
         <Setter Property="Background" Value="{DynamicResource DarkLilacPastel}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
@@ -109,7 +109,43 @@
         <Setter Property="Background" Value="{DynamicResource NightLilacPastel}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
     </Style>
-    
+
+    <!-- Action Button No Motion -->
+    <Style Selector="Button.actionNoMotion">
+        <Setter Property="FontFamily" Value="{DynamicResource Poppins}" />
+        <Setter Property="Background" Value="{DynamicResource LilacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+
+    </Style>
+    <Style Selector="Button.actionNoMotion:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DarkLilacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.actionNoMotion:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource NightLilacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+    </Style>
+
+    <!-- Action Button No Motion + Lilac Border -->
+    <Style Selector="Button.actionNoMotionBorder">
+        <Setter Property="FontFamily" Value="{DynamicResource Poppins}" />
+        <Setter Property="Background" Value="{DynamicResource LilacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LilacPastel}" />
+    </Style>
+    <Style Selector="Button.actionNoMotionBorder:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DarkLilacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LilacPastel}" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.actionNoMotionBorder:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource NightLilacPastel}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LilacPastel}" />
+    </Style>
+
     <!-- Secondary Action Button -->
     <Style Selector="Button.actionSecondary">
         <Setter Property="FontFamily" Value="{DynamicResource Poppins}" />
@@ -118,13 +154,30 @@
 
     </Style>
     <Style Selector="Button.actionSecondary:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource RedSunset}" />
+        <Setter Property="Background" Value="{DynamicResource BleachedRed}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="RenderTransform" Value="scale(0.9)" />
     </Style>
     <Style Selector="Button.actionSecondary:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DarkWine}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+    </Style>
+
+    <!-- Secondary Action Button No Motion -->
+    <Style Selector="Button.actionSecondaryNoMotion">
+        <Setter Property="FontFamily" Value="{DynamicResource Poppins}" />
+        <Setter Property="Background" Value="{DynamicResource SweetRed}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+
+    </Style>
+    <Style Selector="Button.actionSecondaryNoMotion:pointerover /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource BleachedRed}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.actionSecondaryNoMotion:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DarkWine}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
     </Style>
 </Styles>

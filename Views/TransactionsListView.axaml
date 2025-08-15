@@ -12,6 +12,16 @@
         <vm:TransactionsListViewModel />
     </Design.DataContext>
     <StackPanel>
+        <Grid ColumnDefinitions="Auto, *" HorizontalAlignment="Center" Width="800" Margin="0 20 0 0">
+            <TextBox Grid.Column="0" Width="750" HorizontalAlignment="Left" FontFamily="{DynamicResource PoppinsLight}"
+                     FontSize="24" Margin="0" CornerRadius="5 0 0 5"
+                     BorderThickness="1 1 0 1" Watermark="Search by: counterparty, description, tags"
+                     Text="{Binding SearchInput}" />
+            <Button Grid.Column="1" Classes="actionNoMotion" CornerRadius="0 5 5 0"
+                    FontFamily="{DynamicResource Phosphor}" Margin="-2 0 0 0"
+                    FontSize="36" Content="&#xe30c;" BorderBrush="{DynamicResource LilacPastel}" Width="50"
+                    Command="{Binding FilterTransactionsCommand}" />
+        </Grid>
         <ItemsControl ItemsSource="{Binding GetCurrentPageContent}" Margin="0 20">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -22,7 +32,7 @@
         <Border CornerRadius="5" Background="{DynamicResource SecondaryBackground}"
                 Padding="20" Width="800" Margin="0 0 0 20">
             <StackPanel Orientation="Horizontal" Spacing="15" HorizontalAlignment="Center">
-                <Button Classes="actionSecondary" FontFamily="{DynamicResource Phosphor}" FontSize="35"
+                <Button Classes="actionSecondaryNoMotion" FontFamily="{DynamicResource Phosphor}" FontSize="35"
                         Content="&#xe120;" CornerRadius="5" Foreground="{DynamicResource PrimaryBackground}"
                         Command="{Binding PreviousPageCommand}" />
                 <Border CornerRadius="5" Background="{DynamicResource PrimaryBackground}" Width="80">
@@ -30,7 +40,7 @@
                                VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"
                                Foreground="{DynamicResource SweetRed}" FontSize="20" />
                 </Border>
-                <Button Classes="actionSecondary" FontFamily="{DynamicResource Phosphor}" FontSize="35"
+                <Button Classes="actionSecondaryNoMotion" FontFamily="{DynamicResource Phosphor}" FontSize="35"
                         Content="&#xe122;" CornerRadius="5" Foreground="{DynamicResource PrimaryBackground}"
                         Command="{Binding NextPageCommand}" />
             </StackPanel>

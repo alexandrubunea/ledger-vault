@@ -16,12 +16,6 @@ namespace ledger_vault.ViewModels;
 
 public partial class TransactionsListViewModel : PageComponentViewModel, IDisposable
 {
-    #region PUBLIC PROPERTIES
-
-    public ObservableCollection<TransactionViewModel> TransactionsOnPage { get; private set; } = [];
-
-    #endregion
-
     #region PUBLIC API
 
     public TransactionsListViewModel(TransactionService transactionService,
@@ -55,8 +49,6 @@ public partial class TransactionsListViewModel : PageComponentViewModel, IDispos
     public ObservableCollection<TransactionViewModel> GetCurrentPageContent =>
         new(_transactions.Skip(TransactionsPerPage * (CurrentPage - 1)).Take(TransactionsPerPage).ToList());
 
-    public int NumberOfPages => (int)Math.Ceiling((double)_transactions.Count / TransactionsPerPage);
-
     #endregion
 
     #region PRIVATE PROPERTIES
@@ -72,9 +64,19 @@ public partial class TransactionsListViewModel : PageComponentViewModel, IDispos
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(GetCurrentPageContent))]
     private int _currentPage = 1;
 
+    [ObservableProperty] private string _searchInput = "";
+
     #endregion
 
     #region PRIVATE METHODS
+
+    private int NumberOfPages => (int)Math.Ceiling((double)_transactions.Count / TransactionsPerPage);
+
+    [RelayCommand]
+    private void FilterTransactions()
+    {
+        LoadTransactions();
+    }
 
     [RelayCommand]
     private void NextPage()
@@ -121,18 +123,28 @@ public partial class TransactionsListViewModel : PageComponentViewModel, IDispos
             {
                 List<Transaction> transactions = await _transactionService.GetTransactionsAsync();
 
+                IEnumerable<Transaction> transactionsFilter = transactions.Where(tx =>
+                    CurrentTransactionType == TransactionType.Income ? tx.Amount > 0 : tx.Amount < 0);
+
+                if (!string.IsNullOrWhiteSpace(SearchInput) && !string.IsNullOrEmpty(SearchInput))
+                {
+                    transactions = transactionsFilter.Where(tx =>
+                            tx.Counterparty.Contains(SearchInput, StringComparison.CurrentCultureIgnoreCase) ||
+                            tx.Description.Contains(SearchInput, StringComparison.CurrentCultureIgnoreCase) ||
+                            string.Join(", ", tx.Tags).Contains(SearchInput, StringComparison.CurrentCultureIgnoreCase))
+                        .ToList();
+                }
+                else transactions = transactionsFilter.ToList();
+
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     _transactions.Clear();
-                    foreach (Transaction tx in Enumerable.Reverse(transactions))
-                    {
-                        if ((CurrentTransactionType == TransactionType.Income && tx.Amount <= 0) ||
-                            (CurrentTransactionType == TransactionType.Payment && tx.Amount > 0))
-                            continue;
 
+                    transactions.ForEach(tx =>
+                    {
                         var vm = new TransactionViewModel(tx, _userStateService.CurrencyId, ReverseTransaction);
                         _transactions.Add(vm);
-                    }
+                    });
 
                     OnPropertyChanged(nameof(GetCurrentPageContent));
                 });

@@ -63,21 +63,24 @@ public class TransactionLoader(TransactionRepository transactionRepository, Hmac
 
     private void VerifyChain(List<Transaction> transactions)
     {
-        bool brokenChain = false;
+        // A chain with fewer than two transactions cannot be broken.
+        if (transactions.Count < 2)
+        {
+            return;
+        }
 
         for (int i = 1; i < transactions.Count; i++)
         {
-            if (brokenChain)
+            // Check if the chain is broken, either by an explicit invalid status
+            // or a mismatch in the previous hash.
+            bool isBroken = transactions[i - 1].HashVerifiedStatus == HashStatus.BrokenChain ||
+                            transactions[i - 1].HashVerifiedStatus == HashStatus.Invalid ||
+                            transactions[i].PreviousHash != transactions[i - 1].Hash;
+
+            if (isBroken)
             {
                 transactions[i].HashVerifiedStatus = HashStatus.BrokenChain;
-                continue;
             }
-
-            if (transactions[i - 1].HashVerifiedStatus == HashStatus.Valid &&
-                transactions[i].PreviousHash == transactions[i - 1].Hash) continue;
-            
-            transactions[i].HashVerifiedStatus = HashStatus.Invalid; // In case its "InProgress"
-            brokenChain = true;
         }
     }
 

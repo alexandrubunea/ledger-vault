@@ -13,14 +13,97 @@
                 <StackPanel Grid.Column="0">
                     <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="24"
                                Text="{Binding GetFormattedTitle}" TextWrapping="Wrap" />
-                    <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="13"
-                               Text="{Binding GetFormattedTimestamp}" TextWrapping="Wrap"
-                               Foreground="{DynamicResource DarkGray}" />
-                    <StackPanel Margin="0, 5, 0, 0">
+                    <WrapPanel Orientation="Horizontal" Width="400" ItemSpacing="10" LineSpacing="2">
+                        <Border CornerRadius="5" Background="{DynamicResource PrimaryBackground}" Padding="3">
+                            <StackPanel Orientation="Horizontal" Spacing="2">
+                                <TextBlock FontFamily="{DynamicResource Phosphor}" FontSize="13"
+                                           Text="&#xe19a;" Foreground="{DynamicResource DarkGray}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="13"
+                                           Text="{Binding GetFormattedTimestamp}" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource DarkGray}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border CornerRadius="5" Background="{DynamicResource PrimaryBackground}" Padding="3">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="2"
+                                            IsVisible="{Binding IsTransactionHashValid}">
+                                    <TextBlock FontFamily="{DynamicResource Phosphor}" FontSize="13"
+                                               Text="&#xe606;" Foreground="LimeGreen"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="13"
+                                               Text="Verified" TextWrapping="Wrap"
+                                               Foreground="LimeGreen" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="2"
+                                            IsVisible="{Binding IsTransactionHashInProgress}">
+                                    <TextBlock FontFamily="{DynamicResource Phosphor}" FontSize="13"
+                                               Text="&#xe2b2;" Foreground="DarkOrange"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="13"
+                                               Text="Checking" TextWrapping="Wrap"
+                                               Foreground="DarkOrange" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="2"
+                                            IsVisible="{Binding IsTransactionHashBrokenChain}">
+                                    <TextBlock FontFamily="{DynamicResource Phosphor}" FontSize="13"
+                                               Text="&#xe60c;" Foreground="Red"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="13"
+                                               Text="Broken chain" TextWrapping="Wrap"
+                                               Foreground="Red" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="2"
+                                            IsVisible="{Binding IsTransactionHashInvalid}">
+                                    <TextBlock FontFamily="{DynamicResource Phosphor}" FontSize="13"
+                                               Text="&#xe60c;" Foreground="Red"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="13"
+                                               Text="Tampered" TextWrapping="Wrap"
+                                               Foreground="Red" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <Border CornerRadius="5" Background="{DynamicResource PrimaryBackground}" Padding="3">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="2"
+                                            IsVisible="{Binding IsTransactionSignatureValid}">
+                                    <TextBlock FontFamily="{DynamicResource Phosphor}" FontSize="13"
+                                               Text="&#xe3ac;" Foreground="LimeGreen"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="13"
+                                               Text="Signed" TextWrapping="Wrap"
+                                               Foreground="LimeGreen" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="2"
+                                            IsVisible="{Binding IsTransactionSignatureInProgress}">
+                                    <TextBlock FontFamily="{DynamicResource Phosphor}" FontSize="13"
+                                               Text="&#xe2b2;" Foreground="DarkOrange"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="13"
+                                               Text="Checking" TextWrapping="Wrap"
+                                               Foreground="DarkOrange" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="2"
+                                            IsVisible="{Binding IsTransactionSignatureInvalid}">
+                                    <TextBlock FontFamily="{DynamicResource Phosphor}" FontSize="13"
+                                               Text="&#xe412;" Foreground="Red"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="13"
+                                               Text="Not signed" TextWrapping="Wrap"
+                                               Foreground="Red" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                    </WrapPanel>
+                    <StackPanel Margin="0, 10, 0, 0">
                         <Grid RowDefinitions="50, *">
                             <TextBlock Grid.Row="0" FontFamily="{DynamicResource Poppins}" FontSize="15"
                                        Text="{Binding Description}" TextWrapping="Wrap" />
-                            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom"
+                                        IsVisible="{Binding DoesHaveTags}">
                                 <TextBlock FontFamily="{DynamicResource Poppins}" FontSize="12" Text="Tags: " />
                                 <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="12"
                                            Text="{Binding FormattedTags}" TextWrapping="Wrap" />

@@ -4,11 +4,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.Input;
+using ledger_vault.Data;
 using ledger_vault.Models;
 
 namespace ledger_vault.ViewModels;
 
-public partial class TransactionViewModel(Transaction transaction, int currencyId, Action<Transaction> reverseTransactionAction)
+public partial class TransactionViewModel(
+    Transaction transaction,
+    int currencyId,
+    Action<Transaction> reverseTransactionAction)
 {
     #region PUBLIC API
 
@@ -18,8 +22,16 @@ public partial class TransactionViewModel(Transaction transaction, int currencyI
     public string GetFormattedTimestamp => transaction.Timestamp.ToString("dd MMM yyyy HH:mm:ss");
     public string Description => transaction.Description;
     public string FormattedTags => string.Join(", ", transaction.Tags);
+    public bool DoesHaveTags => !String.IsNullOrEmpty(FormattedTags);
     public bool DoesHaveAttachment => transaction.ReceiptImage.Length > 0;
     public bool IsNotReversedPayment => transaction.ReversalOfTransactionId == null;
+    public bool IsTransactionHashValid => transaction.HashVerifiedStatus == HashStatus.Valid;
+    public bool IsTransactionHashBrokenChain => transaction.HashVerifiedStatus == HashStatus.BrokenChain;
+    public bool IsTransactionHashInvalid => transaction.HashVerifiedStatus == HashStatus.Invalid;
+    public bool IsTransactionHashInProgress => transaction.HashVerifiedStatus == HashStatus.InProgress;
+    public bool IsTransactionSignatureInProgress => transaction.SignatureVerifiedStatus == SignatureStatus.InProgress;
+    public bool IsTransactionSignatureValid => transaction.SignatureVerifiedStatus == SignatureStatus.Valid;
+    public bool IsTransactionSignatureInvalid => transaction.SignatureVerifiedStatus == SignatureStatus.Invalid;
 
     #endregion
 
@@ -33,7 +45,7 @@ public partial class TransactionViewModel(Transaction transaction, int currencyI
 
         var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "LedgerVault", "attachments", transaction.ReceiptImage);
-        
+
         if (!File.Exists(filePath))
             return;
 

@@ -80,10 +80,12 @@ public class TransactionService(
             transaction.SignatureVerifiedStatus = SignatureStatus.Invalid;
 
             if (transaction.PreviousHash == lastTransaction.Hash &&
-                lastTransaction.HashVerifiedStatus == HashStatus.Valid &&
                 await TransactionHashing.VerifyHashAsync(transaction, CancellationToken.None) &&
                 await TransactionHashing.VerifyFileHashAsync(transaction, CancellationToken.None))
                 transaction.HashVerifiedStatus = HashStatus.Valid;
+
+            if (lastTransaction.HashVerifiedStatus != HashStatus.Valid)
+                transaction.HashVerifiedStatus = HashStatus.BrokenChain;
 
             if (hmacService.VerifySignature(transaction.GetSigningData(),
                     Convert.FromBase64String(transaction.Signature)))

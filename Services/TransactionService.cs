@@ -5,8 +5,8 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Threading;
 using ledger_vault.Crypto;
+using ledger_vault.Data;
 using ledger_vault.Models;
 
 namespace ledger_vault.Services;
@@ -53,33 +53,51 @@ public class TransactionService(
 
     public async Task AddTransaction(Transaction transaction)
     {
+        // Wait for any ongoing refresh to complete first
+        await _refreshSemaphore.WaitAsync();
         try
         {
             if (!transactionCacheService.IsCacheValid())
             {
-                // Transactions need to be queried from the database again
-                // It's not needed to add the transaction anymore
-                // because it's stored already in the database
-                await RefreshCache();
+                // Cache is invalid, the transaction will be loaded by the next refresh
                 return;
             }
 
-            Transaction lastTransaction =
-                transactionCacheService.GetCachedTransactions().First(); // Assuming that is ordered desc by id
-            transaction.HashVerified = transaction.PreviousHash == lastTransaction.Hash &&
-                                       lastTransaction.HashVerified &&
-                                       await TransactionHashing.VerifyHashAsync(transaction, CancellationToken.None) &&
-                                       await TransactionHashing.VerifyFileHashAsync(transaction,
-                                           CancellationToken.None);
+            // Check if transaction already exists in cache to prevent duplicates
+            var existingTransactions = transactionCacheService.GetCachedTransactions();
+            if (existingTransactions.Any(t => t.Id == transaction.Id))
+            {
+                // Transaction already exists in cache, no need to add
+                return;
+            }
 
-            transaction.SignatureVerified = hmacService.VerifySignature(transaction.GetSigningData(),
-                Convert.FromBase64String(transaction.Signature));
+            Transaction? lastTransaction = existingTransactions.LastOrDefault();
+
+            if (lastTransaction == null)
+                throw new NullReferenceException("Last transaction cannot be null");
+
+            transaction.HashVerifiedStatus = HashStatus.Invalid;
+            transaction.SignatureVerifiedStatus = SignatureStatus.Invalid;
+
+            if (transaction.PreviousHash == lastTransaction.Hash &&
+                lastTransaction.HashVerifiedStatus == HashStatus.Valid &&
+                await TransactionHashing.VerifyHashAsync(transaction, CancellationToken.None) &&
+                await TransactionHashing.VerifyFileHashAsync(transaction, CancellationToken.None))
+                transaction.HashVerifiedStatus = HashStatus.Valid;
+
+            if (hmacService.VerifySignature(transaction.GetSigningData(),
+                    Convert.FromBase64String(transaction.Signature)))
+                transaction.SignatureVerifiedStatus = SignatureStatus.Valid;
 
             transactionCacheService.AddTransaction(transaction);
         }
         catch (Exception ex)
         {
             throw new Exception("Error adding transaction", ex);
+        }
+        finally
+        {
+            _refreshSemaphore.Release();
         }
     }
 

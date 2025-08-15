@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using ledger_vault.Data;
@@ -32,32 +33,7 @@ public class TransactionsListViewModel : PageComponentViewModel, IDisposable
         _reverseTransactionMediator = reverseTransactionMediator;
         _userStateService = userStateService;
 
-        // Loading transactions
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                List<Transaction> transactions = await _transactionService.GetTransactionsAsync();
-
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    Transactions.Clear();
-                    foreach (Transaction tx in transactions)
-                    {
-                        if ((CurrentTransactionType == TransactionType.Income && tx.Amount <= 0) ||
-                            (CurrentTransactionType == TransactionType.Payment && tx.Amount > 0))
-                            continue;
-
-                        var vm = new TransactionViewModel(tx, _userStateService.CurrencyId, ReverseTransaction);
-                        Transactions.Add(vm);
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error in transaction list", ex);
-            }
-        });
+        LoadTransactions();
 
         _addToListMediator.Subscribe(OnSuccessfulTransaction);
     }
@@ -97,17 +73,42 @@ public class TransactionsListViewModel : PageComponentViewModel, IDisposable
             try
             {
                 await _transactionService.AddTransaction(message.Transaction);
+                LoadTransactions();
+            }
+            catch (Exception ex)
+            {
+                throw new NullReferenceException("OnSuccessfulTransaction", ex);
+            }
+        });
+    }
+
+    private void LoadTransactions()
+    {
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                // This will improve when pagination will be implemented.
+                // Then only a limited number of elements will be iterated and displayed.
+                List<Transaction> transactions = await _transactionService.GetTransactionsAsync();
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    var newTransactionViewModel = new TransactionViewModel(message.Transaction,
-                        _userStateService.CurrencyId, ReverseTransaction);
-                    Transactions.Insert(0, newTransactionViewModel);
+                    Transactions.Clear();
+                    foreach (Transaction tx in Enumerable.Reverse(transactions))
+                    {
+                        if ((CurrentTransactionType == TransactionType.Income && tx.Amount <= 0) ||
+                            (CurrentTransactionType == TransactionType.Payment && tx.Amount > 0))
+                            continue;
+
+                        var vm = new TransactionViewModel(tx, _userStateService.CurrencyId, ReverseTransaction);
+                        Transactions.Add(vm);
+                    }
                 });
             }
             catch (Exception ex)
             {
-                throw new Exception("Error while adding transaction", ex);
+                throw new Exception("Error in transaction list", ex);
             }
         });
     }

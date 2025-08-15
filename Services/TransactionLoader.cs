@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using ledger_vault.Crypto;
+using ledger_vault.Data;
 using ledger_vault.Models;
 
 namespace ledger_vault.Services;
@@ -26,11 +27,15 @@ public class TransactionLoader(TransactionRepository transactionRepository, Hmac
         {
             await foreach (Transaction tx in channel.Reader.ReadAllAsync(ct))
             {
-                tx.HashVerified = await TransactionHashing.VerifyHashAsync(tx, ct) &&
-                                  await TransactionHashing.VerifyFileHashAsync(tx, ct);
+                tx.HashVerifiedStatus = HashStatus.Invalid;
+                tx.SignatureVerifiedStatus = SignatureStatus.Invalid;
 
-                tx.SignatureVerified =
-                    hmacService.VerifySignature(tx.GetSigningData(), Convert.FromBase64String(tx.Signature));
+                if (await TransactionHashing.VerifyHashAsync(tx, ct) &&
+                    await TransactionHashing.VerifyFileHashAsync(tx, ct))
+                    tx.HashVerifiedStatus = HashStatus.Valid;
+
+                if (hmacService.VerifySignature(tx.GetSigningData(), Convert.FromBase64String(tx.Signature)))
+                    tx.SignatureVerifiedStatus = SignatureStatus.Valid;
 
                 verifiedTransactions.Add(tx);
             }
@@ -46,7 +51,7 @@ public class TransactionLoader(TransactionRepository transactionRepository, Hmac
 
         await Task.WhenAll(workers);
 
-        List<Transaction> ordered = verifiedTransactions.OrderByDescending(t => t.Id).ToList();
+        List<Transaction> ordered = verifiedTransactions.OrderBy(t => t.Id).ToList();
         VerifyChain(ordered);
 
         return ordered;
@@ -64,12 +69,15 @@ public class TransactionLoader(TransactionRepository transactionRepository, Hmac
         {
             if (brokenChain)
             {
-                transactions[i].HashVerified = false;
+                transactions[i].HashVerifiedStatus = HashStatus.BrokenChain;
                 continue;
             }
 
-            if (!(transactions[i - 1].HashVerified && transactions[i].PreviousHash == transactions[i - 1].Hash))
-                brokenChain = true;
+            if (transactions[i - 1].HashVerifiedStatus == HashStatus.Valid &&
+                transactions[i].PreviousHash == transactions[i - 1].Hash) continue;
+            
+            transactions[i].HashVerifiedStatus = HashStatus.Invalid; // In case its "InProgress"
+            brokenChain = true;
         }
     }
 

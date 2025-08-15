@@ -46,16 +46,12 @@
 
                 <StackPanel Margin="0 20 0 0">
                     <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
-                           Content="Add tag" />
+                           Content="Add tag" Margin="0, 0, 0, -5" />
                     <StackPanel Orientation="Horizontal" Spacing="20" Height="50">
-                        <StackPanel>
+                        <StackPanel VerticalAlignment="Center">
                             <TextBox HorizontalAlignment="Left" CornerRadius="5" Width="300" Height="35"
                                      Watermark="E.g: groceries, taxes, debts" Text="{Binding TagToAdd}"
                                      VerticalAlignment="Center" />
-                            <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="12"
-                                   Content="Tags can only be letters and numbers."
-                                   Foreground="{DynamicResource SweetRed}"
-                                   IsVisible="{Binding InvalidTag}" />
                         </StackPanel>
 
                         <Button Classes="action" Command="{Binding AddTagCommand}" VerticalAlignment="Center">
@@ -67,6 +63,10 @@
                             </StackPanel>
                         </Button>
                     </StackPanel>
+                    <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="12"
+                           Content="Tags can only be letters and numbers."
+                           Foreground="{DynamicResource SweetRed}"
+                           IsVisible="{Binding InvalidTag}" />
 
                     <StackPanel IsVisible="{Binding AnyTagExist}" Margin="0 20 0 0">
                         <Label FontFamily="{DynamicResource PoppinsLight}" FontSize="14"

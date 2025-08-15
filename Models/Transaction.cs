@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using ledger_vault.Crypto;
+using ledger_vault.Data;
 
 namespace ledger_vault.Models;
 
@@ -24,8 +25,8 @@ public class Transaction
     public uint? ReversalOfTransactionId { get; private set; }
 
     // Not database related properties
-    public bool HashVerified { get; set; }
-    public bool SignatureVerified { get; set; }
+    public HashStatus HashVerifiedStatus { get; set; } = HashStatus.InProgress;
+    public SignatureStatus SignatureVerifiedStatus { get; set; } = SignatureStatus.InProgress;
 
     #endregion
 

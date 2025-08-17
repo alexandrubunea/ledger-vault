@@ -25,7 +25,7 @@ public partial class TransactionsViewModel : PageViewModel, IDisposable
 
     public string GetCurrency => Currencies[_currencyId][..3];
     public string GetFormattedBalance => CurrentBalance.ToString("N");
-    public string PageTitle => CurrentTransactionType == TransactionType.Income ? "Your income" : "Your payments";
+    public string PageTitle => CurrentTransactionType == TransactionType.Income ? "income" : "payments";
 
     public TransactionsViewModel(UserStateService userStateService, PageComponentFactory pageComponentFactory,
         MediatorService<ReturnFromTransactionFormMessage> formMediator,

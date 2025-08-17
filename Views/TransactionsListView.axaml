@@ -7,6 +7,8 @@
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.TransactionsListView"
              x:DataType="vm:TransactionsListViewModel"
+             Background="{DynamicResource PrimaryBackground}"
+             Foreground="{DynamicResource PrimaryForeground}"
              Unloaded="OnUnloaded">
     <Design.DataContext>
         <vm:TransactionsListViewModel />

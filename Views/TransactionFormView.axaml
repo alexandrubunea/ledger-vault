@@ -7,6 +7,8 @@
              x:Class="ledger_vault.Views.TransactionFormView"
              x:DataType="vm:TransactionFormViewModel"
              x:Name="RootControl"
+             Background="{DynamicResource PrimaryBackground}"
+             Foreground="{DynamicResource PrimaryForeground}"
              Unloaded="OnUnloaded">
     <Design.DataContext>
         <vm:TransactionFormViewModel />

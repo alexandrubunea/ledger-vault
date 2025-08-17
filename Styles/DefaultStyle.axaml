@@ -68,6 +68,7 @@
         <Setter Property="Margin" Value="15,0,0,0" />
     </Style>
     <Style Selector="Button.sidebar:pressed /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBackground}" />
         <Setter Property="Background" Value="{DynamicResource DarkLilacPastel}" />
     </Style>
 

@@ -6,6 +6,8 @@
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.TransactionsView"
              x:DataType="vm:TransactionsViewModel"
+             Background="{DynamicResource PrimaryBackground}"
+             Foreground="{DynamicResource PrimaryForeground}"
              Unloaded="OnUnloaded">
     <Design.DataContext>
         <vm:TransactionsViewModel />
@@ -13,12 +15,19 @@
     <StackPanel>
         <Grid ColumnDefinitions="*, *" Height="100">
             <StackPanel Grid.Column="0" Margin="20 0 0 0" VerticalAlignment="Center">
-                <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="32" Text="{Binding PageTitle}" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="32"
+                               Foreground="{DynamicResource DarkGray}" Text="Your " />
+                    <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="32"
+                               Foreground="{DynamicResource LilacPastel}" Text="{Binding PageTitle}" />
+                </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="5">
-                    <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14" Text="Current balance:" />
                     <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
-                               Text="{Binding GetFormattedBalance}" />
-                    <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14" Text="{Binding GetCurrency}" />
+                               Foreground="{DynamicResource DarkGray}" Text="Current balance:" />
+                    <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                               Foreground="{DynamicResource DarkGray}" Text="{Binding GetFormattedBalance}" />
+                    <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                               Foreground="{DynamicResource DarkGray}" Text="{Binding GetCurrency}" />
                 </StackPanel>
             </StackPanel>
             <Button Grid.Column="1" HorizontalAlignment="Right" Classes="action"

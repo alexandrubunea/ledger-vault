@@ -3,18 +3,43 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ledger_vault.ViewModels"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.HomeView"
              x:DataType="vm:HomeViewModel"
              Background="{DynamicResource PrimaryBackground}"
              Foreground="{DynamicResource PrimaryForeground}">
     <Design.DataContext>
-        <vm:PageViewModel />
+        <vm:HomeViewModel />
     </Design.DataContext>
     <StackPanel>
-        <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="24" Margin="50, 50, 0, 0">
-            Hello, <TextBlock Text="{Binding UserFullName}">PLACEHOLDER</TextBlock>
-        </TextBlock>
-        <Separator Margin="0 20" Background="{DynamicResource PrimaryForeground}" />
+        <StackPanel Margin="20 20 0 0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" Foreground="{DynamicResource DarkGray}"
+                           FontSize="32" Text="Hello, " />
+                <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" Foreground="{DynamicResource LilacPastel}"
+                           FontSize="32" Text="{Binding UserFullName}" />
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                           Foreground="{DynamicResource DarkGray}" Text="Current balance:" />
+                <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                           Foreground="{DynamicResource DarkGray}" Text="{Binding GetFormattedBalance}" />
+                <TextBlock FontFamily="{DynamicResource PoppinsLight}" FontSize="14"
+                           Foreground="{DynamicResource DarkGray}" Text="{Binding GetCurrency}" />
+            </StackPanel>
+        </StackPanel>
+
+
+        <StackPanel Margin="20 50 20 0">
+            <Border Padding="10" CornerRadius="5" Background="{DynamicResource SecondaryBackground}">
+                <StackPanel>
+                    <TextBlock FontFamily="{DynamicResource MerriweatherLight}" FontSize="22"
+                               Text="Your weekly spending">
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </StackPanel>
     </StackPanel>
 </UserControl>

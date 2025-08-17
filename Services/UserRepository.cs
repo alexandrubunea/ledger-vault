@@ -117,6 +117,7 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
         command.CommandText = """
                               DROP TABLE user_information;
                               DROP TABLE transactions;
+                              DROP TABLE reversed_transactions;
                               """;
         command.ExecuteNonQuery();
     }

@@ -5,7 +5,9 @@
              xmlns:vm="using:ledger_vault.ViewModels"
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.BackupsView"
-             x:DataType="vm:BackupsViewModel">
+             x:DataType="vm:BackupsViewModel"
+             Background="{DynamicResource PrimaryBackground}"
+             Foreground="{DynamicResource PrimaryForeground}">
     <Design.DataContext><vm:BackupsViewModel /></Design.DataContext>
     Backups View
 </UserControl>

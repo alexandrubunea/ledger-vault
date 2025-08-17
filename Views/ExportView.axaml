@@ -5,7 +5,9 @@
              xmlns:vm="using:ledger_vault.ViewModels"
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.ExportView"
-             x:DataType="vm:ExportViewModel">
+             x:DataType="vm:ExportViewModel"
+             Background="{DynamicResource PrimaryBackground}"
+             Foreground="{DynamicResource PrimaryForeground}">
     <Design.DataContext><vm:ExportViewModel /></Design.DataContext>
     Export View
 </UserControl>

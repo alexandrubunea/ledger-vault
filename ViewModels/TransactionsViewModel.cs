@@ -301,7 +301,7 @@ public partial class TransactionsViewModel : PageViewModel, IDisposable
             return;
 
         form.Description =
-            $"Reverse of transaction #{tx.Id}. From counterparty: {tx.Counterparty}. Made at: {tx.Timestamp:dd MMM yyyy HH:mm:ss}. Amount: {tx.Amount}";
+            $"Reverse of transaction #{tx.Id}. From counterparty: {tx.Counterparty}. Made at: {tx.Timestamp:dd MMM yyyy HH:mm:ss}.";
 
         form.Counterparty = tx.Counterparty;
         form.Tags = new ObservableCollection<string>(tx.Tags);

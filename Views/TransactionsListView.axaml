@@ -12,8 +12,16 @@
         <vm:TransactionsListViewModel />
     </Design.DataContext>
     <StackPanel>
-        <Grid ColumnDefinitions="Auto, *" HorizontalAlignment="Center" Width="800" Margin="0 20 0 0">
-            <TextBox Grid.Column="0" Width="750" HorizontalAlignment="Left" FontFamily="{DynamicResource PoppinsLight}"
+        <StackPanel HorizontalAlignment="Center" Margin="0 100 0 0" IsVisible="{Binding NoTransactionsFound}">
+            <TextBlock Text="&#xe608;" FontFamily="{DynamicResource Phosphor}" FontSize="150"
+                       Foreground="{DynamicResource SteelGray}" HorizontalAlignment="Center" />
+            <TextBlock Text="No transactions found" FontFamily="{DynamicResource PoppinsLight}" FontSize="24"
+                       Foreground="{DynamicResource DarkGray}" HorizontalAlignment="Center" />
+        </StackPanel>
+        <Grid ColumnDefinitions="Auto, *" HorizontalAlignment="Center" Width="800" Margin="0 20 0 0"
+              IsVisible="{Binding ShowSearch}">
+            <TextBox Grid.Column="0" Width="750" HorizontalAlignment="Left"
+                     FontFamily="{DynamicResource PoppinsLight}"
                      FontSize="24" Margin="0" CornerRadius="5 0 0 5"
                      BorderThickness="1 1 0 1" Watermark="Search by: counterparty, description, tags"
                      Text="{Binding SearchInput}" />
@@ -22,28 +30,37 @@
                     FontSize="36" Content="&#xe30c;" BorderBrush="{DynamicResource LilacPastel}" Width="50"
                     Command="{Binding FilterTransactionsCommand}" />
         </Grid>
-        <ItemsControl ItemsSource="{Binding GetCurrentPageContent}" Margin="0 20">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <view:TransactionView Margin="0 20 0 0" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <Border CornerRadius="5" Background="{DynamicResource SecondaryBackground}"
-                Padding="20" Width="800" Margin="0 0 0 20">
-            <StackPanel Orientation="Horizontal" Spacing="15" HorizontalAlignment="Center">
-                <Button Classes="actionSecondaryNoMotion" FontFamily="{DynamicResource Phosphor}" FontSize="35"
-                        Content="&#xe120;" CornerRadius="5" Foreground="{DynamicResource PrimaryBackground}"
-                        Command="{Binding PreviousPageCommand}" />
-                <Border CornerRadius="5" Background="{DynamicResource PrimaryBackground}" Width="80">
-                    <TextBlock Text="{Binding CurrentPage}" FontFamily="{DynamicResource PoppinsLight}"
-                               VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"
-                               Foreground="{DynamicResource SweetRed}" FontSize="20" />
-                </Border>
-                <Button Classes="actionSecondaryNoMotion" FontFamily="{DynamicResource Phosphor}" FontSize="35"
-                        Content="&#xe122;" CornerRadius="5" Foreground="{DynamicResource PrimaryBackground}"
-                        Command="{Binding NextPageCommand}" />
-            </StackPanel>
-        </Border>
+        <StackPanel HorizontalAlignment="Center" Margin="0 100 0 0" IsVisible="{Binding NoResultFound}">
+            <TextBlock Text="&#xe608;" FontFamily="{DynamicResource Phosphor}" FontSize="150"
+                       Foreground="{DynamicResource SteelGray}" HorizontalAlignment="Center" />
+            <TextBlock Text="There is no transaction that matches your search"
+                       FontFamily="{DynamicResource PoppinsLight}" FontSize="24"
+                       Foreground="{DynamicResource DarkGray}" HorizontalAlignment="Center" />
+        </StackPanel>
+        <StackPanel IsVisible="{Binding TransactionsFound}">
+            <ItemsControl ItemsSource="{Binding GetCurrentPageContent}" Margin="0 20">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <view:TransactionView Margin="0 20 0 0" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Border CornerRadius="5" Background="{DynamicResource SecondaryBackground}"
+                    Padding="20" Width="800" Margin="0 0 0 20">
+                <StackPanel Orientation="Horizontal" Spacing="15" HorizontalAlignment="Center">
+                    <Button Classes="actionSecondaryNoMotion" FontFamily="{DynamicResource Phosphor}" FontSize="35"
+                            Content="&#xe120;" CornerRadius="5" Foreground="{DynamicResource PrimaryBackground}"
+                            Command="{Binding PreviousPageCommand}" />
+                    <Border CornerRadius="5" Background="{DynamicResource PrimaryBackground}" Width="80">
+                        <TextBlock Text="{Binding CurrentPage}" FontFamily="{DynamicResource PoppinsLight}"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource SweetRed}" FontSize="20" />
+                    </Border>
+                    <Button Classes="actionSecondaryNoMotion" FontFamily="{DynamicResource Phosphor}" FontSize="35"
+                            Content="&#xe122;" CornerRadius="5" Foreground="{DynamicResource PrimaryBackground}"
+                            Command="{Binding NextPageCommand}" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
     </StackPanel>
 </UserControl>

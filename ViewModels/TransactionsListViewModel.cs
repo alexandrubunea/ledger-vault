@@ -49,6 +49,11 @@ public partial class TransactionsListViewModel : PageComponentViewModel, IDispos
     public ObservableCollection<TransactionViewModel> GetCurrentPageContent =>
         new(_transactions.Skip(TransactionsPerPage * (CurrentPage - 1)).Take(TransactionsPerPage).ToList());
 
+    public bool NoTransactionsFound => _transactions.Count == 0 && SearchInput.Length == 0;
+    public bool TransactionsFound => _transactions.Count > 0;
+    public bool NoResultFound => _transactions.Count == 0 && SearchInput.Length > 0;
+    public bool ShowSearch => NoResultFound || TransactionsFound;
+
     #endregion
 
     #region PRIVATE PROPERTIES
@@ -147,6 +152,10 @@ public partial class TransactionsListViewModel : PageComponentViewModel, IDispos
                     });
 
                     OnPropertyChanged(nameof(GetCurrentPageContent));
+                    OnPropertyChanged(nameof(NoTransactionsFound));
+                    OnPropertyChanged(nameof(TransactionsFound));
+                    OnPropertyChanged(nameof(NoResultFound));
+                    OnPropertyChanged(nameof(ShowSearch));
                 });
             }
             catch (Exception ex)

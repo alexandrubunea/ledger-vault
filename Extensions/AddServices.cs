@@ -48,7 +48,6 @@ namespace ledger_vault.Services
                 ApplicationPages.CashFlow => x.GetRequiredService<CashFlowViewModel>(),
                 ApplicationPages.Transaction => x.GetRequiredService<TransactionsViewModel>(),
                 ApplicationPages.Export => x.GetRequiredService<ExportViewModel>(),
-                ApplicationPages.VerifyIntegrity => x.GetRequiredService<VerifyIntegrityViewModel>(),
                 _ => throw new InvalidOperationException(),
             });
             collection.AddSingleton<Func<CoreViews, CoreViewModel>>(x => name => name switch
@@ -86,7 +85,6 @@ namespace ledger_vault.Services
             collection.AddTransient<HomeViewModel>();
             collection.AddTransient<TransactionsViewModel>();
             collection.AddTransient<SettingsViewModel>();
-            collection.AddTransient<VerifyIntegrityViewModel>();
             collection.AddTransient<TransactionFormViewModel>();
             collection.AddTransient<TransactionsListViewModel>();
 

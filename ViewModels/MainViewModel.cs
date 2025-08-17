@@ -26,7 +26,6 @@ public partial class MainViewModel : CoreViewModel, IDisposable
     };
 
     public bool CashFlowPageIsActive => CurrentPageViewModel is CashFlowViewModel;
-    public bool VerifyIntegrityPageIsActive => CurrentPageViewModel is VerifyIntegrityViewModel;
     public bool ExportPageIsActive => CurrentPageViewModel is ExportViewModel;
     public bool BackupsPageIsActive => CurrentPageViewModel is BackupsViewModel;
     public bool SettingsPageIsActive => CurrentPageViewModel is SettingsViewModel;
@@ -101,7 +100,6 @@ public partial class MainViewModel : CoreViewModel, IDisposable
     [NotifyPropertyChangedFor(nameof(IncomePageIsActive))]
     [NotifyPropertyChangedFor(nameof(PaymentsPageIsActive))]
     [NotifyPropertyChangedFor(nameof(CashFlowPageIsActive))]
-    [NotifyPropertyChangedFor(nameof(VerifyIntegrityPageIsActive))]
     [NotifyPropertyChangedFor(nameof(ExportPageIsActive))]
     [NotifyPropertyChangedFor(nameof(BackupsPageIsActive))]
     [NotifyPropertyChangedFor(nameof(SettingsPageIsActive))]

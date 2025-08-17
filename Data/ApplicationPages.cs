@@ -5,7 +5,6 @@ public enum ApplicationPages : byte
     Home,
     Transaction,
     CashFlow,
-    VerifyIntegrity,
     Settings,
     Export,
     Backups,

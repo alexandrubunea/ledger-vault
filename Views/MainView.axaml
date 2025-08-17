@@ -53,13 +53,6 @@
                             <Label Content="Cash Flow" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar" Classes.active_sidebar="{Binding VerifyIntegrityPageIsActive}"
-                            Command="{Binding SwitchPageCommand}" CommandParameter="VerifyIntegrity">
-                        <StackPanel Orientation="Horizontal">
-                            <Label Classes="icon" Content="&#xe606;" />
-                            <Label Content="Verify Integrity" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
                     <Button Classes="sidebar" Classes.active_sidebar="{Binding ExportPageIsActive}"
                             Command="{Binding SwitchPageCommand}" CommandParameter="Export">
                         <StackPanel Orientation="Horizontal">

@@ -139,7 +139,7 @@ public partial class TransactionsListViewModel : PageComponentViewModel, IDispos
                             string.Join(", ", tx.Tags).Contains(SearchInput, StringComparison.CurrentCultureIgnoreCase))
                         .ToList();
                 }
-                else transactions = transactionsFilter.ToList();
+                else transactions = transactionsFilter.OrderByDescending(tx => tx.Timestamp).ToList();
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {

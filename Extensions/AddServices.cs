@@ -25,6 +25,7 @@ namespace ledger_vault.Services
             collection.AddSingleton<TransactionLoader>();
             collection.AddSingleton<TransactionCacheService>();
             collection.AddSingleton(typeof(MediatorService<>));
+            collection.AddSingleton<StatsRepository>();
 
             #endregion
 

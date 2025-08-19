@@ -1,8 +1,10 @@
+using System.Collections.Generic;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ledger_vault.Data;
 
 namespace ledger_vault.ViewModels;
 
-public class ExportViewModel : PageViewModel
+public partial class ExportViewModel : PageViewModel
 {
     #region PUBLIC API
 
@@ -10,6 +12,13 @@ public class ExportViewModel : PageViewModel
     {
         PageName = ApplicationPages.Export;
     }
+
+    #endregion
+
+    #region PRIVATE PROPERTIES
+
+    [ObservableProperty] private int _selectedExportFormat;
+    private static readonly List<string> ExportFormats = ["PDF", "CSV", "XAML", "JSON", "XLSX"];
 
     #endregion
 }

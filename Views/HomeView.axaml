@@ -30,14 +30,7 @@
                            Foreground="{DynamicResource DarkGray}" Text="{Binding GetCurrency}" />
             </StackPanel>
         </StackPanel>
-        <ContentControl Content="{Binding WeeklyIncome}" Margin="20 50 20 0">
-            <ContentControl.ContentTemplate>
-                <DataTemplate DataType="{x:Type vm:WeeklyChartViewModel}">
-                    <view:WeeklyChartView />
-                </DataTemplate>
-            </ContentControl.ContentTemplate>
-        </ContentControl>
-        <ContentControl Content="{Binding WeeklyExpenses}" Margin="20 50 20 50">
+        <ContentControl Content="{Binding WeeklyDataChart}" Margin="20 50 20 0">
             <ContentControl.ContentTemplate>
                 <DataTemplate DataType="{x:Type vm:WeeklyChartViewModel}">
                     <view:WeeklyChartView />

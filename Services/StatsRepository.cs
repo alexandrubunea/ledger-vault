@@ -35,7 +35,7 @@ public class StatsRepository(DatabaseManagerService databaseManagerService)
                                   GROUP BY
                                     strftime('%w', DateTime)
                                   ORDER BY
-                                    (strftime('%w', 'now') - strftime('%w', DateTime) + 7) % 7 DESC;
+                                    abs(strftime('%w', 'now') - strftime('%w', DateTime)) % 7 DESC;
                                   """;
             await using var reader = await command.ExecuteReaderAsync();
 
@@ -82,7 +82,7 @@ public class StatsRepository(DatabaseManagerService databaseManagerService)
                                   GROUP BY
                                     strftime('%w', DateTime)
                                   ORDER BY
-                                    (strftime('%w', 'now') - strftime('%w', DateTime) + 7) % 7 DESC;
+                                    abs(strftime('%w', 'now') - strftime('%w', DateTime)) % 7 DESC;
                                   """;
             await using var reader = await command.ExecuteReaderAsync();
 

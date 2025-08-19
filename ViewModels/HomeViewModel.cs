@@ -20,19 +20,14 @@ public partial class HomeViewModel : PageViewModel
 {
     #region PUBLIC API
 
-    public HomeViewModel(UserStateService userStateService, WeeklyChartViewModel weeklyIncome,
-        WeeklyChartViewModel weeklyExpenses)
+    public HomeViewModel(UserStateService userStateService, WeeklyChartViewModel weeklyDataChart)
     {
         PageName = ApplicationPages.Home;
 
         UserFullName = userStateService.FullUserName;
         CurrentBalance = userStateService.Balance;
+        WeeklyDataChart = weeklyDataChart;
         _currencyId = userStateService.CurrencyId;
-        _weeklyIncome = weeklyIncome;
-        _weeklyExpenses = weeklyExpenses;
-
-        _weeklyIncome.WeeklyChartType = ChartType.WeeklyIncome;
-        _weeklyExpenses.WeeklyChartType = ChartType.WeeklyExpenses;
     }
 
 #pragma warning disable
@@ -222,8 +217,7 @@ public partial class HomeViewModel : PageViewModel
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(GetFormattedBalance))]
     private decimal _currentBalance;
 
-    [ObservableProperty] private WeeklyChartViewModel _weeklyIncome;
-    [ObservableProperty] private WeeklyChartViewModel _weeklyExpenses;
+    [ObservableProperty] private WeeklyChartViewModel _weeklyDataChart;
 
     private readonly short _currencyId;
 

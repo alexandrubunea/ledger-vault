@@ -13,7 +13,8 @@
                 <StackPanel Grid.Column="0">
                     <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="24"
                                Text="{Binding GetFormattedTitle}" TextWrapping="Wrap" />
-                    <WrapPanel Orientation="Horizontal" Width="400" ItemSpacing="10" LineSpacing="2">
+                    <WrapPanel Orientation="Horizontal" Width="400" ItemSpacing="10" LineSpacing="2"
+                               HorizontalAlignment="Left">
                         <Border CornerRadius="5" Background="{DynamicResource PrimaryBackground}" Padding="3">
                             <StackPanel Orientation="Horizontal" Spacing="2">
                                 <TextBlock FontFamily="{DynamicResource Phosphor}" FontSize="13"

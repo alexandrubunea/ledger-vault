@@ -46,7 +46,6 @@ namespace ledger_vault.Services
                 ApplicationPages.Home => x.GetRequiredService<HomeViewModel>(),
                 ApplicationPages.Settings => x.GetRequiredService<SettingsViewModel>(),
                 ApplicationPages.Backups => x.GetRequiredService<BackupsViewModel>(),
-                ApplicationPages.CashFlow => x.GetRequiredService<CashFlowViewModel>(),
                 ApplicationPages.Transaction => x.GetRequiredService<TransactionsViewModel>(),
                 ApplicationPages.Export => x.GetRequiredService<ExportViewModel>(),
                 _ => throw new InvalidOperationException(),
@@ -81,7 +80,6 @@ namespace ledger_vault.Services
             collection.AddTransient<LoginViewModel>();
             collection.AddTransient<MainViewModel>();
             collection.AddTransient<BackupsViewModel>();
-            collection.AddTransient<CashFlowViewModel>();
             collection.AddTransient<ExportViewModel>();
             collection.AddTransient<HomeViewModel>();
             collection.AddTransient<TransactionsViewModel>();

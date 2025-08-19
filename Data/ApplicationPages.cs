@@ -4,7 +4,6 @@ public enum ApplicationPages : byte
 {
     Home,
     Transaction,
-    CashFlow,
     Settings,
     Export,
     Backups,

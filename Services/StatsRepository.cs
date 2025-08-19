@@ -27,7 +27,7 @@ public class StatsRepository(DatabaseManagerService databaseManagerService)
                                       WHEN '4' THEN 'Thursday'
                                       WHEN '5' THEN 'Friday'
                                       WHEN '6' THEN 'Saturday'
-                                    END || ' ' || strftime('%d', DateTime) AS DayOfWeek,
+                                    END AS DayOfWeek,
                                     SUM(Amount) AS TotalAmount
                                   FROM transactions
                                   WHERE
@@ -74,7 +74,7 @@ public class StatsRepository(DatabaseManagerService databaseManagerService)
                                       WHEN '4' THEN 'Thursday'
                                       WHEN '5' THEN 'Friday'
                                       WHEN '6' THEN 'Saturday'
-                                    END || ' ' || strftime('%d', DateTime) AS DayOfWeek,
+                                    END AS DayOfWeek,
                                     SUM(Amount) AS TotalAmount
                                   FROM transactions
                                   WHERE

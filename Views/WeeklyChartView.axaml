@@ -30,7 +30,8 @@
                 <StackPanel IsVisible="{Binding ContainsDataWeek}">
                     <lvc:CartesianChart
                         Series="{Binding LastWeekData}" XAxes="{Binding LastWeekDataXAxes}"
-                        YAxes="{Binding LastWeekDataYAxes}" Height="300" ZoomMode="None">
+                        YAxes="{Binding LastWeekDataYAxes}" Height="300"
+                        LegendPosition="Bottom">
                     </lvc:CartesianChart>
                 </StackPanel>
                 <StackPanel HorizontalAlignment="Center"

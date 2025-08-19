@@ -9,7 +9,7 @@
     <Border CornerRadius="5" HorizontalAlignment="Center" Width="800" MinHeight="150"
             Background="{DynamicResource SecondaryBackground}" Padding="10">
         <StackPanel>
-            <Grid ColumnDefinitions="*, *">
+            <Grid ColumnDefinitions="Auto, *">
                 <StackPanel Grid.Column="0">
                     <TextBlock FontFamily="{DynamicResource MerriweatherBlack}" FontSize="24"
                                Text="{Binding GetFormattedTitle}" TextWrapping="Wrap" />

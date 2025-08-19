@@ -325,8 +325,9 @@ public partial class WeeklyChartViewModel : ViewModelBase
                 Fill = new SolidColorPaint(isCashFlowChart
                     ? SKColors.IndianRed
                     : new SKColor(30, 30, 30, 30)),
-                MaxBarWidth = 40,
-                IgnoresBarPosition = true
+                MaxBarWidth = isCashFlowChart ? 20 : 40,
+                IgnoresBarPosition = !isCashFlowChart,
+                Name = isCashFlowChart ? "Expense" : "Highest value"
             },
             new ColumnSeries<double>
             {
@@ -335,8 +336,9 @@ public partial class WeeklyChartViewModel : ViewModelBase
                 Fill = new SolidColorPaint(isIncomeChart || isCashFlowChart
                     ? SKColors.MediumPurple
                     : SKColors.IndianRed),
-                MaxBarWidth = isCashFlowChart ? 30 : 40,
-                IgnoresBarPosition = true
+                MaxBarWidth = isCashFlowChart ? 20 : 40,
+                IgnoresBarPosition = !isCashFlowChart,
+                Name = isIncomeChart || isCashFlowChart ? "Income" : "Expense"
             }
         ];
 

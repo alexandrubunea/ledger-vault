@@ -188,7 +188,7 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
             uint? reversalOfTransactionId = reader.IsDBNull(11) ? null : (uint)reader.GetInt32(11);
             bool isReverted = !reader.IsDBNull(12) && reader.GetBoolean(12);
 
-            List<string> tags = tagsString.Split(",").ToList();
+            List<string> tags = tagsString.Length > 0 ? tagsString.Split(",").ToList() : [];
 
             return Transaction.Load(id, counterparty, description, amount, tags, receiptImage, receiptImageHash,
                 timestamp, previousHash, hash, signature, isReverted, reversalOfTransactionId);

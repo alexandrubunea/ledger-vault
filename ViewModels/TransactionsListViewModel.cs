@@ -53,6 +53,7 @@ public partial class TransactionsListViewModel : PageComponentViewModel, IDispos
     public bool TransactionsFound => _transactions.Count > 0;
     public bool NoResultFound => _transactions.Count == 0 && SearchInput.Length > 0;
     public bool ShowSearch => NoResultFound || TransactionsFound;
+    public bool MoreThanOnePage => NumberOfPages > 1;
 
     #endregion
 
@@ -156,6 +157,7 @@ public partial class TransactionsListViewModel : PageComponentViewModel, IDispos
                     OnPropertyChanged(nameof(TransactionsFound));
                     OnPropertyChanged(nameof(NoResultFound));
                     OnPropertyChanged(nameof(ShowSearch));
+                    OnPropertyChanged(nameof(MoreThanOnePage));
                 });
             }
             catch (Exception ex)

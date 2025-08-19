@@ -48,7 +48,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
             <Border CornerRadius="5" Background="{DynamicResource SecondaryBackground}"
-                    Padding="20" Width="800" Margin="0 0 0 20">
+                    Padding="20" Width="800" Margin="0 0 0 20" IsVisible="{Binding MoreThanOnePage}">
                 <StackPanel Orientation="Horizontal" Spacing="15" HorizontalAlignment="Center">
                     <Button Classes="actionSecondaryNoMotion" FontFamily="{DynamicResource Phosphor}" FontSize="35"
                             Content="&#xe120;" CornerRadius="5" Foreground="{DynamicResource PrimaryBackground}"

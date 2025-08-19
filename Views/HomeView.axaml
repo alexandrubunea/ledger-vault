@@ -37,5 +37,21 @@
                 </DataTemplate>
             </ContentControl.ContentTemplate>
         </ContentControl>
+        <Grid ColumnDefinitions="*, *" ColumnSpacing="20" Margin="20">
+            <ContentControl Grid.Column="0" Content="{Binding TagsIncomeChart}">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate DataType="{x:Type vm:TagsChartViewModel}">
+                        <view:TagsChartView />
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+            <ContentControl Grid.Column="1" Content="{Binding TagsExpenseChart}">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate DataType="{x:Type vm:TagsChartViewModel}">
+                        <view:TagsChartView />
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+        </Grid>
     </StackPanel>
 </UserControl>

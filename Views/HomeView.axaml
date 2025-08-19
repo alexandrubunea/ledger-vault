@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ledger_vault.ViewModels"
-             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:view="using:ledger_vault.Views"
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="ledger_vault.Views.HomeView"
              x:DataType="vm:HomeViewModel"
@@ -30,29 +30,19 @@
                            Foreground="{DynamicResource DarkGray}" Text="{Binding GetCurrency}" />
             </StackPanel>
         </StackPanel>
-
-
-        <StackPanel Margin="20 50 20 0">
-            <Border Padding="10" CornerRadius="5" Background="{DynamicResource SecondaryBackground}">
-                <StackPanel>
-                    <StackPanel IsVisible="{Binding ContainsDataWeekIncome}">
-                        <TextBlock FontFamily="{DynamicResource MerriweatherLight}" FontSize="22"
-                                   Text="Your last week's income" />
-                        <lvc:CartesianChart
-                            Series="{Binding LastWeekIncome}" XAxes="{Binding LastWeekIncomeXAxes}" Height="300">
-                        </lvc:CartesianChart>
-                    </StackPanel>
-                    <StackPanel HorizontalAlignment="Center"
-                                IsVisible="{Binding NoDataWeekIncome}">
-                        <TextBlock Text="&#xe608;" FontFamily="{DynamicResource Phosphor}" FontSize="120"
-                                   Foreground="{DynamicResource PrimaryForeground}" HorizontalAlignment="Center" />
-                        <TextBlock Text="No transactions have been recorded to create this chart"
-                                   FontFamily="{DynamicResource PoppinsLight}"
-                                   FontSize="20"
-                                   Foreground="{DynamicResource PrimaryForeground}" HorizontalAlignment="Center" />
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-        </StackPanel>
+        <ContentControl Content="{Binding WeeklyIncome}" Margin="20 50 20 0">
+            <ContentControl.ContentTemplate>
+                <DataTemplate DataType="{x:Type vm:WeeklyChartViewModel}">
+                    <view:WeeklyChartView />
+                </DataTemplate>
+            </ContentControl.ContentTemplate>
+        </ContentControl>
+        <ContentControl Content="{Binding WeeklyExpenses}" Margin="20 50 20 50">
+            <ContentControl.ContentTemplate>
+                <DataTemplate DataType="{x:Type vm:WeeklyChartViewModel}">
+                    <view:WeeklyChartView />
+                </DataTemplate>
+            </ContentControl.ContentTemplate>
+        </ContentControl>
     </StackPanel>
 </UserControl>

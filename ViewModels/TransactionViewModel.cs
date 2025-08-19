@@ -12,12 +12,13 @@ namespace ledger_vault.ViewModels;
 public partial class TransactionViewModel(
     Transaction transaction,
     int currencyId,
-    Action<Transaction> reverseTransactionAction)
+    Action<Transaction> reverseTransactionAction) : ViewModelBase
 {
     #region PUBLIC API
 
     public string GetFormattedTitle =>
-        transaction.Counterparty + " — " + Math.Abs(transaction.Amount) + " " + Currencies[currencyId][..3];
+        transaction.Counterparty + " — " + Math.Abs(transaction.Amount).ToString("N") + " " +
+        Currencies[currencyId][..3];
 
     public string GetFormattedTimestamp => transaction.Timestamp.ToString("dd MMM yyyy HH:mm:ss");
     public string Description => transaction.Description;

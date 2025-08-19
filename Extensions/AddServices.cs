@@ -88,6 +88,7 @@ namespace ledger_vault.Services
             collection.AddTransient<SettingsViewModel>();
             collection.AddTransient<TransactionFormViewModel>();
             collection.AddTransient<TransactionsListViewModel>();
+            collection.AddTransient<WeeklyChartViewModel>();
 
             #endregion
 

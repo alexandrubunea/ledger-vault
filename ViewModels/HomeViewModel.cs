@@ -20,17 +20,19 @@ public partial class HomeViewModel : PageViewModel
 {
     #region PUBLIC API
 
-    public HomeViewModel(UserStateService userStateService, StatsRepository statsRepository)
+    public HomeViewModel(UserStateService userStateService, WeeklyChartViewModel weeklyIncome,
+        WeeklyChartViewModel weeklyExpenses)
     {
         PageName = ApplicationPages.Home;
-
-        _statsRepository = statsRepository;
 
         UserFullName = userStateService.FullUserName;
         CurrentBalance = userStateService.Balance;
         _currencyId = userStateService.CurrencyId;
+        _weeklyIncome = weeklyIncome;
+        _weeklyExpenses = weeklyExpenses;
 
-        _ = Task.Run(async () => { await Dispatcher.UIThread.InvokeAsync(LoadStats); });
+        _weeklyIncome.WeeklyChartType = ChartType.WeeklyIncome;
+        _weeklyExpenses.WeeklyChartType = ChartType.WeeklyExpenses;
     }
 
 #pragma warning disable
@@ -215,77 +217,15 @@ public partial class HomeViewModel : PageViewModel
         "ZWL - Zimbabwean Dollar"
     ];
 
-    private readonly StatsRepository _statsRepository;
-
     [ObservableProperty] private string _userFullName;
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(GetFormattedBalance))]
     private decimal _currentBalance;
 
+    [ObservableProperty] private WeeklyChartViewModel _weeklyIncome;
+    [ObservableProperty] private WeeklyChartViewModel _weeklyExpenses;
+
     private readonly short _currencyId;
-
-    [ObservableProperty] private ISeries[] _lastWeekIncome = [];
-
-    [ObservableProperty] private ICartesianAxis[] _lastWeekIncomeXAxes =
-        [new Axis { MinLimit = null, MaxLimit = null }];
-
-    [ObservableProperty] private bool _noDataWeekIncome;
-    [ObservableProperty] private bool _containsDataWeekIncome;
-
-    #endregion
-
-    #region PRIVATE METHODS
-
-    private void LoadStats()
-    {
-        _ = Task.Run(async () =>
-        {
-            Dictionary<string, decimal> weeklyExpenses = await _statsRepository.GetWeeklyIncome();
-
-            List<string> days = weeklyExpenses.Keys.ToList();
-            List<double> expenses = weeklyExpenses.Values.Select(Convert.ToDouble).ToList();
-
-            if (expenses.Count == 0)
-            {
-                NoDataWeekIncome = true;
-                ContainsDataWeekIncome = false;
-                return;
-            }
-
-            NoDataWeekIncome = false;
-            ContainsDataWeekIncome = true;
-
-            double maxAmount = expenses.Max();
-
-            LastWeekIncome =
-            [
-                new ColumnSeries<double>
-                {
-                    IsHoverable = false,
-                    Values = new ReadOnlyCollection<double>(Enumerable.Repeat(maxAmount, days.Count).ToList()),
-                    Stroke = null,
-                    Fill = new SolidColorPaint(new SKColor(30, 30, 30, 30)),
-                    IgnoresBarPosition = true
-                },
-                new ColumnSeries<double>
-                {
-                    Values = new ReadOnlyCollection<double>(expenses),
-                    Stroke = null,
-                    Fill = new SolidColorPaint(SKColors.MediumPurple),
-                    IgnoresBarPosition = true
-                }
-            ];
-
-            LastWeekIncomeXAxes =
-            [
-                new Axis
-                {
-                    MinLimit = null, MaxLimit = null,
-                    Labels = days
-                }
-            ];
-        });
-    }
 
     #endregion
 }

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Threading.Tasks;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
@@ -306,7 +306,7 @@ public partial class TransactionsViewModel : PageViewModel, IDisposable
         form.Counterparty = tx.Counterparty;
         form.Tags = new ObservableCollection<string>(tx.Tags);
         form.ReverseTransactionId = tx.Id;
-        form.Amount = Math.Abs(tx.Amount);
+        form.Amount = Convert.ToString(Math.Abs(tx.Amount), CultureInfo.CurrentCulture);
 
         ShowIncomeMode = false;
         CurrentTransactionType = CurrentTransactionType == TransactionType.Income

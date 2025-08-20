@@ -54,7 +54,7 @@ public partial class TransactionFormViewModel : PageComponentViewModel
 
     [ObservableProperty] private string _counterparty = "";
     [ObservableProperty] private string _description = "";
-    [ObservableProperty] private decimal _amount = 1;
+    [ObservableProperty] private string _amount = "1";
     [ObservableProperty] private string _tagToAdd = "";
     [ObservableProperty] private ObservableCollection<string> _tags = [];
     [ObservableProperty] private string _attachmentPath = "";
@@ -104,17 +104,22 @@ public partial class TransactionFormViewModel : PageComponentViewModel
             return;
 
         // If the transaction is a payment, the amount is negative
-        decimal amount = (CurrentTransactionType == TransactionType.Income) ? Amount : -Amount;
+        decimal amountDecimal = decimal.TryParse(Amount, out var convertedAmount)
+            ? CurrentTransactionType == TransactionType.Income ? convertedAmount : -convertedAmount
+            : 0;
+        
+        if (amountDecimal == 0)
+            return;
 
         Transaction tx =
-            _transactionService.CreateTransaction(Counterparty, Description, amount, [..Tags], AttachmentPath,
+            _transactionService.CreateTransaction(Counterparty, Description, amountDecimal, [..Tags], AttachmentPath,
                 ReverseTransactionId);
 
-        _userStateService.Balance += amount;
+        _userStateService.Balance += amountDecimal;
         _userStateService.SaveUserBalance();
 
         // Return to the list
-        _cancelMediator.Publish(CreateReturnFromTransactionMessage(true, amount, tx));
+        _cancelMediator.Publish(CreateReturnFromTransactionMessage(true, amountDecimal, tx));
     }
 
     [RelayCommand]

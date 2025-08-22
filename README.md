@@ -1,6 +1,3 @@
-﻿# ledger-vault
-
-### > Work in progress...
 # Ledger Vault
 
 A secure, cross-platform desktop application for personal financial management with blockchain-inspired integrity protection.

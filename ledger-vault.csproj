@@ -26,7 +26,10 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+        <PackageReference Include="closedxml" Version="0.105.0" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+        <PackageReference Include="itext" Version="9.2.0" />
+        <PackageReference Include="iText.Bouncy-Castle-Adapter" Version="9.2.0" />
         <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.4" />
         <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="9.0.8" />
         <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.7" />

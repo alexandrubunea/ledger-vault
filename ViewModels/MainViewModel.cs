@@ -26,7 +26,6 @@ public partial class MainViewModel : CoreViewModel, IDisposable
     };
 
     public bool ExportPageIsActive => CurrentPageViewModel is ExportViewModel;
-    public bool BackupsPageIsActive => CurrentPageViewModel is BackupsViewModel;
     public bool SettingsPageIsActive => CurrentPageViewModel is SettingsViewModel;
 
     #endregion
@@ -99,7 +98,6 @@ public partial class MainViewModel : CoreViewModel, IDisposable
     [NotifyPropertyChangedFor(nameof(IncomePageIsActive))]
     [NotifyPropertyChangedFor(nameof(PaymentsPageIsActive))]
     [NotifyPropertyChangedFor(nameof(ExportPageIsActive))]
-    [NotifyPropertyChangedFor(nameof(BackupsPageIsActive))]
     [NotifyPropertyChangedFor(nameof(SettingsPageIsActive))]
     private PageViewModel _currentPageViewModel = new();
 

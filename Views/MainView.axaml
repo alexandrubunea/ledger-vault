@@ -53,13 +53,6 @@
                             <Label Content="Export" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Classes="sidebar" Classes.active_sidebar="{Binding BackupsPageIsActive}"
-                            Command="{Binding SwitchPageCommand}" CommandParameter="Backups">
-                        <StackPanel Orientation="Horizontal">
-                            <Label Classes="icon" Content="&#xe922;" />
-                            <Label Content="Backups" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
                     <Button Classes="sidebar" Classes.active_sidebar="{Binding SettingsPageIsActive}"
                             Command="{Binding SwitchPageCommand}" CommandParameter="Settings">
                         <StackPanel Orientation="Horizontal">

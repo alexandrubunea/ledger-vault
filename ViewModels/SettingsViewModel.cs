@@ -18,11 +18,12 @@ public partial class SettingsViewModel : PageViewModel
                                       NewPassword != RetypePassword;
 
     public SettingsViewModel(UserStateService userStateService, AuthService authService,
-        CoreViewNavigatorService navigator)
+        CoreViewNavigatorService navigator, TransactionCacheService cacheService)
     {
         PageName = ApplicationPages.Settings;
         _userStateService = userStateService;
         _authService = authService;
+	_cacheService = cacheService;
         _navigator = navigator;
 
         UserCompleteName = _userStateService.FullUserName;
@@ -61,6 +62,7 @@ public partial class SettingsViewModel : PageViewModel
 
     private readonly UserStateService _userStateService;
     private readonly AuthService _authService;
+    private readonly TransactionCacheService _cacheService;
     private readonly CoreViewNavigatorService _navigator;
 
     [ObservableProperty] private bool _wrongOldPassword;
@@ -119,6 +121,7 @@ public partial class SettingsViewModel : PageViewModel
         }
 
         _authService.DeleteAccount();
+        _cacheService.InvalidateCache();
         _navigator.NavigateTo(CoreViews.Setup);
     }
 

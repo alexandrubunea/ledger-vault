@@ -115,9 +115,9 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
         using var command = conn.CreateCommand();
 
         command.CommandText = """
-                              DROP TABLE user_information;
-                              DROP TABLE transactions;
-                              DROP TABLE reversed_transactions;
+                              DELETE FROM user_information;
+                              DELETE FROM reversed_transactions;
+                              DELETE FROM transactions;
                               """;
         command.ExecuteNonQuery();
     }

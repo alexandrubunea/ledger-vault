@@ -27,17 +27,20 @@ public class TransactionLoader(TransactionRepository transactionRepository, Hmac
         {
             await foreach (Transaction tx in channel.Reader.ReadAllAsync(ct))
             {
-                tx.HashVerifiedStatus = HashStatus.Invalid;
-                tx.SignatureVerifiedStatus = SignatureStatus.Invalid;
+                HashStatus hashVerifiedStatus = HashStatus.Invalid;
+                SignatureStatus signatureVerifiedStatus = SignatureStatus.Invalid;
 
                 if (await TransactionHashing.VerifyHashAsync(tx, ct) &&
                     await TransactionHashing.VerifyFileHashAsync(tx, ct))
-                    tx.HashVerifiedStatus = HashStatus.Valid;
+                    hashVerifiedStatus = HashStatus.Valid;
 
                 if (hmacService.VerifySignature(tx.GetSigningData(), Convert.FromBase64String(tx.Signature)))
-                    tx.SignatureVerifiedStatus = SignatureStatus.Valid;
+                    signatureVerifiedStatus = SignatureStatus.Valid;
 
-                verifiedTransactions.Add(tx);
+                verifiedTransactions.Add(tx
+                    .SetHashVerifiedStatus(hashVerifiedStatus)
+                    .SetSignatureStatus(signatureVerifiedStatus)
+                );
             }
         }, ct)).ToArray();
 

@@ -11,76 +11,122 @@ public class Transaction : IComparable<Transaction>
 {
     #region PUBLIC PROPERTIES
 
-    public uint Id { get; private set; }
-    public string Counterparty { get; private set; }
-    public string Description { get; private set; }
-    public decimal Amount { get; private set; }
-    public List<string> Tags { get; private set; }
-    public string ReceiptImage { get; private set; }
-    public string ReceiptImageHash { get; private set; }
-    public DateTime Timestamp { get; private set; }
-    public string Hash { get; private set; }
-    public string PreviousHash { get; private set; }
-    public string Signature { get; private set; }
-    public uint? ReversalOfTransactionId { get; private set; }
-    public bool IsReverted { get; private set; }
+    public uint Id = 0;
+    public string Counterparty = String.Empty;
+    public string Description = String.Empty;
+    public decimal Amount = 0m;
+    public List<string> Tags = new List<string>();
+    public string ReceiptImage = String.Empty;
+    public string ReceiptImageHash = String.Empty;
+    public DateTime Timestamp = DateTime.MinValue;
+    public string Hash = String.Empty;
+    public string PreviousHash = String.Empty;
+    public string Signature = String.Empty;
+    public uint? ReversalOfTransactionId = null;
+    public bool IsReverted = false;
 
-    // Not database related properties
-    public HashStatus HashVerifiedStatus { get; set; } = HashStatus.InProgress;
-    public SignatureStatus SignatureVerifiedStatus { get; set; } = SignatureStatus.InProgress;
+    public HashStatus HashVerifiedStatus = HashStatus.InProgress;
+    public SignatureStatus SignatureVerifiedStatus = SignatureStatus.InProgress;
 
     #endregion
 
     #region PUBLIC API
-    
-    /// <summary>
-    /// Creates a dummy transaction.
-    /// Example when needed: trying to binary search an id in a ordered list of transactions.
-    /// USE WITH CAUTION.
-    /// </summary>
-    /// <param name="id">id of the transaction, should be an already existing id</param>
-    public Transaction(uint id)
+
+    public Transaction SetId(uint id)
     {
         Id = id;
-
-        Counterparty = string.Empty;
-        Description = string.Empty;
-        Tags = [];
-        ReceiptImage = string.Empty;
-        ReceiptImageHash = string.Empty;
-        Hash = string.Empty;
-        PreviousHash = string.Empty;
-        Signature = string.Empty;
-    }
-    
-    public static Transaction Create(string counterparty, string description, decimal amount, List<string> tags,
-        string receiptImagePath, string previousHash, uint? reversalOfTransactionId = null)
-    {
-        string receiptImageHash =
-            receiptImagePath.Length > 0 ? TransactionHashing.GenerateFileHash(receiptImagePath) : "";
-
-        // File folder its known to be in the special folder -> attachments
-        // There is no need to store the whole path in the db
-        string receiptImage = Path.GetFileName(receiptImagePath);
-
-        Transaction tx =
-            new Transaction(counterparty, description, amount, tags, receiptImage, previousHash,
-                reversalOfTransactionId);
-
-        tx.ReceiptImageHash = receiptImageHash;
-        tx.Hash = TransactionHashing.GenerateHash(tx);
-
-        return tx;
+        return this;
     }
 
-    public static Transaction Load(uint id, string counterparty, string description, decimal amount, List<string> tags,
-        string receiptImage, string receiptImageHash, DateTime timestamp, string previousHash, string hash,
-        string signature, bool isReverted, uint? reversalOfTransactionId = null)
+    public Transaction SetCounterparty(string counterparty)
     {
-        Transaction tx = new Transaction(id, counterparty, description, amount, tags, receiptImage, receiptImageHash,
-            previousHash, timestamp, hash, signature, isReverted, reversalOfTransactionId);
+        Counterparty = counterparty;
+        return this;
+    }
 
-        return tx;
+    public Transaction SetDescription(string description)
+    {
+        Description = description;
+        return this;
+    }
+
+    public Transaction SetAmount(decimal amount)
+    {
+        Amount = amount;
+        return this;
+    }
+
+    public Transaction SetTags(List<string> tags)
+    {
+        Tags = tags;
+        return this;
+    }
+
+    public Transaction SetReceiptImage(string receiptImage)
+    {
+        ReceiptImage = receiptImage;
+        return this;
+    }
+
+    public Transaction SetReceiptImageHash(string receiptImageHash)
+    {
+        ReceiptImageHash = receiptImageHash;
+        return this;
+    }
+
+    public Transaction SetTimestamp(DateTime timestamp)
+    {
+        Timestamp = timestamp;
+        return this;
+    }
+
+    public Transaction SetPreviousHash(string previousHash)
+    {
+        PreviousHash = previousHash;
+        return this;
+    }
+
+    public Transaction SetHash(string hash)
+    {
+        Hash = hash;
+        return this;
+    }
+
+    public Transaction SetSignature(byte[] signature)
+    {
+        Signature = Convert.ToBase64String(signature);
+
+        return this;
+    }
+
+    public Transaction SetSignature(string signature)
+    {
+        Signature = signature;
+        return this;
+    }
+
+    public Transaction SetIsReverted(bool isReverted)
+    {
+        IsReverted = isReverted;
+        return this;
+    }
+
+    public Transaction SetReversalOfTransactionId(uint? reversalOfTransactionId)
+    {
+        ReversalOfTransactionId = reversalOfTransactionId;
+        return this;
+    }
+
+    public Transaction SetHashVerifiedStatus(HashStatus status)
+    {
+        HashVerifiedStatus = status;
+        return this;
+    }
+
+    public Transaction SetSignatureStatus(SignatureStatus status)
+    {
+        SignatureVerifiedStatus = status;
+        return this;
     }
 
     public byte[] GetSigningData()
@@ -95,73 +141,9 @@ public class Transaction : IComparable<Transaction>
         return System.Text.Encoding.UTF8.GetBytes(data);
     }
 
-    public void SetSignature(byte[] signature)
-    {
-        if (Signature != "")
-            return;
-
-        Signature = Convert.ToBase64String(signature);
-    }
-
-    public void SetIsReverted(bool isReverted)
-    {
-        if (_isRevertedSetOnce) return;
-
-        _isRevertedSetOnce = true;
-        IsReverted = isReverted;
-    }
-
     public int CompareTo(Transaction? other)
     {
         return other == null ? 1 : Id.CompareTo(other.Id);
-    }
-
-    #endregion
-
-    #region PRIVATE PROPERTIES
-
-    private bool _isRevertedSetOnce = false;
-
-    #endregion
-
-    #region PRIVATE CONSTRUCTORS
-
-    // Constructor for non-existing transaction in the database
-    private Transaction(string counterparty, string description, decimal amount, List<string> tags, string receiptImage,
-        string previousHash, uint? reversalOfTransactionId = null)
-    {
-        Counterparty = counterparty;
-        Description = description;
-        Amount = amount;
-        Tags = tags;
-        ReceiptImage = receiptImage;
-        PreviousHash = previousHash;
-        ReversalOfTransactionId = reversalOfTransactionId;
-        Timestamp = DateTime.Now;
-
-        ReceiptImageHash = "";
-        Hash = "";
-        Signature = "";
-    }
-
-    // Constructor for existing transaction in the database
-    private Transaction(uint id, string counterparty, string description, decimal amount, List<string> tags,
-        string receiptImage, string receiptImageHash, string previousHash, DateTime timestamp, string hash,
-        string signature, bool isReverted, uint? reversalOfTransactionId = null)
-    {
-        Id = id;
-        Counterparty = counterparty;
-        Description = description;
-        Amount = amount;
-        Tags = tags;
-        ReceiptImage = receiptImage;
-        ReceiptImageHash = receiptImageHash;
-        PreviousHash = previousHash;
-        ReversalOfTransactionId = reversalOfTransactionId;
-        IsReverted = isReverted;
-        Timestamp = timestamp;
-        Signature = signature;
-        Hash = hash;
     }
 
     #endregion

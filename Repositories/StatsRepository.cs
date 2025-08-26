@@ -89,24 +89,27 @@ public class StatsRepository(DatabaseManagerService databaseManagerService)
             string amountCondition = isExpense ? "Amount <= 0" : "Amount > 0";
 
             command.CommandText = $"""
+                                   WITH days_of_week (day_num, day_name) AS (
+                                     SELECT '0', 'Sunday' UNION ALL
+                                     SELECT '1', 'Monday' UNION ALL
+                                     SELECT '2', 'Tuesday' UNION ALL
+                                     SELECT '3', 'Wednesday' UNION ALL
+                                     SELECT '4', 'Thursday' UNION ALL
+                                     SELECT '5', 'Friday' UNION ALL
+                                     SELECT '6', 'Saturday'
+                                   )
                                    SELECT
-                                     CASE strftime('%w', DateTime)
-                                       WHEN '0' THEN 'Sunday'
-                                       WHEN '1' THEN 'Monday'
-                                       WHEN '2' THEN 'Tuesday'
-                                       WHEN '3' THEN 'Wednesday'
-                                       WHEN '4' THEN 'Thursday'
-                                       WHEN '5' THEN 'Friday'
-                                       WHEN '6' THEN 'Saturday'
-                                     END AS DayOfWeek,
-                                     SUM(Amount) AS TotalAmount
-                                   FROM transactions
-                                   WHERE
-                                     DateTime >= date('now', '-7 days') AND {amountCondition}
+                                     t1.day_name AS DayOfWeek,
+                                     COALESCE(SUM(t2.Amount), 0) AS TotalAmount
+                                   FROM days_of_week AS t1
+                                   LEFT JOIN transactions AS t2
+                                     ON t1.day_num = strftime('%w', t2.DateTime)
+                                     AND t2.DateTime >= date('now', '-7 days')
+                                     AND {amountCondition}
                                    GROUP BY
-                                     strftime('%w', DateTime)
+                                     t1.day_num, t1.day_name
                                    ORDER BY
-                                     abs(strftime('%w', 'now') - strftime('%w', DateTime)) % 7 DESC;
+                                     (strftime('%w', 'now') - t1.day_num + 7) % 7;
                                    """;
 
             await using var reader = await command.ExecuteReaderAsync();

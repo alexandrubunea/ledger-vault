@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using ledger_vault.Models;
 
 namespace ledger_vault.Services;
 
 // Maybe will be useful in the future, at the moment is just a list with a lifespan
-public class TransactionCacheService
+public class TransactionCacheService(TransactionLoader transactionLoader)
 {
     #region PUBLIC API
 
@@ -54,6 +55,38 @@ public class TransactionCacheService
         }
     }
 
+    public async Task RefreshCache()
+    {
+        await _refreshSemaphore.WaitAsync();
+        try
+        {
+            if (IsCacheValid())
+                return;
+
+            InvalidateCache();
+
+            List<Transaction> transactions = await transactionLoader.LoadAndVerifyTransactionsAsync();
+            SetCache(transactions);
+        }
+        finally
+        {
+            _refreshSemaphore.Release();
+        }
+    }
+
+    public async Task RunCacheSensitiveAction(Func<Task> action)
+    {
+        await _refreshSemaphore.WaitAsync();
+        try
+        {
+            await action();
+        }
+        finally
+        {
+            _refreshSemaphore.Release();
+        }
+    }
+
     #endregion
 
     #region PRIVATE PROPERTIES
@@ -61,6 +94,8 @@ public class TransactionCacheService
     private readonly Lock _lock = new();
     private List<Transaction> _cachedTransactions = [];
     private DateTime _lastLoadedTime;
+    private readonly SemaphoreSlim _refreshSemaphore = new(1, 1);
+
 
     private readonly TimeSpan _cacheDuration = TimeSpan.FromHours(2);
 

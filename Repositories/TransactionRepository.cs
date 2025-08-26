@@ -170,7 +170,7 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
 
     // I don't think this should be used with any other database
     // If this is the case, maybe implement the same function for different readers
-    private Transaction? ExtractTransactionFromReader(SqliteDataReader reader)
+    private Transaction ExtractTransactionFromReader(SqliteDataReader reader)
     {
         try
         {
@@ -190,8 +190,20 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
 
             List<string> tags = tagsString.Length > 0 ? tagsString.Split(",").ToList() : [];
 
-            return Transaction.Load(id, counterparty, description, amount, tags, receiptImage, receiptImageHash,
-                timestamp, previousHash, hash, signature, isReverted, reversalOfTransactionId);
+            return new Transaction()
+                .SetId(id)
+                .SetCounterparty(counterparty)
+                .SetDescription(description)
+                .SetAmount(amount)
+                .SetTags(tags)
+                .SetReceiptImage(receiptImage)
+                .SetReceiptImageHash(receiptImageHash)
+                .SetTimestamp(timestamp)
+                .SetPreviousHash(previousHash)
+                .SetHash(hash)
+                .SetSignature(signature)
+                .SetIsReverted(isReverted)
+                .SetReversalOfTransactionId(reversalOfTransactionId);
         }
         catch (Exception ex)
         {

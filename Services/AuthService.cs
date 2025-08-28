@@ -1,5 +1,6 @@
 using System;
 using ledger_vault.Data;
+using System.Threading.Tasks;
 
 namespace ledger_vault.Services;
 
@@ -13,15 +14,15 @@ public class AuthService(UserStateService userState, UserRepository userReposito
 
     #region PUBLIC API
 
-    public LoginResult Login(string password)
+    public async Task<LoginResult> Login(string password)
     {
-        LoginResult loginResult = userRepository.CheckUserPassword(password);
+        LoginResult loginResult = await userRepository.CheckUserPassword(password);
         if (loginResult != LoginResult.Success)
             return loginResult;
 
         LoggedIn = true;
-        UserData? loadedState = userRepository.LoadUserState();
-        
+        UserData? loadedState = await userRepository.LoadUserState();
+
         if (loadedState == null)
             throw new Exception("Could not load user state");
 
@@ -29,18 +30,19 @@ public class AuthService(UserStateService userState, UserRepository userReposito
         userState.Balance = loadedState.Balance;
         userState.CurrencyId = loadedState.CurrencyId;
         userState.ThemeId = loadedState.ThemeId;
-        
+
         return LoginResult.Success;
     }
 
-    public void UpdateUserPassword(string password, string newPassword) =>
-        userRepository.UpdateUserPassword(password, newPassword);
+    public async Task UpdateUserPassword(string password, string newPassword) => 
+        await userRepository.UpdateUserPassword(password, newPassword);
 
-    public bool CheckUserPassword(string password) => userRepository.CheckUserPassword(password) == LoginResult.Success;
+    public async Task<bool> CheckUserPassword(string password) => 
+        await userRepository.CheckUserPassword(password) == LoginResult.Success;
 
-    public void DeleteAccount()
+    public async Task DeleteAccount()
     {
-        userRepository.DeleteAllUserData();
+        await userRepository.DeleteAllUserData();
     }
 
     #endregion

@@ -18,7 +18,7 @@ public class TransactionService(
 {
     #region PUBLIC API
 
-    public Transaction CreateTransaction(string counterparty, string description, decimal amount, List<string> tags,
+    public async Task<Transaction> CreateTransaction(string counterparty, string description, decimal amount, List<string> tags,
         string receiptImagePath, uint? reversalOfTransactionId = null)
     {
         string previousHash = transactionRepository.GetLastHash();
@@ -43,12 +43,14 @@ public class TransactionService(
 
         tx.SetHash(TransactionHashing.GenerateHash(tx));
 
-        transactionRepository.SaveTransaction(tx);
+        await transactionRepository.SaveTransaction(tx);
 
-        tx = transactionRepository.GetLastTransaction();
+        tx = await transactionRepository.GetLastTransaction();
         if (tx.ReversalOfTransactionId == null) return tx;
 
-        transactionRepository.AddReverseRelation(tx);
+        await transactionRepository.AddReverseRelation(tx);
+
+
         return tx;
     }
 

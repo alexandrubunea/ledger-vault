@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
@@ -46,29 +48,35 @@ public partial class LoginViewModel : CoreViewModel
     [RelayCommand]
     private void ProcessLogin()
     {
-        WrongPassword = false;
-        DatabaseError = false;
-
-        LoginResult result = _authService.Login(Password);
-
-        switch (result)
+        _ = Task.Run(async () =>
         {
-            case LoginResult.WrongPassword:
-                WrongPassword = true;
-                break;
-            case LoginResult.DatabaseError:
-                DatabaseError = true;
-                break;
-            // If there is NoUser, and the user somehow end up in the login view send him back to the setup view
-            case LoginResult.NoUser:
-                _navigator.NavigateTo(CoreViews.Setup);
-                break;
-            case LoginResult.Success:
-                _navigator.NavigateTo(CoreViews.Main);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            WrongPassword = false;
+            DatabaseError = false;
+
+            LoginResult result = await Task.Run(() => _authService.Login(Password));
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                switch (result)
+                {
+                    case LoginResult.WrongPassword:
+                        WrongPassword = true;
+                        break;
+                    case LoginResult.DatabaseError:
+                        DatabaseError = true;
+                        break;
+                    case LoginResult.NoUser:
+                        _navigator.NavigateTo(CoreViews.Setup);
+                        break;
+                    case LoginResult.Success:
+                        _navigator.NavigateTo(CoreViews.Main);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            });
+        });
+
     }
 
     #endregion

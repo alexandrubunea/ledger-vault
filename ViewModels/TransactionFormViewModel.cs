@@ -112,11 +112,12 @@ public partial class TransactionFormViewModel : PageComponentViewModel
             return;
 
         Transaction tx =
-            _transactionService.CreateTransaction(Counterparty, Description, amountDecimal, [..Tags], AttachmentPath,
-                ReverseTransactionId);
+            Task.Run(async () =>await _transactionService.CreateTransaction(Counterparty, Description, amountDecimal, [..Tags], AttachmentPath,
+                ReverseTransactionId)).Result;
 
         _userStateService.Balance += amountDecimal;
-        _userStateService.SaveUserBalance();
+        
+        Task.Run(async () => await _userStateService.SaveUserBalance());
 
         // Return to the list
         _cancelMediator.Publish(CreateReturnFromTransactionMessage(true, amountDecimal, tx));

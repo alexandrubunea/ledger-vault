@@ -1,4 +1,5 @@
 using ledger_vault.Data;
+using System.Threading.Tasks;
 
 namespace ledger_vault.Services;
 
@@ -6,7 +7,7 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
 {
     #region PUBLIC API
 
-    public void CreateUser(string fullName, string password, ushort currencyId)
+    public async Task CreateUser(string fullName, string password, ushort currencyId)
     {
         if (databaseManagerService.IsSetup())
             return;
@@ -24,12 +25,12 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
         command.Parameters.AddWithValue("@currency", currencyId);
         command.Parameters.AddWithValue("@password_hashed", BCrypt.Net.BCrypt.EnhancedHashPassword(password));
 
-        command.ExecuteNonQuery();
+        await command.ExecuteNonQueryAsync();
     }
 
-    public void UpdateUserPassword(string password, string newPassword)
+    public async Task UpdateUserPassword(string password, string newPassword)
     {
-        if (CheckUserPassword(password) != LoginResult.Success)
+        if (await CheckUserPassword(password) != LoginResult.Success)
             return;
 
         using var conn = databaseManagerService.GetConnection();
@@ -38,10 +39,10 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
         command.CommandText = "UPDATE user_information SET password = @password WHERE id > 0";
         command.Parameters.AddWithValue("@password", BCrypt.Net.BCrypt.EnhancedHashPassword(newPassword));
 
-        command.ExecuteNonQuery();
+        await command.ExecuteNonQueryAsync();
     }
 
-    public void UpdateUserName(string fullName)
+    public async Task UpdateUserName(string fullName)
     {
         using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
@@ -49,10 +50,10 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
         command.CommandText = "UPDATE user_information SET full_name = @fullName WHERE id > 0";
         command.Parameters.AddWithValue("@fullName", fullName);
 
-        command.ExecuteNonQuery();
+        await command.ExecuteNonQueryAsync();
     }
 
-    public void UpdateUserCurrencyId(short currencyId)
+    public async Task UpdateUserCurrencyId(short currencyId)
     {
         using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
@@ -60,10 +61,11 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
         command.CommandText = "UPDATE user_information SET currencyId = @currencyId WHERE id > 0";
         command.Parameters.AddWithValue("@currencyId", currencyId);
 
-        command.ExecuteNonQuery();
+
+        await command.ExecuteNonQueryAsync();
     }
 
-    public void UpdateUserThemeId(short themeId)
+    public async Task UpdateUserThemeId(short themeId)
     {
         using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
@@ -71,10 +73,10 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
         command.CommandText = "UPDATE user_information SET themeId = @themeId WHERE id > 0";
         command.Parameters.AddWithValue("@themeId", themeId);
 
-        command.ExecuteNonQuery();
+        await command.ExecuteNonQueryAsync();
     }
 
-    public void UpdateUserBalance(decimal balance)
+    public async Task UpdateUserBalance(decimal balance)
     {
         using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
@@ -82,10 +84,10 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
         command.CommandText = "UPDATE user_information SET balance = @balance WHERE id > 0";
         command.Parameters.AddWithValue("@balance", balance);
 
-        command.ExecuteNonQuery();
+        await command.ExecuteNonQueryAsync();
     }
 
-    public LoginResult CheckUserPassword(string password)
+    public async Task<LoginResult> CheckUserPassword(string password)
     {
         try
         {
@@ -93,7 +95,7 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
             using var cmd = conn.CreateCommand();
             cmd.CommandText = "SELECT password FROM user_information LIMIT 1";
 
-            using var reader = cmd.ExecuteReader();
+            using var reader = await cmd.ExecuteReaderAsync();
             if (!reader.Read())
                 return LoginResult.NoUser;
 
@@ -102,6 +104,8 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
             return !BCrypt.Net.BCrypt.EnhancedVerify(password, storedHash)
                 ? LoginResult.WrongPassword
                 : LoginResult.Success;
+
+
         }
         catch
         {
@@ -109,7 +113,7 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
         }
     }
 
-    public void DeleteAllUserData()
+    public async Task DeleteAllUserData()
     {
         using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
@@ -119,16 +123,17 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
                               DELETE FROM reversed_transactions;
                               DELETE FROM transactions;
                               """;
-        command.ExecuteNonQuery();
+
+        await command.ExecuteNonQueryAsync();
     }
 
-    public UserData? LoadUserState()
+    public async Task<UserData?> LoadUserState()
     {
         using var conn = databaseManagerService.GetConnection();
         using var cmd = conn.CreateCommand();
         cmd.CommandText = "SELECT full_name, balance, currencyId, themeId FROM user_information LIMIT 1";
 
-        using var reader = cmd.ExecuteReader();
+        using var reader = await cmd.ExecuteReaderAsync();
         if (!reader.Read()) return null;
 
         return new UserData(
@@ -137,6 +142,7 @@ public class UserRepository(DatabaseManagerService databaseManagerService)
             reader.GetInt16(2),
             reader.GetInt16(3)
         );
+
     }
 
     #endregion

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using ledger_vault.Models;
 using Microsoft.Data.Sqlite;
 
@@ -52,7 +53,7 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
         }
     }
 
-    public Transaction GetLastTransaction()
+    public async Task<Transaction> GetLastTransaction()
     {
         using var conn = databaseManagerService.GetConnection();
         using var cmd = conn.CreateCommand();
@@ -70,7 +71,7 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
                           LIMIT 1;
                           """;
 
-        using var reader = cmd.ExecuteReader();
+        using var reader = await cmd.ExecuteReaderAsync();
         if (!reader.Read())
             throw new Exception("No transaction found");
 
@@ -82,7 +83,7 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
         return tx;
     }
 
-    public void AddReverseRelation(Transaction transaction)
+    public async Task AddReverseRelation(Transaction transaction)
     {
         if (transaction.ReversalOfTransactionId == null)
             return;
@@ -103,7 +104,7 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
             command.Parameters.AddWithValue("@transactionId", transactionId);
             command.Parameters.AddWithValue("@reversedByTransactionId", reversedByTransactionId);
 
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
         }
         catch (Exception ex)
         {
@@ -111,7 +112,7 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
         }
     }
 
-    public void SaveTransaction(Transaction transaction)
+    public async Task SaveTransaction(Transaction transaction)
     {
         using var conn = databaseManagerService.GetConnection();
         using var command = conn.CreateCommand();
@@ -141,7 +142,7 @@ public class TransactionRepository(DatabaseManagerService databaseManagerService
                     ? transaction.ReversalOfTransactionId.Value
                     : DBNull.Value);
 
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
         }
         catch (Exception ex)
         {

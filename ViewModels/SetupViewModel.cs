@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ledger_vault.Data;
 using ledger_vault.Services;
@@ -56,7 +57,7 @@ public partial class SetupViewModel : CoreViewModel
             return;
         }
 
-        _userRepository.CreateUser(UserCompleteName, _finalPassword, CurrencyIndex);
+        _ = Task.Run(async () => await _userRepository.CreateUser(UserCompleteName, _finalPassword, CurrencyIndex));
 
         StepTwo = false;
         _navigator.NavigateTo(CoreViews.Login);
@@ -77,7 +78,8 @@ public partial class SetupViewModel : CoreViewModel
     [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
     private string _password = "";
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
     private string _confirmPassword = "";
 
     [ObservableProperty] private string _userCompleteName = "";

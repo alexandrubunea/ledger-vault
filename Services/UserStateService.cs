@@ -1,4 +1,4 @@
-using ledger_vault.Data;
+using System.Threading.Tasks;
 
 namespace ledger_vault.Services;
 
@@ -15,16 +15,16 @@ public class UserStateService(UserRepository userRepository)
 
     #region PUBLIC API
 
-    public void SaveUserState()
+    public async Task SaveUserState()
     {
-        userRepository.UpdateUserName(FullUserName);
-        userRepository.UpdateUserCurrencyId(CurrencyId);
-        userRepository.UpdateUserThemeId(ThemeId);
+        await userRepository.UpdateUserName(FullUserName);
+        await userRepository.UpdateUserCurrencyId(CurrencyId);
+        await userRepository.UpdateUserThemeId(ThemeId);
     }
 
-    public void SaveUserBalance()
+    public async Task SaveUserBalance()
     {
-        userRepository.UpdateUserBalance(Balance);
+        await userRepository.UpdateUserBalance(Balance);
     }
 
     #endregion

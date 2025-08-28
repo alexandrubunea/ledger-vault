@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ledger_vault.Data;
@@ -23,7 +24,7 @@ public partial class SettingsViewModel : PageViewModel
         PageName = ApplicationPages.Settings;
         _userStateService = userStateService;
         _authService = authService;
-	_cacheService = cacheService;
+        _cacheService = cacheService;
         _navigator = navigator;
 
         UserCompleteName = _userStateService.FullUserName;
@@ -50,7 +51,8 @@ public partial class SettingsViewModel : PageViewModel
     [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
     private string _newPassword = "";
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DifferentPasswords))]
     private string _retypePassword = "";
 
     [ObservableProperty] private short _currencyIndex;
@@ -75,29 +77,33 @@ public partial class SettingsViewModel : PageViewModel
     [RelayCommand]
     private void ChangePassword()
     {
-        // Check old password
-        WrongOldPassword = false;
-        if (!_authService.CheckUserPassword(OldPassword))
-        {
-            WrongOldPassword = true;
-            return;
-        }
+        _ = Task.Run(async () =>
+                {
+                    // Check old password
+                    WrongOldPassword = false;
+                    if (! await _authService.CheckUserPassword(OldPassword))
+                    {
+                        WrongOldPassword = true;
+                        return;
+                    }
 
-        // Check if the new password is valid
-        if (IsPasswordTooWeak || NewPassword.Length == 0)
-            return;
+                    // Check if the new password is valid
+                    if (IsPasswordTooWeak || NewPassword.Length == 0)
+                        return;
 
-        // Check if the retyped password is the same with the new password
-        if (DifferentPasswords)
-            return;
+                    // Check if the retyped password is the same with the new password
+                    if (DifferentPasswords)
+                        return;
 
-        // Update the password
-        _authService.UpdateUserPassword(OldPassword, NewPassword);
+                    // Update the password
+                    _ = Task.Run(async () => await _authService.UpdateUserPassword(OldPassword, NewPassword));
 
-        // Reset data
-        OldPassword = "";
-        NewPassword = "";
-        RetypePassword = "";
+                    // Reset data
+                    OldPassword = "";
+                    NewPassword = "";
+                    RetypePassword = "";
+
+                });
     }
 
     [RelayCommand]
@@ -107,22 +113,26 @@ public partial class SettingsViewModel : PageViewModel
         _userStateService.CurrencyId = CurrencyIndex;
         _userStateService.ThemeId = ThemeIndex;
 
-        _userStateService.SaveUserState();
+        _ = Task.Run(async () => await _userStateService.SaveUserState());
     }
 
     [RelayCommand]
     private void DeleteData()
     {
-        WrongCurrentPassword = false;
-        if (!_authService.CheckUserPassword(CurrentPassword))
-        {
-            WrongCurrentPassword = true;
-            return;
-        }
+        _ = Task.Run(async () =>
+                {
+                    WrongCurrentPassword = false;
+                    if (!await _authService.CheckUserPassword(CurrentPassword))
+                    {
+                        WrongCurrentPassword = true;
+                        return;
+                    }
 
-        _authService.DeleteAccount();
-        _cacheService.InvalidateCache();
-        _navigator.NavigateTo(CoreViews.Setup);
+                    await _authService.DeleteAccount();
+                    _cacheService.InvalidateCache();
+                    _navigator.NavigateTo(CoreViews.Setup);
+
+                });
     }
 
     #endregion
